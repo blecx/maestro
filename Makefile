@@ -53,3 +53,16 @@ install-hooks:
 @cp hooks/pre-commit-maestro .git/hooks/pre-commit
 @chmod +x .git/hooks/pre-commit
 @echo "=> Pre-commit hook installed successfully."
+
+# Initialize local environment variables
+init-env:
+@echo "Initializing .env from .env.maestro.example..."
+@if [ ! -f .env ]; then cp .env.maestro.example .env; echo "=> Created .env"; else echo "=> .env already exists"; fi
+
+# Install Git hooks for AI gates
+install-hooks:
+@echo "Installing Maestro git hooks..."
+@mkdir -p .git/hooks
+@cp hooks/pre-commit-maestro .git/hooks/pre-commit
+@chmod +x .git/hooks/pre-commit
+@echo "=> Pre-commit hook installed successfully."

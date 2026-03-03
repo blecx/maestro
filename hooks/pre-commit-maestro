@@ -14,7 +14,6 @@ fi
 
 if [ -f "agents/complexity_scorer.py" ]; then
     echo "=> Checking code complexity parameters..."
-    # Optionally fail the commit if the scorer exits with a non-zero code
     python agents/complexity_scorer.py --check-only || { echo "Complexity check failed."; exit 1; }
 fi
 
