@@ -32,6 +32,7 @@ sync-maestro:
 	@cp /tmp/maestro-trunk/Makefile ./Makefile
 	@cp -n /tmp/maestro-trunk/.env.maestro.example ./.env.maestro.example || true
 	@rsync -av /tmp/maestro-trunk/hooks/ ./hooks/
+	@rsync -av /tmp/maestro-trunk/scripts/ ./scripts/
 	@git -C /tmp/maestro-trunk rev-parse HEAD > .maestro-version
 	@rm -rf /tmp/maestro-trunk
 	@echo "✅ Maestro sync complete (pinned SHA written to .maestro-version)."
