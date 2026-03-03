@@ -1,0 +1,91 @@
+{
+  "name": "issueagent",
+  "displayName": "Resolve Issue (AI-Agent-Framework)",
+  "description": "Run the AI-Agent-Framework issue resolution workflow from VS Code chat",
+  "version": "1.0.0",
+  "publisher": "ai-agent-framework",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blecx/AI-Agent-Framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/blecx/AI-Agent-Framework/issues"
+  },
+  "homepage": "https://github.com/blecx/AI-Agent-Framework",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "files": [
+    "extension.js",
+    "package.json",
+    "README.md"
+  ],
+  "categories": [
+    "Chat"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onChatParticipant:resolve-issue.chat",
+    "onChatParticipant:ralph.chat",
+    "onChatParticipant:create-issue.chat"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Resolve Issue Agent",
+      "properties": {
+        "issueagent.customAgent": {
+          "type": "string",
+          "default": "resolve-issue",
+          "description": "Agent alias or class spec passed to scripts/work-issue.py --agent (for @resolve-issue). Examples: resolve-issue, ralph, module.path:ClassName"
+        }
+      }
+    },
+    "chatParticipants": [
+      {
+        "id": "resolve-issue.chat",
+        "name": "resolve-issue",
+        "fullName": "Resolve Issue",
+        "description": "Select the next issue and run the autonomous workflow",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "run",
+            "description": "Select next issue and run autonomous agent"
+          }
+        ]
+      },
+      {
+        "id": "ralph.chat",
+        "name": "ralph",
+        "fullName": "Ralph Agent",
+        "description": "Spec-Kit style issue resolver with skill criteria and specialist review gates",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "run",
+            "description": "Select next issue and run Ralph profile"
+          }
+        ]
+      },
+      {
+        "id": "create-issue.chat",
+        "name": "create-issue",
+        "fullName": "Create Issue",
+        "description": "Launcher for the repo's create-issue workflow (draft/create GitHub issues)",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "run",
+            "description": "Open the create-issue workflow and show how to run it"
+          },
+          {
+            "name": "open",
+            "description": "Open the create-issue workflow prompt file"
+          }
+        ]
+      }
+    ]
+  },
+  "dependencies": {}
+}

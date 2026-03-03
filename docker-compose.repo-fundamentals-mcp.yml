@@ -1,0 +1,47 @@
+name: repo-fundamentals-mcp
+
+services:
+  git-mcp:
+    build:
+      context: .
+      dockerfile: docker/mcp-repo-fundamentals-git/Dockerfile
+    container_name: repo-fundamentals-git-mcp
+    restart: unless-stopped
+    environment:
+      - GIT_MCP_PORT=3012
+      - GIT_MCP_HOST=0.0.0.0
+      - REPO_FUNDAMENTALS_REPO_ROOT=/workspace
+    ports:
+      - "127.0.0.1:3012:3012"
+    volumes:
+      - ./:/workspace
+
+  search-mcp:
+    build:
+      context: .
+      dockerfile: docker/mcp-repo-fundamentals-search/Dockerfile
+    container_name: repo-fundamentals-search-mcp
+    restart: unless-stopped
+    environment:
+      - SEARCH_MCP_PORT=3013
+      - SEARCH_MCP_HOST=0.0.0.0
+      - REPO_FUNDAMENTALS_REPO_ROOT=/workspace
+    ports:
+      - "127.0.0.1:3013:3013"
+    volumes:
+      - ./:/workspace
+
+  filesystem-mcp:
+    build:
+      context: .
+      dockerfile: docker/mcp-repo-fundamentals-filesystem/Dockerfile
+    container_name: repo-fundamentals-filesystem-mcp
+    restart: unless-stopped
+    environment:
+      - FILESYSTEM_MCP_PORT=3014
+      - FILESYSTEM_MCP_HOST=0.0.0.0
+      - REPO_FUNDAMENTALS_REPO_ROOT=/workspace
+    ports:
+      - "127.0.0.1:3014:3014"
+    volumes:
+      - ./:/workspace
