@@ -1,0 +1,42 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+.env/
+ENV/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+configs/llm.json
+
+# VS Code (keep settings and tasks)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor swap
+*.swp
+*.bak
+*.tmp
+
+# Nested hooks artifact (rsync side-effect)
+hooks/hooks/
+
+# Node
+node_modules/
+*.tsbuildinfo
