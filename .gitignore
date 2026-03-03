@@ -29,6 +29,7 @@ configs/llm.json
 .tox/
 .coverage
 .coverage.*
+coverage.json
 coverage.xml
 htmlcov/
 *.cover
