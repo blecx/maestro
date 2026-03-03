@@ -1,0 +1,42 @@
+.PHONY: sync-maestro mcp-up mcp-down help
+
+help:
+@echo "Maestro Toolchain CLI"
+@echo "-----------------------"
+@echo "make sync-maestro   - Pull the latest AI tooling from blecx/maestro trunk"
+@echo "make mcp-up         - Start all Maestro Context (MCP) Docker servers locally"
+@echo "make mcp-down       - Stop all Maestro Context (MCP) Docker servers locally"
+
+sync-maestro:
+@echo "🔄 Syncing latest Maestro toolchain into your current repository..."
+@rm -rf /tmp/maestro-trunk
+@git clone --depth 1 https://github.com/blecx/maestro.git /tmp/maestro-trunk
+@rsync -av /tmp/maestro-trunk/agents/ ./agents/
+@rsync -av /tmp/maestro-trunk/apps/mcp/ ./apps/mcp/
+@rsync -av /tmp/maestro-trunk/.github/agents/ ./.github/agents/
+@rsync -av /tmp/maestro-trunk/.copilot/skills/ ./.copilot/skills/
+@rsync -av /tmp/maestro-trunk/docs/maestro/ ./docs/maestro/
+@cp /tmp/maestro-trunk/docker-compose*.yml ./
+@cp /tmp/maestro-trunk/Makefile ./Makefile
+@rm -rf /tmp/maestro-trunk
+@echo "✅ Maestro sync complete. Ensure your .env files carry the required keys."
+
+mcp-up:
+@echo "🚀 Starting Maestro MCP context servers..."
+docker compose -f docker-compose.maestro.yml up -d
+docker compose -f docker-compose.mcp-bash-gateway.yml up -d
+docker compose -f docker-compose.repo-fundamentals-mcp.yml up -d
+docker compose -f docker-compose.mcp-github-ops.yml up -d
+docker compose -f docker-compose.mcp-offline-docs.yml up -d
+docker compose -f docker-compose.mcp-devops.yml up -d
+@echo "✅ MCP servers are running."
+
+mcp-down:
+@echo "🛑 Stopping Maestro MCP context servers..."
+docker compose -f docker-compose.maestro.yml down
+docker compose -f docker-compose.mcp-bash-gateway.yml down
+docker compose -f docker-compose.repo-fundamentals-mcp.yml down
+docker compose -f docker-compose.mcp-github-ops.yml down
+docker compose -f docker-compose.mcp-offline-docs.yml down
+docker compose -f docker-compose.mcp-devops.yml down
+@echo "✅ MCP servers stopped."
