@@ -17,7 +17,6 @@ sync-maestro:
 	@rsync -av /tmp/maestro-trunk/apps/mcp/ ./apps/mcp/
 	@rsync -av /tmp/maestro-trunk/.github/agents/ ./.github/agents/
 	@rsync -av /tmp/maestro-trunk/.copilot/skills/ ./.copilot/skills/
-	@rsync -av /tmp/maestro-trunk/docs/maestro/ ./docs/maestro/
 	@cp /tmp/maestro-trunk/docker-compose*.yml ./
 	@cp /tmp/maestro-trunk/Makefile ./Makefile
 	@cp -n /tmp/maestro-trunk/.env.maestro.example ./.env.maestro.example || true
