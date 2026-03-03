@@ -21,7 +21,7 @@ sync-maestro:
 	@cp /tmp/maestro-trunk/docker-compose*.yml ./
 	@cp /tmp/maestro-trunk/Makefile ./Makefile
 	@cp -n /tmp/maestro-trunk/.env.maestro.example ./.env.maestro.example || true
-	@cp -R /tmp/maestro-trunk/hooks ./hooks
+	@rsync -av /tmp/maestro-trunk/hooks/ ./hooks/
 	@rm -rf /tmp/maestro-trunk
 	@echo "✅ Maestro sync complete. Run \"make init-env\" and \"make install-hooks\" if this is your first time."
 
