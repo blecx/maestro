@@ -1,0 +1,22 @@
+#!/bin/bash
+# Maestro Pre-commit Hook: AI Quality Gates
+
+echo "=> Running Maestro Pre-commit Quality Gates..."
+
+if [ -f ".venv/bin/activate" ]; then
+    source .venv/bin/activate
+elif [ -d "venv" ]; then
+    source venv/bin/activate
+else
+    echo "=> WARNING: Active python environment not found. Skipping AI checks."
+    exit 0
+fi
+
+if [ -f "agents/complexity_scorer.py" ]; then
+    echo "=> Checking code complexity parameters..."
+    # Optionally fail the commit if the scorer exits with a non-zero code
+    python agents/complexity_scorer.py --check-only || { echo "Complexity check failed."; exit 1; }
+fi
+
+echo "=> Maestro Quality Gates Passed."
+exit 0
