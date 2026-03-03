@@ -1,0 +1,20 @@
+[Unit]
+Description=Maestro toolchain version drift check
+Documentation=https://github.com/blecx/maestro
+# Declare a soft network dependency — the script handles the offline case itself
+# (exits 0) so the unit does not fail when the network job is not available on
+# desktop environments that lack network-online.target.
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Per-workspace configuration written by `make install-drift-check`
+EnvironmentFile=%h/.config/systemd/user/check-maestro-drift.env
+ExecStart=%h/.local/bin/check-maestro-drift
+# Do not accumulate failure entries for offline runs — exit 0 means "skipped".
+# Exit 1 means actual drift; show it clearly in `systemctl --user status`.
+SuccessExitStatus=0
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=check-maestro-drift

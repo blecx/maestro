@@ -1,0 +1,17 @@
+[Unit]
+Description=Weekly Maestro toolchain drift check
+Documentation=https://github.com/blecx/maestro
+
+[Timer]
+# Fire every Monday at 09:00 local time.
+OnCalendar=Mon *-*-* 09:00:00
+# Persistent=true is the key offline-resilience feature: if the system was
+# off, sleeping, or had no internet during the scheduled window, systemd will
+# fire the job as soon as the machine is running again — once, not repeatedly.
+Persistent=true
+# Small random delay so machines don't all hit GitHub at the same instant.
+RandomizedDelaySec=5min
+Unit=check-maestro-drift.service
+
+[Install]
+WantedBy=timers.target
