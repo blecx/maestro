@@ -1,42 +1,70 @@
-# Python
+# ── Python runtime ───────────────────────────────────────────────────────────
 *.pyc
 *.pyo
 *.pyd
-__pycache__/
+**/__pycache__/
 *.egg-info/
+.eggs/
+*.so
+
+# ── Build output ──────────────────────────────────────────────────────────────
 dist/
 build/
-.eggs/
 
-# Virtual environments
+# ── Virtual environments ──────────────────────────────────────────────────────
 venv/
 .venv/
 .env/
 ENV/
+env/
 
-# Environment / secrets
+# ── Environment / secrets ─────────────────────────────────────────────────────
 .env
 .env.local
 .env.*.local
 configs/llm.json
 
-# VS Code (keep settings and tasks)
+# ── Test & coverage runtime ───────────────────────────────────────────────────
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.cover
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Temp & agent workspace ────────────────────────────────────────────────────
+.tmp/
+tmp/
+temp/
+
+# ── VS Code (keep settings and tasks) ────────────────────────────────────────
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 
-# OS
+# ── OS ────────────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+*~
 
-# Editor swap
+# ── Editor swap ───────────────────────────────────────────────────────────────
 *.swp
+*.swo
 *.bak
-*.tmp
 
-# Nested hooks artifact (rsync side-effect)
+# ── Nested hooks artifact (rsync side-effect) ────────────────────────────────
 hooks/hooks/
 
-# Node
+# ── Node ──────────────────────────────────────────────────────────────────────
 node_modules/
 *.tsbuildinfo
+.eslintcache
+.vite/
