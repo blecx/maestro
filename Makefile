@@ -1,18 +1,27 @@
-.PHONY: sync-maestro mcp-up mcp-down help init-env install-hooks
+.PHONY: sync-maestro check-maestro-version mcp-up mcp-down help init-env install-hooks
+
+# Load .env if it exists so MAESTRO_VERSION can be set there
+-include .env
+MAESTRO_VERSION ?= main
 
 help:
 	@echo "Maestro Toolchain CLI"
 	@echo "-----------------------"
-	@echo "make sync-maestro   - Pull the latest AI tooling from blecx/maestro trunk"
-	@echo "make mcp-up         - Start all Maestro Context (MCP) Docker servers locally"
-	@echo "make mcp-down       - Stop all Maestro Context (MCP) Docker servers locally"
-	@echo "make init-env       - Initialize .env from .env.maestro.example template"
-	@echo "make install-hooks  - Install Maestro git hooks for AI complexity gates"
+	@echo "make sync-maestro          - Pull Maestro toolchain at MAESTRO_VERSION into your repo"
+	@echo "make check-maestro-version - Verify local copy matches MAESTRO_VERSION"
+	@echo "make mcp-up                - Start all Maestro Context (MCP) Docker servers locally"
+	@echo "make mcp-down              - Stop all Maestro Context (MCP) Docker servers locally"
+	@echo "make init-env              - Initialize .env from .env.maestro.example template"
+	@echo "make install-hooks         - Install Maestro git hooks for AI complexity gates"
+	@echo ""
+	@echo "Current MAESTRO_VERSION: $(MAESTRO_VERSION)"
 
 sync-maestro:
-	@echo "🔄 Syncing latest Maestro toolchain into your current repository..."
+	@echo "🔄 Syncing Maestro toolchain (version: $(MAESTRO_VERSION)) into this repository..."
 	@rm -rf /tmp/maestro-trunk
-	@git clone --depth 1 https://github.com/blecx/maestro.git /tmp/maestro-trunk
+	@git clone --depth 1 --branch $(MAESTRO_VERSION) https://github.com/blecx/maestro.git /tmp/maestro-trunk 2>/dev/null || \
+		(echo "⚠️  Branch/tag '$(MAESTRO_VERSION)' not found, falling back to main..." && \
+		 git clone --depth 1 https://github.com/blecx/maestro.git /tmp/maestro-trunk)
 	@rsync -av /tmp/maestro-trunk/agents/ ./agents/
 	@rsync -av /tmp/maestro-trunk/apps/mcp/ ./apps/mcp/
 	@rsync -av /tmp/maestro-trunk/.github/agents/ ./.github/agents/
@@ -21,8 +30,28 @@ sync-maestro:
 	@cp /tmp/maestro-trunk/Makefile ./Makefile
 	@cp -n /tmp/maestro-trunk/.env.maestro.example ./.env.maestro.example || true
 	@rsync -av /tmp/maestro-trunk/hooks/ ./hooks/
+	@git -C /tmp/maestro-trunk rev-parse HEAD > .maestro-version
 	@rm -rf /tmp/maestro-trunk
-	@echo "✅ Maestro sync complete. Run \"make init-env\" and \"make install-hooks\" if this is your first time."
+	@echo "✅ Maestro sync complete (pinned SHA written to .maestro-version)."
+	@echo "   Run \"make init-env\" and \"make install-hooks\" if this is your first time."
+
+check-maestro-version:
+	@echo "🔍 Checking Maestro version drift..."
+	@if [ ! -f .maestro-version ]; then \
+		echo "⚠️  .maestro-version not found. Run 'make sync-maestro' first."; \
+		exit 1; \
+	fi
+	@LOCAL_SHA=$$(cat .maestro-version); \
+	REMOTE_SHA=$$(git ls-remote https://github.com/blecx/maestro.git refs/heads/$(MAESTRO_VERSION) | awk '{print $$1}'); \
+	if [ "$$LOCAL_SHA" = "$$REMOTE_SHA" ]; then \
+		echo "✅ Local Maestro ($$LOCAL_SHA) matches $(MAESTRO_VERSION) ($$REMOTE_SHA)."; \
+	else \
+		echo "⚠️  Drift detected!"; \
+		echo "   Local : $$LOCAL_SHA"; \
+		echo "   Remote: $$REMOTE_SHA ($(MAESTRO_VERSION))"; \
+		echo "   Run 'make sync-maestro' to update."; \
+		exit 1; \
+	fi
 
 mcp-up:
 	@echo "🚀 Starting Maestro MCP context servers..."

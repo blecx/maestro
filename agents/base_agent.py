@@ -16,6 +16,34 @@ from typing import Dict, List, Optional, Union
 from agents.tooling.gh_throttle import run_gh_throttled
 
 
+try:
+    from typing import Protocol, runtime_checkable
+except ImportError:
+    from typing_extensions import Protocol, runtime_checkable  # type: ignore
+
+
+@runtime_checkable
+class AgentProtocol(Protocol):
+    """Structural interface for all Maestro agents.
+
+    Any class implementing run(), plan(), and validate() is compatible
+    with this protocol, enabling dependency injection and testability
+    without requiring BaseAgent inheritance.
+    """
+
+    def run(self, dry_run: bool = False, **kwargs) -> bool:
+        """Main entry point. Returns True on success."""
+        ...
+
+    def plan(self, issue_num: int, **kwargs) -> Dict:
+        """Produce a planning artefact for the given issue. Returns a plan dict."""
+        ...
+
+    def validate(self, **kwargs) -> bool:
+        """Validate prerequisites or intermediate state. Returns True if valid."""
+        ...
+
+
 class BaseAgent(ABC):
     """Base class for all custom AI agents."""
 

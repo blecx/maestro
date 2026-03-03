@@ -1,0 +1,88 @@
+name: Check Maestro Version Drift
+
+on:
+  schedule:
+    # Run every Monday at 08:00 UTC
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+jobs:
+  check-drift:
+    name: Verify Maestro sync is current
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check .maestro-version exists
+        id: version_file
+        run: |
+          if [ ! -f .maestro-version ]; then
+            echo "exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "local_sha=$(cat .maestro-version)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get remote Maestro HEAD SHA
+        id: remote_sha
+        run: |
+          MAESTRO_VERSION="${{ vars.MAESTRO_VERSION || 'main' }}"
+          REMOTE_SHA=$(git ls-remote https://github.com/blecx/maestro.git "refs/heads/${MAESTRO_VERSION}" | awk '{print $1}')
+          echo "sha=${REMOTE_SHA}" >> $GITHUB_OUTPUT
+          echo "version=${MAESTRO_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Evaluate drift
+        id: drift
+        run: |
+          LOCAL="${{ steps.version_file.outputs.local_sha }}"
+          REMOTE="${{ steps.remote_sha.outputs.sha }}"
+          if [ "${{ steps.version_file.outputs.exists }}" = "false" ]; then
+            echo "status=missing" >> $GITHUB_OUTPUT
+          elif [ "$LOCAL" = "$REMOTE" ]; then
+            echo "status=current" >> $GITHUB_OUTPUT
+          else
+            echo "status=drifted" >> $GITHUB_OUTPUT
+          fi
+          echo "local=${LOCAL}" >> $GITHUB_OUTPUT
+          echo "remote=${REMOTE}" >> $GITHUB_OUTPUT
+
+      - name: Report — current
+        if: steps.drift.outputs.status == 'current'
+        run: |
+          echo "✅ Maestro is current (SHA: ${{ steps.drift.outputs.local }})"
+
+      - name: Report — missing version file
+        if: steps.drift.outputs.status == 'missing'
+        run: |
+          echo "⚠️ .maestro-version file not found. Run 'make sync-maestro' to create it."
+          exit 1
+
+      - name: Create drift issue
+        if: steps.drift.outputs.status == 'drifted'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const local = '${{ steps.drift.outputs.local }}';
+            const remote = '${{ steps.drift.outputs.remote }}';
+            const version = '${{ steps.remote_sha.outputs.version }}';
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'maestro-drift',
+              state: 'open',
+            });
+            if (existing.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `chore: Maestro toolchain drift detected (${new Date().toISOString().split('T')[0]})`,
+                body: `## Maestro Version Drift\n\nThe local Maestro copy is behind \`blecx/maestro\` ${version}.\n\n| | SHA |\n|---|---|\n| Local | \`${local}\` |\n| Remote (${version}) | \`${remote}\` |\n\n**Action required:** Run \`make sync-maestro\` to update and commit the result.\n\n_Auto-filed by the weekly drift-check workflow._`,
+                labels: ['maestro-drift', 'chore'],
+              });
+              console.log('Drift issue created.');
+            } else {
+              console.log('Drift issue already open, skipping creation.');
+            }
+            core.setFailed(`Maestro drift detected. Local: ${local} / Remote: ${remote}`);
