@@ -4,6 +4,16 @@
 <file>
 # UX Skill: Context Sources
 
+## Objective
+Provides context and instructions for the `ux-context-sources` skill module.
+
+## When to Use
+- Use this when working on tasks related to ux context sources.
+
+## When Not to Use
+- Do not use this when the current task does not involve frontend UI, styling, or ux context sources.
+
+## Instructions
 Derive product intent from:
 
 - `README.md`
@@ -21,6 +31,5 @@ Source precedence for conflicts:
 
 Confidence rule:
 - If confidence is low due to missing evidence, record it as a requirement gap.
-
 </file>
 </skill>

@@ -2,6 +2,22 @@
 <name>blecs-ux-authority</name>
 <description>blecs UX authority: mandatory consultation for navigation, graphical design, responsive behavior, modern React/Vite/Tailwind UI patterns, and UX/a11y review.</description>
 <file>
+# Blecs Ux Authority
+
+## Objective
+
+## When to Use
+- Use this when working on tasks related to blecs ux authority.
+
+## When Not to Use
+- Do not use this when the current task does not involve frontend UI, styling, or blecs ux authority.
+
+## When to Use
+- Use this when working on tasks related to blecs ux authority.
+
+## Objective
+Provides context and instructions for the `blecs-ux-authority` skill module.
+
 ---
 description: "blecs UX authority: mandatory consultation for navigation, graphical design, responsive behavior, modern React/Vite/Tailwind UI patterns, and UX/a11y review."
 ---
@@ -79,5 +95,8 @@ Required sections after decision header:
 - `Risk Notes:`
 - `Required Changes:` (if CHANGES)
 
+## Instructions
+
+- Follow domain guidelines.
 </file>
 </skill>

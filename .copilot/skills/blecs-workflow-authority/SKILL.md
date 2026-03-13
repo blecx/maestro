@@ -2,6 +2,22 @@
 <name>blecs-workflow-authority</name>
 <description>blecs workflow authority: keeps project workflow truth and provides normalized context packets for other agents.</description>
 <file>
+# Blecs Workflow Authority
+
+## Objective
+
+## When to Use
+- Use this when working on tasks related to blecs workflow authority.
+
+## When Not to Use
+- Do not use this when the current task does not involve blecs workflow authority.
+
+## When to Use
+- Use this when working on tasks related to blecs workflow authority.
+
+## Objective
+Provides context and instructions for the `blecs-workflow-authority` skill module.
+
 ---
 description: "blecs workflow authority: keeps project workflow truth and provides normalized context packets for other agents."
 ---
@@ -34,5 +50,8 @@ Return:
 
 Do not design UX directly; route design decisions to `blecs-ux-authority`.
 
+## Instructions
+
+- Follow domain guidelines.
 </file>
 </skill>

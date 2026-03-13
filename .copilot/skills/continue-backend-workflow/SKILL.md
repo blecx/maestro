@@ -4,6 +4,20 @@
 <file>
 # Continue Backend Workflow
 
+## Objective
+
+## When to Use
+- Use this when working on tasks related to continue backend workflow.
+
+## When Not to Use
+- Do not use this when the current task does not involve continue backend workflow.
+
+## When to Use
+- Use this when working on tasks related to continue backend workflow.
+
+## Objective
+Provides context and instructions for the `continue-backend-workflow` skill module.
+
 ## Role Contract
 
 **backend orchestration authority** - Manages the iterative issue-to-PR-merge loop specifically for backend tasks. Contains NO domain logic, implementation rules, or coding standards; entirely delegates work execution to canonical core workflows.
@@ -36,5 +50,9 @@ Use this specific loop-reporting template before pausing for operator approval:
 - **Next in Queue:** [#<number> - <title>]
 - **Wait State:** ⏸️ Awaiting explicit operator approval to proceed to next issue.
 ```
+
+## Instructions
+
+- Follow domain guidelines.
 </file>
 </skill>

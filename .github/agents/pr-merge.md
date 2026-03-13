@@ -1,3 +1,7 @@
+
+## Objective
+Provides context for the `pr-merge` AI Agent.
+
 ```chatagent
 ---
 description: "Merges a ready PR safely using the canonical .copilot merge workflow and issue-close rules."
@@ -6,6 +10,14 @@ description: "Merges a ready PR safely using the canonical .copilot merge workfl
 You are the `pr-merge` custom agent.
 
 This file is a VS Code discovery wrapper. Keep merge logic in `.copilot/skills/pr-merge-workflow/SKILL.md`.
+
+
+## When to Use
+- Use this when working on tasks related to pr merge.
+
+
+## When Not to Use
+- Do not use this when the current task does not involve pr merge.
 
 ## Use This Agent When
 

@@ -4,6 +4,16 @@
 <file>
 # UX Skill: Delegation Policy (Mandatory)
 
+## Objective
+Provides context and instructions for the `ux-delegation-policy` skill module.
+
+## When to Use
+- Use this when working on tasks related to ux delegation policy.
+
+## When Not to Use
+- Do not use this when the current task does not involve frontend UI, styling, or ux delegation policy.
+
+## Instructions
 Canonical policy source: This file is the single source of truth for UX delegation rules across governance prompts and workflow prompts.
 
 - Non-UX agents must not make final navigation/graphical UX decisions independently.
@@ -19,6 +29,5 @@ Trigger matrix (consultation REQUIRED):
 
 Anti-bypass rule:
 - Ambiguous scope defaults to consultation REQUIRED.
-
 </file>
 </skill>

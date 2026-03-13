@@ -4,7 +4,21 @@
 <file>
 # Issue Creation Workflow (Module)
 
-## Steps
+## Objective
+
+## When to Use
+- Use this when working on tasks related to issue creation workflow.
+
+## When Not to Use
+- Do not use this when the current task does not involve issue creation workflow.
+
+## When to Use
+- Use this when working on tasks related to issue creation workflow.
+
+## Objective
+Provides context and instructions for the `issue-creation-workflow` skill module.
+
+## Instructions
 
 1. Search for duplicates and related issues.
 2. Select repository (backend/client) and estimate size (S/M/L).
@@ -39,6 +53,5 @@ Return:
 - issue URL/number,
 - short scope summary,
 - implementation handoff note.
-
 </file>
 </skill>

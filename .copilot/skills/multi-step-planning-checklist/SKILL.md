@@ -4,6 +4,20 @@
 <file>
 # Multi-Step Planning Checklist (Module)
 
+## Objective
+
+## When to Use
+- Use this when working on tasks related to multi step planning checklist.
+
+## When Not to Use
+- Do not use this when the current task does not involve multi step planning checklist.
+
+## When to Use
+- Use this when working on tasks related to multi step planning checklist.
+
+## Objective
+Provides context and instructions for the `multi-step-planning-checklist` skill module.
+
 ## Plan Deliverables
 
 - Requirements spec file
@@ -24,5 +38,8 @@
 - No unresolved blockers in execution order.
 - Hand-off package is implementation-ready.
 
+## Instructions
+
+- Follow domain guidelines.
 </file>
 </skill>

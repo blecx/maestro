@@ -4,14 +4,20 @@
 <file>
 # PR Merge Workflow (Module)
 
+## Objective
+Provides context and instructions for the `pr-merge-workflow` skill module.
+
 Use this skill as the canonical implementation source for `pr-merge`.
 
-## Use When
+## When to Use
 
 - A PR is ready or nearly ready and needs merge validation.
 - An issue number needs to be resolved through PR discovery and merge.
 
-## Steps
+## When Not to Use
+- Do not use this when the current task does not involve pr merge workflow.
+
+## Instructions
 
 1. Verify PR is open, mergeable, and not draft.
 2. Confirm required checks are green (or only pre-existing failures).
@@ -37,6 +43,5 @@ Use this skill as the canonical implementation source for `pr-merge`.
 - Document any admin override rationale.
 - Never use `/tmp`; use `.tmp/`.
 - Never merge with failing CI.
-
 </file>
 </skill>

@@ -4,6 +4,16 @@
 <file>
 # UX Skill: Consult Request Template
 
+## Objective
+Provides context and instructions for the `ux-consult-request` skill module.
+
+## When to Use
+- Use this when working on tasks related to ux consult request.
+
+## When Not to Use
+- Do not use this when the current task does not involve frontend UI, styling, or ux consult request.
+
+## Instructions
 Use this payload for UX consultations:
 
 - Issue/PR context
@@ -36,6 +46,5 @@ CONSTRAINTS:
 KNOWN_RISKS:
 EVIDENCE_PATHS:
 ```
-
 </file>
 </skill>

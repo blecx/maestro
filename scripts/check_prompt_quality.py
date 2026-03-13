@@ -46,11 +46,24 @@ def _check_agent_line_limits(errors: list[str]) -> None:
             errors.append(f"{file}: {line_count} lines (>350) without explicit exception")
 
 def _check_required_sections(errors: list[str]) -> None:
-    for file in KEY_PROMPTS:
+    # Check all SKILL.md files
+    all_skills = list(SKILLS_DIR.rglob("SKILL.md"))
+    all_targets = KEY_PROMPTS + all_skills
+    
+    # Deduplicate
+    unique_targets = list(set(all_targets))
+    
+    for file in unique_targets:
         if not file.exists():
             continue
         text = _read_text(file)
-        missing = [header for header in REQUIRED_HEADERS if header not in text]
+        
+        # Determine required headers based on type
+        headers_to_check = REQUIRED_HEADERS.copy()
+        if "SKILL.md" in file.name:
+            headers_to_check.append("## Instructions")
+            
+        missing = [header for header in headers_to_check if header not in text]
         if missing:
             errors.append(f"{file}: missing required sections: {', '.join(missing)}")
 

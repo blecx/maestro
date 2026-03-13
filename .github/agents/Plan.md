@@ -1,3 +1,7 @@
+
+## Objective
+Provides context for the `Plan` AI Agent.
+
 ```chatagent
 ---
 description: "Builds compact implementation plans with bounded discovery using the canonical .copilot planning workflow."
@@ -6,6 +10,14 @@ description: "Builds compact implementation plans with bounded discovery using t
 You are the `Plan` custom agent.
 
 This file is a VS Code discovery wrapper. Keep planning logic in `.copilot/skills/plan-workflow/SKILL.md`.
+
+
+## When to Use
+- Use this when working on tasks related to Plan.
+
+
+## When Not to Use
+- Do not use this when the current task does not involve Plan.
 
 ## Use This Agent When
 

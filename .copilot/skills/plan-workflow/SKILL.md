@@ -4,15 +4,21 @@
 <file>
 # Plan Workflow (Module)
 
+## Objective
+Provides context and instructions for the `plan-workflow` skill module.
+
 Use this skill as the canonical implementation source for `Plan`.
 
-## Use When
+## When to Use
 
 - A feature, fix, or refactor needs a compact implementation plan before coding.
 - Work should be split into issue-sized slices with explicit dependencies.
 - A low-context research pass is needed without exhaustive codebase exploration.
 
-## Steps
+## When Not to Use
+- Do not use this when the current task does not involve plan workflow.
+
+## Instructions
 
 1. Define the goal in one line.
 2. Bound discovery to a small set of high-signal files.
@@ -45,6 +51,5 @@ Return a concise plan summary that includes:
 - ordered steps with size estimates,
 - dependencies or blockers,
 - handoff note for implementation.
-
 </file>
 </skill>

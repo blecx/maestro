@@ -4,14 +4,20 @@
 <file>
 # Close Issue Workflow (Module)
 
+## Objective
+Provides context and instructions for the `close-issue-workflow` skill module.
+
 Use this skill as the canonical implementation source for `close-issue`.
 
-## Use When
+## When to Use
 
 - A merged PR or explicit maintainer decision has established the issue outcome.
 - An issue should be closed as completed or not planned with traceable evidence.
 
-## Steps
+## When Not to Use
+- Do not use this when the current task does not involve close issue workflow.
+
+## Instructions
 
 1. Verify the issue exists and is still open.
 2. Verify the outcome evidence:
@@ -46,6 +52,5 @@ Return a concise result that states:
 - close reason,
 - PR/commit traceability,
 - final close status or blocker.
-
 </file>
 </skill>

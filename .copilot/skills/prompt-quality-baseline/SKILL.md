@@ -4,6 +4,20 @@
 <file>
 # Prompt Quality Baseline
 
+## Objective
+
+## When to Use
+- Use this when working on tasks related to prompt quality baseline.
+
+## When Not to Use
+- Do not use this when the current task does not involve prompt quality baseline.
+
+## When to Use
+- Use this when working on tasks related to prompt quality baseline.
+
+## Objective
+Provides context and instructions for the `prompt-quality-baseline` skill module.
+
 ## Required Sections
 
 Each operational prompt (non-README) should include:
@@ -70,5 +84,8 @@ Prompts must treat these as hard rules, not preferences.
 - Run: `python scripts/check_context7_guardrails.py`
 - Verify links: `rg -n "\]\(.*\)" .copilot/skills --glob '*.md'`
 
+## Instructions
+
+- Follow domain guidelines.
 </file>
 </skill>

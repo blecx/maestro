@@ -4,18 +4,24 @@
 <file>
 # Resolve Issue Workflow
 
+## Objective
+Provides context and instructions for the `resolve-issue-workflow` skill module.
+
 ## Role Contract
 
 **issue implementation workflow authority** - Dictates how an issue becomes a PR, independent of underlying runtime execution engines. (Module)
 
 Use this skill as the canonical implementation source for `resolve-issue`.
 
-## Use When
+## When to Use
 
 - A specific issue number is provided for implementation.
 - The user asks to pick the next issue and execute one issue-to-PR slice.
 
-## Steps
+## When Not to Use
+- Do not use this when the current task does not involve resolve issue workflow.
+
+## Instructions
 
 1. Select issue (backend-first, lowest number) and confirm scope.
 2. Write compact plan: goal, scope, AC, files, validation commands.
@@ -68,6 +74,5 @@ Return a concise result that states:
 - validation status,
 - PR or blocking condition,
 - any follow-up split/dependency if scope exceeded the slice.
-
 </file>
 </skill>

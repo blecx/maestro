@@ -4,6 +4,20 @@
 <file>
 # Continue Phase 2 Workflow
 
+## Objective
+
+## When to Use
+- Use this when working on tasks related to continue phase 2 workflow.
+
+## When Not to Use
+- Do not use this when the current task does not involve continue phase 2 workflow.
+
+## When to Use
+- Use this when working on tasks related to continue phase 2 workflow.
+
+## Objective
+Provides context and instructions for the `continue-phase-2-workflow` skill module.
+
 ## Role Contract
 
 **phase-2 orchestration authority** - Manages the iterative issue-to-PR-merge loop specifically for Phase 2 tasks. Contains NO domain logic, implementation rules, or coding standards; entirely delegates work execution to canonical core workflows.
@@ -36,5 +50,9 @@ Use this specific loop-reporting template before pausing for operator approval:
 - **Next in Queue:** [#<number> - <title>]
 - **Wait State:** ⏸️ Awaiting explicit operator approval to proceed to next issue.
 ```
+
+## Instructions
+
+- Follow domain guidelines.
 </file>
 </skill>
