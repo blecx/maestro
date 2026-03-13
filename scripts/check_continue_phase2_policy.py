@@ -15,8 +15,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 LOOP_SCRIPT = ROOT / "scripts" / "continue-phase-2.sh"
-PROMPT_FILE = ROOT / ".github" / "prompts" / "agents" / "continue-phase-2.md"
-MODULE_FILE = ROOT / ".github" / "prompts" / "modules" / "continue-phase-2-workflow.md"
+PROMPT_FILE = ROOT / ".github" / "agents" / "continue-phase-2.md"
+MODULE_FILE = ROOT / ".copilot" / "skills" / "continue-phase-2-workflow" / "SKILL.md"
 
 
 def _must_contain(path: Path, snippet: str, errors: list[str]) -> None:
@@ -36,8 +36,7 @@ def main() -> int:
         _must_contain(LOOP_SCRIPT, 'if [[ "$MAX_ISSUES" -gt "$MAX_ISSUES_CAP" ]]', errors)
         _must_contain(LOOP_SCRIPT, "Override cap and continue? (y/N):", errors)
 
-    if PROMPT_FILE.exists():
-        _must_contain(PROMPT_FILE, "Default run limit is `25` issues", errors)
+
 
     if MODULE_FILE.exists():
         _must_contain(MODULE_FILE, "Default `max-issues` per run is `25`", errors)

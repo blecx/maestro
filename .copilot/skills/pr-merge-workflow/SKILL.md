@@ -29,6 +29,9 @@ Use this skill as the canonical implementation source for `pr-merge`.
 
 ## Guardrails
 
+- If `prmerge` reports no PR found for the issue, treat that as a complete answer (nothing to merge). Do not prompt for a manual PR number.
+- Mandatory PR review before merge.
+
 - Do not fix failing code/tests in this workflow.
 - Delegate implementation changes to `resolve-issue`.
 - Document any admin override rationale.

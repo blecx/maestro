@@ -48,6 +48,9 @@ Prefer tool-driven discovery over pasting large context into chat.
 
 ## Guardrails
 
+- Validate issue spec (strict sections + body-size limit) for roadmap specs.
+- Keep scope to small CI-safe slices (single issue, minimal domains), no architecture regressions outside scope.
+
 - Avoid unrelated refactors.
 - Keep diffs reviewable and DDD-compliant.
 - Use `.tmp/` for transient artifacts.

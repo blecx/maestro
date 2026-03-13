@@ -17,12 +17,6 @@ This file is a VS Code discovery wrapper. Keep loop logic in `.copilot/skills/co
 - `.copilot/skills/continue-backend-workflow/SKILL.md`
 - `.copilot/skills/resolve-issue-workflow/SKILL.md`
 
-## Hard Rules
-
-- Keep one issue per PR.
-- Do not bypass review or CI.
-- Use `.tmp/`, never `/tmp`.
-
 ## Completion Contract
 
 Return the processed issue range, final stop condition, merge results, and any blocking dependency requiring operator action.
