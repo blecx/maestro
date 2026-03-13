@@ -78,3 +78,9 @@ If drift is reported, re-run the corresponding projection command or task.
 
 Older guidance in this repository recommended copying a large repo-specific JSON block into VS Code user settings.
 That model is deprecated because it duplicated policy, hid source-of-truth ownership, and made fresh-clone behavior harder to reason about.
+
+## Projection and Managed Keys
+
+Our projection tools utilize a **reconciliation** strategy. This means that for top-level keys managed by this repository (such as `chat.tools.subagent.autoApprove`, `chat.tools.terminal.autoApprove`, `issueagent.customAgent`, and `mcp`), the canonical repository sources completely overwrite any settings you have in the workspace `.vscode/settings.json`.
+
+If you add a custom unknown sub-key to `mcp` within `.vscode/settings.json`, it will be identified as drift during the `--check` phase and wiped out upon running the projection scripts.

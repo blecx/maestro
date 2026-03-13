@@ -15,6 +15,7 @@ import argparse
 import json
 import os
 import sys
+import copy
 from pathlib import Path
 from typing import Dict, Any
 
@@ -80,8 +81,7 @@ def write_json_file(path: Path, data: Dict[str, Any]) -> None:
         json.dump(data, f, indent=4)
         f.write('\n')
 
-def reconcile_settings(base: Dict[str, Any], profile_name: str) -> Dict[str, Any]:
-    """Reconcile settings based on profile, removing unused keys."""
+def get_expected_settings(profile_name: str) -> tuple[Dict[str, Any], Dict[str, Any]]:
     profile_data = PROFILE_CONFIG.get(profile_name, {})
     if not profile_data:
         raise ValueError(f"Unknown profile: {profile_name}")
@@ -94,8 +94,42 @@ def reconcile_settings(base: Dict[str, Any], profile_name: str) -> Dict[str, Any
     else:
         merged_subagents = profile_data.get("chat.tools.subagent.autoApprove", {})
         merged_terminal = profile_data.get("chat.tools.terminal.autoApprove", {})
+        
+    return merged_subagents, merged_terminal
 
-    cleaned = json.loads(json.dumps(base))
+def collect_drift(expected: Any, actual: Any, path: str = "") -> list[str]:
+    """Check for missing, mismatch, and extra keys in fully managed blocks."""
+    drifts: list[str] = []
+
+    if isinstance(expected, dict):
+        if not isinstance(actual, dict):
+            drifts.append(f"{path or '<root>'}: expected object, found {type(actual).__name__}")
+            return drifts
+
+        for key, value in expected.items():
+            child_path = f"{path}.{key}" if path else key
+            if key not in actual:
+                drifts.append(f"{child_path}: missing")
+                continue
+            drifts.extend(collect_drift(value, actual[key], child_path))
+            
+        if path: 
+            for key in actual:
+                if key not in expected:
+                    child_path = f"{path}.{key}" if path else key
+                    drifts.append(f"{child_path}: extra managed key")
+                    
+        return drifts
+
+    if expected != actual:
+        drifts.append(f"{path}: expected={expected!r} actual={actual!r} (mismatched)")
+
+    return drifts
+
+def reconcile_settings(base: Dict[str, Any], profile_name: str) -> Dict[str, Any]:
+    """Reconcile settings based on profile, replacing unused keys."""
+    merged_subagents, merged_terminal = get_expected_settings(profile_name)
+    cleaned = copy.deepcopy(base)
     
     # Overwrite entirely instead of merging, to ensure reconciliatory nature
     cleaned["chat.tools.subagent.autoApprove"] = merged_subagents
@@ -103,7 +137,7 @@ def reconcile_settings(base: Dict[str, Any], profile_name: str) -> Dict[str, Any
     
     return cleaned
 
-def configure_workspace(profile: str, global_only: bool = False, workspace_only: bool = False) -> None:
+def configure_workspace(profile: str, global_only: bool = False, workspace_only: bool = False, check: bool = False) -> int:
     root_dir = Path(__file__).parent.parent
     
     paths = []
@@ -117,21 +151,50 @@ def configure_workspace(profile: str, global_only: bool = False, workspace_only:
         ])
     
     success_count = 0
+    drift_count = 0
+    merged_subagents, merged_terminal = get_expected_settings(profile)
+    expected_root = {
+        "chat.tools.subagent.autoApprove": merged_subagents,
+        "chat.tools.terminal.autoApprove": merged_terminal
+    }
+        
     for path in paths:
         if path.parent.parent.name == "_external" and not path.parent.parent.exists():
             continue
             
         try:
             settings = read_json_file(path)
-            updated = reconcile_settings(settings, profile)
-            write_json_file(path, updated)
-            print(f"✅ Updated: {path}")
-            success_count += 1
+            
+            if check:
+                # We only check drift for the keys this script cares about
+                actual_root = {}
+                if "chat.tools.subagent.autoApprove" in settings:
+                    actual_root["chat.tools.subagent.autoApprove"] = settings["chat.tools.subagent.autoApprove"]
+                if "chat.tools.terminal.autoApprove" in settings:
+                    actual_root["chat.tools.terminal.autoApprove"] = settings["chat.tools.terminal.autoApprove"]
+                    
+                drifts = collect_drift(expected_root, actual_root)
+                if drifts:
+                    print(f"❌ Settings drift detected in {path}:")
+                    for d in drifts:
+                        print(f"  - {d}")
+                    drift_count += 1
+                else:
+                    print(f"✅ Settings match profile '{profile}' in {path}")
+            else:
+                updated = reconcile_settings(settings, profile)
+                write_json_file(path, updated)
+                print(f"✅ Updated {profile} profile in: {path}")
+                success_count += 1
         except Exception as e:
-            print(f"❌ Failed to update {path}: {e}")
+            print(f"❌ Failed to process {path}: {e}")
             if "No such file" not in str(e):
                 import traceback
                 traceback.print_exc()
+                
+    if check:
+        return 1 if drift_count > 0 else 0
+    return 0
 
 def main():
     parser = argparse.ArgumentParser(description="Configure VS Code Copilot auto-approve settings.")
@@ -139,17 +202,12 @@ def main():
     parser.add_argument("--workspace-only", action="store_true", help="Only configure workspace settings")
     parser.add_argument("--check", action="store_true", help="Check config instead of updating")
     parser.add_argument("--profile", choices=["safe", "trusted-workflow", "low-friction"], default="trusted-workflow", help="Approval profile to use")
-    
     args = parser.parse_args()
 
-    if args.check:
-        print(f"✅ Auto-approve profile '{args.profile}' would be configured (dry-run).")
-        sys.exit(0)
-
     try:
-        configure_workspace(args.profile, args.global_only, args.workspace_only)
+        sys.exit(configure_workspace(args.profile, args.global_only, args.workspace_only, args.check))
     except Exception as e:
-        print(f"❌ Failed to update settings: {e}")
+        print(f"❌ Failed: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

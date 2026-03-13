@@ -123,3 +123,11 @@ If workspace settings drift or you want to reapply the canonical projection:
 If you need to audit the architecture or source-of-truth map, see:
 
 - `docs/maestro/AUTOMATIONS.md`
+
+## Projection and Reconciliation
+
+VS Code settings are managed through strict **reconciliation**, not merely additive merging.
+
+- The root keys configured by the projection scripts (e.g. `mcp`, `chat.tools.subagent.autoApprove`, `chat.tools.terminal.autoApprove`, `issueagent.customAgent`) are treated as **fully owned** by the canonical config.
+- Any manual modifications or unknown sub-keys within these owned hierarchies in `.vscode/settings.json` will be automatically **removed** when projection scripts run.
+- Non-owned settings paths remain untouched, allowing safe management of developer-specific local preferences alongside canonical team policies.

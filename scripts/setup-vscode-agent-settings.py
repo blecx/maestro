@@ -2,6 +2,7 @@
 """Configure explicit VS Code agent settings from canonical .copilot config."""
 
 import argparse
+import copy
 import json
 from pathlib import Path
 from typing import Any, Dict
@@ -19,17 +20,17 @@ def load_json(path: Path) -> Dict[str, Any]:
         return json.load(handle)
 
 
-def merge_settings(existing: Dict[str, Any], new: Dict[str, Any]) -> Dict[str, Any]:
-    result = dict(existing)
+def reconcile_settings(existing: Dict[str, Any], new: Dict[str, Any]) -> Dict[str, Any]:
+    """Reconciles owned keys completely from canonical config."""
+    result = copy.deepcopy(existing)
     for key, value in new.items():
-        if isinstance(result.get(key), dict) and isinstance(value, dict):
-            result[key] = merge_settings(result[key], value)
-        else:
-            result[key] = value
+        # Complete overwrite of the top-level owned key
+        result[key] = copy.deepcopy(value)
     return result
 
 
 def collect_drift(expected: Any, actual: Any, path: str = "") -> list[str]:
+    """Check for missing, mismatch, and extra keys in fully managed blocks."""
     drifts: list[str] = []
 
     if isinstance(expected, dict):
@@ -43,10 +44,18 @@ def collect_drift(expected: Any, actual: Any, path: str = "") -> list[str]:
                 drifts.append(f"{child_path}: missing")
                 continue
             drifts.extend(collect_drift(value, actual[key], child_path))
+            
+        # If we are inside an owned root, check for extra keys in actual
+        if path: 
+            for key in actual:
+                if key not in expected:
+                    child_path = f"{path}.{key}" if path else key
+                    drifts.append(f"{child_path}: extra managed key")
+                    
         return drifts
 
     if expected != actual:
-        drifts.append(f"{path}: expected={expected!r} actual={actual!r}")
+        drifts.append(f"{path}: expected={expected!r} actual={actual!r} (mismatched)")
 
     return drifts
 
@@ -88,7 +97,7 @@ def main() -> int:
             print(f"- ... and {len(drifts) - 20} more")
         return 1
 
-    updated = merge_settings(existing, expected)
+    updated = reconcile_settings(existing, expected)
     write_json(WORKSPACE_SETTINGS_PATH, updated)
     print("✅ Workspace agent settings projected from .copilot config")
     return 0
