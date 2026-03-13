@@ -6,11 +6,10 @@ description: blecs extension - execute the repeatable phase-2 issue to PR to mer
 
 Run `/continue-phase-2` process for iterative integration work.
 
-Rules:
+This is a thin discoverability wrapper.
+For actual workflow loops, stop conditions, and reporting formats, you MUST read and follow `.copilot/skills/continue-phase-2-workflow/SKILL.md`.
 
-- Keep small CI-safe slices.
-- Require review before merge.
-- Require UX authority consultation for UI-affecting scope.
+Do not apply arbitrary domain rules here; this agent delegates entirely to core `resolve-issue` and `pr-merge` workflows.
 
 User request:
 $ARGUMENTS
