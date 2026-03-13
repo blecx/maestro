@@ -91,13 +91,3 @@ For the explicit developer bootstrap flow, use:
 - `docs/maestro/BOOTSTRAP.md`
 
 That document is the operational guide for a fresh clone and should be kept in sync with the projection scripts and tasks.
-
-## Deprecated Assumptions Removed
-
-The following are no longer valid assumptions and should not be reintroduced:
-
-- `.github/prompts/agents/` as the canonical workflow source.
-- `agents/autonomous_workflow_agent.py` as the runtime default.
-- hidden folder-open setup that silently enables low-friction approvals.
-- `.vscode/` as the canonical home for agent policy.
-- `docs/maestro/APPROVAL_PROFILES.md` - Explicit guide to trust boundaries and profile selection.
