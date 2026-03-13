@@ -6,6 +6,12 @@
 
 Use this matrix as hard acceptance criteria for Ralph executions.
 
+## Use When
+
+- A strict spec-kit style implementation loop is required.
+- The issue needs explicit reviewer gates and bounded retry behavior.
+- Multi-repo scope or elevated quality discipline is required.
+
 ## Skill Matrix
 
 | Skill | Requirement | Evidence |
@@ -47,6 +53,16 @@ Run these gates after implementation and validation:
 - `REVIEW_DECISION: PASS` only when all required skills and reviewer gates pass.
 - Otherwise output `REVIEW_DECISION: CHANGES` with a minimal, ordered fix list.
 - Stop after iteration budget is exhausted and return escalation packet.
+
+## Completion Contract
+
+Return:
+
+- scope/selection decision,
+- plan summary,
+- validation evidence,
+- reviewer-gate matrix,
+- deterministic handoff or escalation packet.
 
 </file>
 </skill>

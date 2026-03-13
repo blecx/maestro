@@ -36,6 +36,7 @@ Merge rule:
 - CI must pass for merge path.
 - PR merge slice limits enforced by `scripts/prmerge` policy defaults.
 - No architecture regressions outside issue scope.
+- Use `.tmp/`, never `/tmp`.
 
 ## Stop Conditions
 

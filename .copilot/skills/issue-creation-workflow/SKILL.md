@@ -30,5 +30,15 @@
 - Repo constraints included (`projectDocs/`, `configs/llm.json`).
 - Cross-repo link exists when downstream work is needed.
 
+## Completion Contract
+
+Return:
+
+- selected repository,
+- issue title,
+- issue URL/number,
+- short scope summary,
+- implementation handoff note.
+
 </file>
 </skill>

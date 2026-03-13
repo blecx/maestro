@@ -36,6 +36,8 @@ Merge rule:
 - CI pass required for merge path.
 - Prompt and policy validators must pass.
 - Keep one issue per PR and scope small.
+- Use `.tmp/`, never `/tmp`.
+- Never stage `projectDocs/` or `configs/llm.json`.
 
 ## Stop Conditions
 

@@ -23,7 +23,7 @@ Produce a complete, accurate, and verifiable conversion of all agent-like workfl
 1. Full inventory of:
    - runtime agents (Python classes + aliases),
    - custom chat agents (`*.md`),
-   - prompt workflows (`.github/prompts/agents/*.md`),
+   - canonical `.copilot/skills/*` workflow modules plus `.github/agents/*.md` discovery wrappers,
    - script/task/workflow automations.
 2. Gap analysis: what exists outside `.github/agents` and why.
 3. Conversion actions:
@@ -42,7 +42,7 @@ Produce a complete, accurate, and verifiable conversion of all agent-like workfl
 
 ## Quality Gate (must pass)
 
-- Every active prompt workflow has either:
+- Every active canonical workflow has either:
   - a corresponding `.md` file, or
   - an explicit documented reason in `AUTOMATIONS.md`.
 - Agent names in `.vscode/settings.json` `chat.tools.subagent.autoApprove` are represented in `.github/agents`.

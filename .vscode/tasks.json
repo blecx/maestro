@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "⚙️ Auto: Apply Low-Friction Approval",
+      "label": "⚙️ Configure Approval Profile (Low-Friction)",
       "type": "shell",
       "command": "bash",
       "args": ["${workspaceFolder}/scripts/setup-low-approval.sh", "low-friction"],
@@ -10,14 +10,43 @@
         "cwd": "${workspaceFolder}"
       },
       "problemMatcher": [],
-      "runOptions": {
-        "runOn": "folderOpen"
-      },
       "presentation": {
-        "reveal": "never",
+        "reveal": "always",
         "panel": "shared",
-        "focus": false,
-        "clear": false
+        "focus": true,
+        "clear": true
+      }
+    },
+    {
+      "label": "⚙️ Configure Approval Profile (Safe)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["${workspaceFolder}/scripts/setup-low-approval.sh", "safe"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": true,
+        "clear": true
+      }
+    },
+    {
+      "label": "⚙️ Configure Workspace Agent Settings",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": ["${workspaceFolder}/scripts/setup-vscode-agent-settings.py"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": true,
+        "clear": true
       }
     },
     {
@@ -63,7 +92,7 @@
     {
       "label": "📋 Select Next Issue",
       "type": "shell",
-      "command": "${workspaceFolder}/next-issue",
+      "command": "${workspaceFolder}/scripts/next-issue.py",
       "args": [],
       "problemMatcher": [],
       "presentation": {
@@ -77,7 +106,7 @@
     {
       "label": "📦 Select Next PR",
       "type": "shell",
-      "command": "${workspaceFolder}/next-pr",
+      "command": "${workspaceFolder}/scripts/next-pr.py",
       "args": [],
       "problemMatcher": [],
       "presentation": {
@@ -92,7 +121,41 @@
       "label": "🔀 Merge PR",
       "type": "shell",
       "command": "${workspaceFolder}/scripts/prmerge",
-      "args": ["${input:prNumber}"],
+      "args": ["${input:issueNumber}"],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "clear": true
+      },
+      "group": "none"
+    },
+    {
+      "label": "🔁 Issue PR Merge Cleanup Loop",
+      "type": "shell",
+      "command": "bash",
+      "args": ["${workspaceFolder}/scripts/issue-pr-merge-cleanup-loop.sh"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "clear": true
+      },
+      "group": "none"
+    },
+    {
+      "label": "🔁 Issue PR Merge Cleanup Loop (#5)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["${workspaceFolder}/scripts/issue-pr-merge-cleanup-loop.sh", "--issue", "5"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",

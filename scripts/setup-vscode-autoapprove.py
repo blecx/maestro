@@ -11,181 +11,34 @@ Run this script to enable auto-approve for all Copilot agent commands
 without manual copy-paste.
 """
 
+import argparse
 import json
 import os
 import sys
-import argparse
 from pathlib import Path
 from typing import Dict, Any
 
 
-LOW_FRICTION_ONLY_TERMINAL_KEYS = [
-    "/^\\s*.+$/",
-    "/^\\s*.*(?:\\/tmp\\/|\\.tmp\\/|\\$TMPDIR|TMPDIR=).*$/",
-]
+CONFIG_PATH = Path(__file__).parent.parent / ".copilot/config/vscode-approval-profiles.json"
 
-# Auto-approve settings to be applied
-AUTO_APPROVE_SETTINGS = {
-    "chat.agent.maxRequests": 50,
-    "chat.allowAnonymousAccess": True,
-    "chat.checkpoints.showFileChanges": True,
-    "chat.customAgentInSubagent.enabled": True,
-    "chat.tools.subagent.autoApprove": {
-        "create-issue": True,
-        "resolve-issue": True,
-        "close-issue": True,
-        "pr-merge": True,
-        "Plan": True,
-        "tutorial": True
-    },
-    "chat.tools.terminal.autoApprove": {
-        # Core executables
-        "bash": True,
-        "python3": True,
-        "python": True,
-        
-        # Git commands
-        "git add": True,
-        "git reset": True,
-        "git commit": True,
-        "git push": True,
-        "git pull": True,
-        "git fetch": True,
-        "git switch": True,
-        "git status": True,
-        "git log": True,
-        "git diff": True,
-        "git branch": True,
-        "git merge": True,
-        "git rebase": True,
-        "git show": True,
-        "git rev-parse": True,
-        "git checkout": True,
-        "git restore": True,
-        "git rm": True,
-        "git stash": True,
-        
-        # Python tooling
-        "python -m black": True,
-        "python -m flake8": True,
-        "python -m pytest": True,
-        "pytest": True,
-        
-        # NPM/Node
-        "npm install": True,
-        "npm run dev": True,
-        "npm test": True,
-        "npm run test": True,
-        "npm run build": True,
-        "npm run lint": True,
-        "npm ci": True,
-        "npm audit": True,
-        "npx vitest": True,
-        "vitest": True,
-        
-        # GitHub CLI
-        "gh": True,
-        
-        # Search tools
-        "rg": True,
-        "fd": True,
-        "grep": True,
-        "awk": True,
-        "sed": True,
-        "find": True,
-        "wc": True,
-        
-        # Shell utilities
-        "cat": True,
-        "head": True,
-        "tail": True,
-        "which": True,
-        "command": True,
-        "cd": True,
-        "ls": True,
-        "pwd": True,
-        "echo": True,
-        "sleep": True,
-        "curl": True,
-        "mkdir": True,
-        "rm": True,
-        "cp": True,
-        "chmod": True,
-        "mv": True,
-        "pushd": True,
-        "popd": True,
-        "source": True,
-        "env": True,
-        "true": True,
-        "printf": True,
-        "getent": True,
-        
-        # Docker
-        "docker": True,
-        "docker-compose": True,
-        "docker compose": True,
-        
-        # Dev tools
-        "act": True,
-        "pre-commit": True,
-        "uv": True,
 
-        # Repo workflow scripts
-        "./scripts/work-issue.py": True,
-        "./scripts/next-issue.py": True,
-        "./scripts/next-issue-both.py": True,
-        "./scripts/next-pr.py": True,
-        "./scripts/prmerge": True,
-        "./scripts/close-issue.sh": True,
-        "./scripts/validate-pr-template.sh": True,
-        "./scripts/check_issue_specs.py": True,
-        "./scripts/validate_issue_specs.sh": True,
-        "./next-issue": True,
-        "./next-pr": True,
+def load_profile_config() -> Dict[str, Any]:
+    """Load canonical approval profiles from .copilot config."""
+    with open(CONFIG_PATH, "r", encoding="utf-8") as handle:
+        return json.load(handle)
 
-        # Allow command lines with optional leading whitespace, env, and VAR=... prefixes
-        "/^\\s*(?:env\\s+)?(?:[A-Za-z_][A-Za-z0-9_]*=[^\\s]+\\s+)*(git|gh|npm|python|pytest|docker|curl|uvicorn|ssh-add|cd|ls|cat|rg|fd|find|awk|sed|grep|jq|xargs|head|tail|wc|echo|sleep|mkdir|rm|cp|mv|chmod|source|env|\\./setup\\.sh|\\./scripts\\/[^\\s]+|\\./next-issue|\\./next-pr)(\\s+.*)?$/": {
-            "approve": True,
-            "matchCommandLine": True,
-            "description": "Allow safe commands with optional leading whitespace, env, and VAR=... prefixes"
-        },
-        "/^\\s*for\\s+.+;\\s*do\\s+.+;\\s*done(?:;\\s*exit\\s+\\d+)?\\s*$/": {
-            "approve": True,
-            "matchCommandLine": True,
-            "description": "Allow polling loops used in issue/pr/merge workflows"
-        },
-        "/^\\s*cd\\s+.*\\s+&&\\s+.*$/": {
-            "approve": True,
-            "matchCommandLine": True,
-            "description": "Allow cd with command chaining"
-        },
-    }
-    ,
-    "terminal.integrated.env.linux": {
-        "TMPDIR": "${workspaceFolder}/.tmp",
-        "TMP": "${workspaceFolder}/.tmp",
-        "TEMP": "${workspaceFolder}/.tmp"
-    }
-}
+
+PROFILE_CONFIG = load_profile_config()
+SAFE_SETTINGS = PROFILE_CONFIG["safe"]
+LOW_FRICTION_ADDITIONS = PROFILE_CONFIG["lowFrictionAdditions"]
+LOW_FRICTION_ONLY_TERMINAL_KEYS = list(
+    LOW_FRICTION_ADDITIONS.get("chat.tools.terminal.autoApprove", {}).keys()
+)
 
 
 def _with_low_friction_settings(base: Dict[str, Any]) -> Dict[str, Any]:
     """Return extended settings for near-zero terminal approval friction."""
-    low = json.loads(json.dumps(base))
-
-    terminal_auto = low.setdefault("chat.tools.terminal.autoApprove", {})
-    terminal_auto["/^\\s*.+$/"] = {
-        "approve": True,
-        "matchCommandLine": True,
-        "description": "Low-friction mode: approve nearly all terminal command lines"
-    }
-    terminal_auto["/^\\s*.*(?:\\/tmp\\/|\\.tmp\\/|\\$TMPDIR|TMPDIR=).*$/"] = {
-        "approve": True,
-        "matchCommandLine": True,
-        "description": "Approve command lines that reference /tmp, .tmp, or TMPDIR"
-    }
-
-    return low
+    return merge_settings(json.loads(json.dumps(base)), LOW_FRICTION_ADDITIONS)
 
 
 def _strip_low_friction_overrides(settings_obj: Dict[str, Any]) -> Dict[str, Any]:
@@ -210,7 +63,7 @@ def get_vscode_settings_path() -> Path:
         raise OSError(f"Unsupported platform: {sys.platform}")
 
 
-def read_json_file(path: Path) -> Dict[str, Any]:
+def read_json_file(path: Path, *, allow_repair: bool = True) -> Dict[str, Any]:
     """Read JSON file, handling comments and missing files."""
     if not path.exists():
         return {}
@@ -240,6 +93,8 @@ def read_json_file(path: Path) -> Dict[str, Any]:
             return json.loads(content)
     except json.JSONDecodeError as e:
         print(f"⚠️  Warning: Could not parse {path}: {e}")
+        if not allow_repair:
+            return {}
         print(f"   Creating backup and starting fresh...")
         # Backup the file
         backup_path = path.with_suffix('.json.backup')
@@ -275,7 +130,7 @@ def update_settings(path: Path, name: str, settings_payload: Dict[str, Any], pro
     print(f"   Path: {path}")
     
     # Read existing settings
-    existing = read_json_file(path)
+    existing = read_json_file(path, allow_repair=False)
     
     if profile == "safe":
         existing = _strip_low_friction_overrides(existing)
@@ -378,9 +233,9 @@ def main():
 
     profile = "low-friction" if args.low_friction else args.profile
 
-    settings_payload = AUTO_APPROVE_SETTINGS
+    settings_payload = SAFE_SETTINGS
     if profile == "low-friction":
-        settings_payload = _with_low_friction_settings(AUTO_APPROVE_SETTINGS)
+        settings_payload = _with_low_friction_settings(SAFE_SETTINGS)
 
     print(f"🔐 Profile: {profile}")
     if profile == "low-friction":

@@ -9,7 +9,7 @@
 
 ## Why MAESTRO Exists
 
-The v1 autonomous agent (`autonomous_workflow_agent.py`) was analysed and found to fail in three fundamental ways:
+The legacy single-chain autonomous runtime was analysed and found to fail in three fundamental ways:
 
 | Root Cause | Symptom | Impact |
 |-----------|---------|--------|
