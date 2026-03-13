@@ -11,17 +11,19 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SETTINGS_FILE = ROOT / ".vscode" / "settings.json"
 
-EXPECTED_MCP_SERVERS = {
-    "context7": "http://127.0.0.1:3010/mcp",
-    "bashGateway": "http://127.0.0.1:3011/mcp",
-    "git": "http://127.0.0.1:3012/mcp",
-    "search": "http://127.0.0.1:3013/mcp",
-    "filesystem": "http://127.0.0.1:3014/mcp",
-    "dockerCompose": "http://127.0.0.1:3015/mcp",
-    "testRunner": "http://127.0.0.1:3016/mcp",
-    "offlineDocs": "http://127.0.0.1:3017/mcp",
-    "githubOps": "http://127.0.0.1:3018/mcp",
-}
+AGENT_SETTINGS_FILE = ROOT / ".copilot" / "config" / "vscode-agent-settings.json"
+
+def _get_expected_mcp_servers() -> dict[str, str]:
+    if not AGENT_SETTINGS_FILE.exists():
+        return {}
+    try:
+        data = json.loads(AGENT_SETTINGS_FILE.read_text(encoding="utf-8"))
+        # Strip comments if jsonc
+        servers = data.get("workspace", {}).get("mcp", {}).get("servers", {})
+        return {k: v.get("url") for k, v in servers.items() if isinstance(v, dict) and "url" in v}
+    except Exception:
+        return {}
+
 
 
 def _load_settings() -> dict:
@@ -45,7 +47,7 @@ def _check_settings_servers(errors: list[str]) -> dict[str, str]:
         return {}
 
     configured: dict[str, str] = {}
-    for name, expected_url in EXPECTED_MCP_SERVERS.items():
+    for name, expected_url in _get_expected_mcp_servers().items():
         entry = servers.get(name)
         if not isinstance(entry, dict):
             errors.append(f"Missing mcp.servers.{name}")

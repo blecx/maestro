@@ -62,8 +62,7 @@ If a global default conflicts with this repository's projected workspace setting
 Check workspace projections explicitly:
 
 ```bash
-python3 scripts/setup-vscode-autoapprove.py --check --profile trusted-workflow
-/usr/local/bin/python3.12 scripts/setup-vscode-agent-settings.py --check
+python3 scripts/validate_workspace_settings.py --profile trusted-workflow
 ```
 
 If drift is reported, re-run the corresponding projection command or task.

@@ -35,6 +35,20 @@ Out of scope:
 5. Add or update verification guidance.
 6. Summarize the new validation model.
 
+
+## Operator Answers
+
+1. **Should validators enforce exact profile equality or only compliance with allowed values?**
+   Our updated `validate_workspace_settings.py` checks both. By default, it enforces that baseline values are met and that any extra approvals are tied to known legitimate agents. You can supply `--exact` to enforce strict canonical projection without extra unassigned drift.
+
+2. **Do you want separate validator modes per approval tier?**
+   Yes. A unified script `validate_workspace_settings.py` takes a `--profile <tier>` flag. It dynamically merges tier inclusions (e.g. `safe`, `trusted-workflow`, `low-friction`) from the canonical `.copilot/config/vscode-approval-profiles.json` source map.
+
+3. **Should the validator warn on optional agent omissions, or only fail on invalid policy?**
+   Omissions of optional/manual agents no longer raise failures or warnings; they are purely ignored. Failures only trigger on the presence of unapproved automated keys, unrecognized registry references, or missing explicitly mandated baseline policies.
+
+
+
 ## Questions for the operator
 
 1. Should validators enforce exact profile equality or only compliance with allowed values?
