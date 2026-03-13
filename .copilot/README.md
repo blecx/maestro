@@ -24,3 +24,7 @@ Explicit projection commands now include:
 
 - `scripts/setup-vscode-autoapprove.py` for terminal approval profiles.
 - `scripts/setup-vscode-agent-settings.py` for workspace agent defaults.
+
+## Architectural Guidelines
+
+For rules regarding separation of concerns across agents, workflow skills, scripts, and policy files, see the [Agent Separation of Concerns Contract](./AGENT_SEPARATION_CONTRACT.md). Review this checklist before submitting or approving PRs touching agent architecture.
