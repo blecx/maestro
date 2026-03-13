@@ -9,9 +9,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 SETTINGS_FILE = ROOT / ".vscode" / "settings.json"
-PROMPT_BASELINE_FILE = ROOT / ".github" / "prompts" / "modules" / "prompt-quality-baseline.md"
-CREATE_ISSUE_PROMPT = ROOT / ".github" / "prompts" / "agents" / "create-issue.md"
-RESOLVE_ISSUE_PROMPT = ROOT / ".github" / "prompts" / "agents" / "resolve-issue-dev.md"
+PROMPT_BASELINE_FILE = ROOT / ".copilot" / "skills" / "agent-customization" / "SKILL.md"
+CREATE_ISSUE_PROMPT = ROOT / ".github" / "agents" / "create-issue.md"
+RESOLVE_ISSUE_PROMPT = ROOT / ".github" / "agents" / "resolve-issue.md"
 
 REQUIRED_BASELINE_SNIPPETS = [
     "Context7",
