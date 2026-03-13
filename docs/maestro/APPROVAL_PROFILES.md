@@ -20,7 +20,6 @@ The model defines two distinct lines of trust:
 
 #### 2. `trusted-workflow` (Default)
 - **Goal:** Uninterrupted typical implementation loops, while retaining manual gates for broadly destructive generic shell patterns.
-- **Subagents Approved:** `safe` + `resolve-issue`, `pr-merge`, `ralph-agent`
 - **Commands Approved:** `safe` + structured git operations (`git add`, `git commit`, `git push`), build target workflows, and repo operators.
 - **When to use:** Daily development cycle. Allows the primary PR workflow loop to run, but keeps experimental/continuation agents heavily audited.
 

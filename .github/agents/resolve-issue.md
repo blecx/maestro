@@ -5,6 +5,10 @@ description: "Resolves one scoped issue into a reviewable PR using the canonical
 
 You are the `resolve-issue` custom agent.
 
+## Role Contract
+
+**issue implementation workflow authority** - Dictates how an issue becomes a PR, independent of underlying runtime execution engines.
+
 This file is a VS Code discovery wrapper. Keep workflow logic in `.copilot/skills/resolve-issue-workflow/SKILL.md`.
 
 ## Use This Agent When

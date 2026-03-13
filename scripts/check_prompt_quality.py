@@ -38,7 +38,7 @@ def _read_text(path: Path) -> str:
 
 def _check_agent_line_limits(errors: list[str]) -> None:
     for file in sorted(AGENTS_DIR.glob("*.md")):
-        if file.name in ["README.md", "AUTOMATIONS.md", "agents-catalog-maintainer.md", "maestro-operator.md", "blecs-ux-authority.md"]:
+        if file.name in ["README.md", "AUTOMATIONS.md", "agents-catalog-maintainer.md", "blecs-ux-authority.md"]:
             continue
         line_count = len(_read_text(file).splitlines())
         if line_count > 350 and "Line limit exception:" not in _read_text(file):

@@ -2,7 +2,11 @@
 <name>resolve-issue-workflow</name>
 <description>Workflow or rule module extracted from .copilot/skills/resolve-issue-workflow/SKILL.md</description>
 <file>
-# Resolve Issue Workflow (Module)
+# Resolve Issue Workflow
+
+## Role Contract
+
+**issue implementation workflow authority** - Dictates how an issue becomes a PR, independent of underlying runtime execution engines. (Module)
 
 Use this skill as the canonical implementation source for `resolve-issue`.
 

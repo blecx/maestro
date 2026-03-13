@@ -20,5 +20,3 @@ echo "[validate_prompts] Running Context7 guardrail checks..."
 echo "[validate_prompts] Running prmerge policy checks..."
 "${PYTHON_BIN}" "${ROOT_DIR}/scripts/check_prmerge_policy.py"
 
-echo "[validate_prompts] Running continue-backend policy checks..."
-"${PYTHON_BIN}" "${ROOT_DIR}/scripts/check_continue_backend_policy.py"

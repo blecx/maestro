@@ -1,5 +1,8 @@
 # Custom AI Agents - Quick Start Guide
 
+> **Note**: This documentation describes runtime execution code. It is **not** the source of workflow policy. For workflow policy authority, see `.copilot/skills/resolve-issue-workflow/SKILL.md`.
+
+
 Complete guide to set up and use custom AI agents trained on your project's chat exports.
 
 ## Overview

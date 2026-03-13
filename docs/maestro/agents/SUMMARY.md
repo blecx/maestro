@@ -1,5 +1,8 @@
 # MVP v1 Implementation Summary
 
+> **Note**: This documentation describes runtime execution code. It is **not** the source of workflow policy. For workflow policy authority, see `.copilot/skills/resolve-issue-workflow/SKILL.md`.
+
+
 ## Status: ✅ Core MVP Complete and Tested
 
 This document provides a summary of the completed ISO 21500 Project Management AI Agent system.

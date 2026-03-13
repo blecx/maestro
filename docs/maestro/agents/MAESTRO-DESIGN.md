@@ -1,5 +1,8 @@
 # MAESTRO — Multi-Agent Execution System for Task Resolution and Orchestration
 
+> **Note**: This documentation describes runtime execution code. It is **not** the source of workflow policy. For workflow policy authority, see `.copilot/skills/resolve-issue-workflow/SKILL.md`.
+
+
 **Status:** Active Design → Implementation in Progress  
 **Last Updated:** 2026-03-02  
 **Supersedes:** Single-chain autonomous agent (v1) described in `AUTONOMOUS-AGENT-GUIDE.md`  

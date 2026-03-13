@@ -11,14 +11,8 @@ Use `.github/agents/*.md` as thin wrappers that point to the relevant `.copilot/
 - **[resolve-issue.md](./resolve-issue.md)** - Issue → PR agent with plan-first execution and validation gates.
 - **[pr-merge.md](./pr-merge.md)** - Merge PRs safely with CI checks and issue closure workflow.
 - **[close-issue.md](./close-issue.md)** - Close issues with template-backed, traceable resolution comments.
-- **[tutorial.md](./tutorial.md)** - Create Markdown-only tutorials with strict visual evidence, feature-gap reporting, and duplicate-content audits.
 - **[create-issue.md](./create-issue.md)** - Create template-compliant issues only (no implementation), with clear acceptance criteria and validation steps.
 - **[Plan.md](./Plan.md)** - Produce compact, actionable implementation plans with bounded discovery and issue sizing.
-- **[continue-backend.md](./continue-backend.md)** - Run backend-only continuation loops with guarded PR/merge flow.
-- **[continue-phase-2.md](./continue-phase-2.md)** - Run phase-2 continuation loops with review-before-merge policy.
-- **[ralph-agent.md](./ralph-agent.md)** - Execute strict spec-kit style issue resolution with specialist review gates.
-- **[workflow.md](./workflow.md)** - Scripted workflow-runtime agent for explicit autonomous orchestration runs.
-- **[maestro-operator.md](./maestro-operator.md)** - Bridge agent that executes the underlying Python autonomous Maestro workflow via CLI.
 
 ## Runtime Agents
 

@@ -1,5 +1,8 @@
 # AI Agents
 
+> **Note**: This documentation describes runtime execution code. It is **not** the source of workflow policy. For workflow policy authority, see `.copilot/skills/resolve-issue-workflow/SKILL.md`.
+
+
 This directory contains the Python runtimes and adapters used for issue-resolution workflows.
 
 ## Current Runtime Model

@@ -24,14 +24,10 @@ The repository now uses an explicit layered model.
 - `.copilot/skills/resolve-issue-workflow/SKILL.md`
 - `.copilot/skills/pr-merge-workflow/SKILL.md`
 - `.copilot/skills/issue-creation-workflow/SKILL.md`
-- `.copilot/skills/continue-backend-workflow/SKILL.md`
-- `.copilot/skills/continue-phase-2-workflow/SKILL.md`
 - `.copilot/skills/tutorial-writer-expert/SKILL.md`
 - `.copilot/skills/ralph-skills-review/SKILL.md`
 - `.copilot/skills/plan-workflow/SKILL.md`
 - `.copilot/skills/close-issue-workflow/SKILL.md`
-- `.copilot/skills/workflow-runtime/SKILL.md`
-- `.copilot/skills/maestro-operator-workflow/SKILL.md`
 
 ### Policy and Configuration
 
@@ -46,14 +42,8 @@ These files should remain thin and point back to `.copilot`:
 - `.github/agents/resolve-issue.md`
 - `.github/agents/pr-merge.md`
 - `.github/agents/create-issue.md`
-- `.github/agents/continue-backend.md`
-- `.github/agents/continue-phase-2.md`
-- `.github/agents/tutorial.md`
-- `.github/agents/ralph-agent.md`
 - `.github/agents/Plan.md`
 - `.github/agents/close-issue.md`
-- `.github/agents/maestro-operator.md`
-- `.github/agents/workflow.md`
 
 ## Explicit Projection Scripts
 
@@ -91,8 +81,6 @@ Committed `.vscode/settings.json` should contain only editor-local baseline sett
 - `scripts/close-issue.sh`
 - `scripts/next-issue.py`
 - `scripts/next-pr.py`
-- `scripts/continue-backend.sh`
-- `scripts/continue-phase-2.sh`
 
 These remain supported execution adapters, but they are not the source of truth for workflow intent.
 
