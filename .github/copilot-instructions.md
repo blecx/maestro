@@ -492,6 +492,7 @@ After successfully merging a PR, the agent MUST clean up related temporary files
    - `.tmp/` directory is gitignored but should be kept clean
 
 3. **Complete cleanup workflow** (mandatory sequence):
+
    ```bash
    # After PR merged successfully
    gh pr merge <PR> --squash --delete-branch
@@ -527,7 +528,7 @@ When in doubt, consult README.md, QUICKSTART.md, or docs/development.md for exte
 - `workflow-runtime` - scripted workflow runtime execution guidance
 - `maestro-operator-workflow` - terminal-driven Maestro operator guidance
 
-**Workflow Templates and Supporting Prompts:** See `.github/prompts/` for reusable templates to help with:
+**Workflow Templates and Supporting Prompts:** See `.copilot/skills/` for reusable templates to help with:
 
 - Planning features and creating specs
 - Drafting implementation issues
@@ -542,8 +543,10 @@ When in doubt, consult README.md, QUICKSTART.md, or docs/development.md for exte
 - `docs/architecture/` - System design and ADRs
 
 ## Custom Agent Skills & Architectures
-All Copilot context logic follows standard Github Spec Kit architectural guidelines. 
-- Static standalone personas strictly reside in `.github/agents/*.md` for global invocation (`@agentname`). 
+
+All Copilot context logic follows standard Github Spec Kit architectural guidelines.
+
+- Static standalone personas strictly reside in `.github/agents/*.md` for global invocation (`@agentname`).
 - Reusable constraint maps, design system guides, and execution logic meant to be read during task evaluation must reside completely inside `.copilot/skills/` formatted using `<skill>` tags or readable `.md` guides.
 - If you need UX standards, use read_file on `.copilot/skills/blecs-ux-authority/SKILL.md`.
 - Never attempt to manually edit python source code for `agents/` autonomous routines unless the task is explicitly about runtime debugging or implementation in that layer; otherwise guide the user through `@maestro-operator` using the canonical `.copilot` operator workflow.

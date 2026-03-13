@@ -29,25 +29,25 @@ precedence and usage model:
 
 1. Prefer the most specialized domain MCP server over generic servers.
 2. Use `git` MCP for repository history/state operations (`status`, `diff`,
-	`log`, `show`, `blame`, branch tasks).
+   `log`, `show`, `blame`, branch tasks).
 3. Use `search` MCP for codebase content discovery and text matching before
-	file reads.
+   file reads.
 4. Use `filesystem` MCP for deterministic file CRUD inside workspace scope;
-	never use it for git-history questions.
+   never use it for git-history questions.
 5. Use `dockerCompose` MCP for container/compose lifecycle and health/log
-	operations; do not route these through generic shell paths first.
+   operations; do not route these through generic shell paths first.
 6. Use `testRunner` MCP for lint/build/test execution profiles before any
-	fallback.
+   fallback.
 7. Use `bashGateway` MCP only for allowlisted script workflows or when a
-	required domain action has no dedicated MCP capability.
+   required domain action has no dedicated MCP capability.
 8. For external API/library docs, use Context7 when online; when offline, use
-	`offlineDocs` MCP for indexed local docs; use `search` MCP only when
-	`offlineDocs` does not cover required content.
+   `offlineDocs` MCP for indexed local docs; use `search` MCP only when
+   `offlineDocs` does not cover required content.
 
 9. For local docs Q&A on repository documentation, prefer `offlineDocs` MCP for
-	index/search/read; use `filesystem` read only for exact-path excerpts.
+   index/search/read; use `filesystem` read only for exact-path excerpts.
 10. Keep `offlineDocs` index lifecycle change-driven: refresh after `docs/` or
-	`templates/` source changes; do not require boot-time rebuilds.
+    `templates/` source changes; do not require boot-time rebuilds.
 
 Prompts must treat these as hard rules, not preferences.
 
@@ -68,7 +68,7 @@ Prompts must treat these as hard rules, not preferences.
 
 - Run: `python scripts/check_prompt_quality.py`
 - Run: `python scripts/check_context7_guardrails.py`
-- Verify links: `rg -n "\]\(.*\)" .github/prompts --glob '*.md'`
+- Verify links: `rg -n "\]\(.*\)" .copilot/skills --glob '*.md'`
 
 </file>
 </skill>

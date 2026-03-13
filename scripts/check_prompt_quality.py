@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prompt quality checks for .github/agents and .github/prompts markdown files."""
+"""Prompt quality checks for .github/agents and .copilot/skills markdown files."""
 
 from __future__ import annotations
 
@@ -8,16 +8,17 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PROMPTS_DIR = ROOT / ".github" / "prompts"
+SKILLS_DIR = ROOT / ".copilot" / "skills"
 AGENTS_DIR = ROOT / ".github" / "agents"
 
 KEY_PROMPTS = [
     AGENTS_DIR / "create-issue.md",
     AGENTS_DIR / "resolve-issue.md",
     AGENTS_DIR / "pr-merge.md",
-    AGENTS_DIR / "tutorial.md",
-    PROMPTS_DIR / "multi-step-planning.md",
-    PROMPTS_DIR / "cross-repo-coordination.md",
+    AGENTS_DIR / "tutorial-audit.md",
+    AGENTS_DIR / "tutorial-author.md",
+    SKILLS_DIR / "multi-step-planning-checklist" / "SKILL.md",
+    SKILLS_DIR / "cross-repo-coordination-checklist" / "SKILL.md",
 ]
 
 REQUIRED_HEADERS = [
@@ -54,7 +55,7 @@ def _check_required_sections(errors: list[str]) -> None:
             errors.append(f"{file}: missing required sections: {', '.join(missing)}")
 
 def _check_broken_local_links(errors: list[str]) -> None:
-    all_prompt_files = list(PROMPTS_DIR.rglob("*.md")) + list(AGENTS_DIR.rglob("*.md"))
+    all_prompt_files = list(SKILLS_DIR.rglob("*.md")) + list(AGENTS_DIR.rglob("*.md"))
     for file in all_prompt_files:
         text = _read_text(file)
         for target in LINK_RE.findall(text):
