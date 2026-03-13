@@ -31,7 +31,7 @@ Merge rule:
 
 ## Quality Gates
 
-- Apply canonical UX delegation policy from `./ux/delegation-policy.md`.
+- Apply canonical UX delegation policy from `.copilot/skills/ux-delegation-policy/SKILL.md`.
 - Mandatory PR review before merge.
 - CI must pass for merge path.
 - PR merge slice limits enforced by `scripts/prmerge` policy defaults.

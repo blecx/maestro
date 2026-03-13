@@ -15,7 +15,7 @@ Use this skill as the canonical implementation source for `resolve-issue`.
 
 1. Select issue (backend-first, lowest number) and confirm scope.
 2. Write compact plan: goal, scope, AC, files, validation commands.
-3. Apply UX delegation policy from `./ux/delegation-policy.md` and capture required consultation outcome.
+3. Apply UX delegation policy from `.copilot/skills/ux-delegation-policy/SKILL.md` and capture required consultation outcome.
 4. Implement minimal code changes in a dedicated branch.
 5. Run required validations for touched areas.
 6. Commit with `Fixes #<issue>` and push.
@@ -51,7 +51,7 @@ Prefer tool-driven discovery over pasting large context into chat.
 - Avoid unrelated refactors.
 - Keep diffs reviewable and DDD-compliant.
 - Use `.tmp/` for transient artifacts.
-- Follow `./ux/delegation-policy.md` as the canonical delegation rule source.
+- Follow `.copilot/skills/ux-delegation-policy/SKILL.md` as the canonical delegation rule source.
 
 ## Completion Contract
 

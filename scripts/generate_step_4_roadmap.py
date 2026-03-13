@@ -119,7 +119,7 @@ AI-Agent-Framework:
 
       ## Scope
       ### In Scope
-      - Add Phase 2.6 in `agents/autonomous_workflow_agent.py`.
+      - Add Phase 2.6 for mockup generation to the core workflow orchestrator.
       - Persist evidence under `.tmp/mockups/issue-<n>/` and link it in logs.
       - Call designer skills after mockup approval (PASS).
       ### Out of Scope
