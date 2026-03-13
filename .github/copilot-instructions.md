@@ -518,15 +518,16 @@ When in doubt, consult README.md, QUICKSTART.md, or docs/development.md for exte
 
 ## Additional Resources
 
-**Optimized Agent Workflows:** See `.github/prompts/agents/` for performance-optimized workflows:
+**Canonical Workflow Modules:** See `.copilot/skills/` for the current source of truth for workflow logic, operator policies, and reusable execution checklists:
 
-- `resolve-issue-dev.md` - Issue resolution workflow (30-45min → 5-10min)
-- `pr-merge.md` - PR merge with admin bypass and cleanup
-- `close-issue.md` - Issue closure with early-exit conditions
-- `Plan.md` - Research agent with limited scope
-- `README.md` - Optimization principles and guidelines
+- `resolve-issue-workflow` - issue-to-PR execution contract
+- `pr-merge-workflow` - merge gates and cleanup contract
+- `close-issue-workflow` - issue closure and traceability rules
+- `plan-workflow` - bounded planning and issue sizing
+- `workflow-runtime` - scripted workflow runtime execution guidance
+- `maestro-operator-workflow` - terminal-driven Maestro operator guidance
 
-**Workflow Templates:** See `.github/prompts/` for reusable templates to help with:
+**Workflow Templates and Supporting Prompts:** See `.github/prompts/` for reusable templates to help with:
 
 - Planning features and creating specs
 - Drafting implementation issues
@@ -545,4 +546,4 @@ All Copilot context logic follows standard Github Spec Kit architectural guideli
 - Static standalone personas strictly reside in `.github/agents/*.md` for global invocation (`@agentname`). 
 - Reusable constraint maps, design system guides, and execution logic meant to be read during task evaluation must reside completely inside `.copilot/skills/` formatted using `<skill>` tags or readable `.md` guides.
 - If you need UX standards, use read_file on `.copilot/skills/blecs-ux-authority/SKILL.md`.
-- Never attempt to manually edit python source code for `agents/` autonomous routines; instead, guide the user to `run_in_terminal` using `@maestro-operator` flows.
+- Never attempt to manually edit python source code for `agents/` autonomous routines unless the task is explicitly about runtime debugging or implementation in that layer; otherwise guide the user through `@maestro-operator` using the canonical `.copilot` operator workflow.

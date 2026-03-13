@@ -10,6 +10,12 @@ description: "Expert instructional design and documentation patterns for technic
 
 This skill defines the technical constraints and methodologies for writing software documentation, user manuals, and technical audits in this repository.
 
+## Use When
+
+- Creating or refactoring tutorials under `docs/tutorials/**`.
+- Auditing docs for accuracy, duplication, and coverage gaps.
+- Preparing remediation plans from qualified tutorial/documentation findings.
+
 ## 1. Primary Directives
 
 1. **Output constraints:** Final tutorial output must always be Markdown.
@@ -62,6 +68,15 @@ When generating a complete tutorial, enforce this structure:
 - **Progressive Disclosure:** Group advanced flags/options into visually collapsible `<details>` tags so beginners are not overwhelmed.
 - **Fail-States Included:** Every action with a side-effect should include what to look for when it succeeds *and* when it fails.
 - **Conversational Minimalism:** Keep sentences brief, active voice, and professional. Avoid overly dramatic or hyper-enthusiastic text (e.g. avoid "Amazing!").
+
+## Completion Contract
+
+Return:
+
+- tutorial Markdown deliverable or strict audit package,
+- feature gap list,
+- duplicate content audit,
+- asset or evidence regeneration notes when visuals are involved.
 
 </file>
 </skill>

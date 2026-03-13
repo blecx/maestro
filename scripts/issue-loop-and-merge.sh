@@ -13,7 +13,7 @@ echo "🔁 Starting issue/PR merge loop..."
 merged_count=0
 
 while true; do
-  pr_json="$(./next-pr --json)"
+  pr_json="$(./scripts/next-pr.py --json)"
 
   candidate_count="$(jq -r '(.recommended // []) | length' <<<"$pr_json")"
   if [[ "$candidate_count" -eq 0 ]]; then
@@ -25,19 +25,19 @@ while true; do
     break
   fi
 
-  issue_number="$({
-    jq -r '(.recommended[0].issue_number // .recommended[0].issue // .recommended[0].number // empty)' <<<"$pr_json"
-    jq -r '(.candidates[0].issue_number // .candidates[0].issue // .candidates[0].number // empty)' <<<"$pr_json"
+  pr_number="$({
+    jq -r '(.recommended[0].number // empty)' <<<"$pr_json"
+    jq -r '(.candidates[0].number // empty)' <<<"$pr_json"
   } | awk 'NF {print; exit}')"
 
-  if [[ -z "$issue_number" ]]; then
-    echo "❌ Could not determine issue number from next-pr output:"
+  if [[ -z "$pr_number" ]]; then
+    echo "❌ Could not determine PR number from next-pr output:"
     echo "$pr_json"
     exit 2
   fi
 
-  echo "🚀 Merging for issue #$issue_number ..."
-  scripts/prmerge "$issue_number"
+  echo "🚀 Merging PR #$pr_number ..."
+  scripts/prmerge --pr "$pr_number"
   merged_count=$((merged_count + 1))
 done
 

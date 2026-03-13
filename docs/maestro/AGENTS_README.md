@@ -1,7 +1,10 @@
 # Custom Agent Registry
 
-This directory contains repository custom agents (`*.md`) discoverable by Copilot Chat. 
-These files have been consolidated from legacy duplicate folders to serve as the single source of truth for all workflows.
+This directory contains repository custom agents (`*.md`) discoverable by Copilot Chat.
+These files are the VS Code discovery layer, not the canonical home for workflow logic.
+
+Canonical workflow logic, reusable policies, and approval-profile sources live under `.copilot/`.
+Use `.github/agents/*.md` as thin wrappers that point to the relevant `.copilot/skills/*/SKILL.md` source.
 
 ## Available Agents
 
@@ -14,14 +17,16 @@ These files have been consolidated from legacy duplicate folders to serve as the
 - **[continue-backend.md](./continue-backend.md)** - Run backend-only continuation loops with guarded PR/merge flow.
 - **[continue-phase-2.md](./continue-phase-2.md)** - Run phase-2 continuation loops with review-before-merge policy.
 - **[ralph-agent.md](./ralph-agent.md)** - Execute strict spec-kit style issue resolution with specialist review gates.
-- **[workflow.md](./workflow.md)** - Legacy workflow-agent wrapper profile for scripted batch runs.
-- **[maestro-operator.md](./maestro-operator.md)** - Bridge agent that executes the underlying Python autonomous 'Maestro' workflow.
+- **[workflow.md](./workflow.md)** - Scripted workflow-runtime agent for explicit autonomous orchestration runs.
+- **[maestro-operator.md](./maestro-operator.md)** - Bridge agent that executes the underlying Python autonomous Maestro workflow via CLI.
 
-## Legacy Sub-Agents functioning as Pseudo-Skills (Soon to be moved to `.copilot/skills`)
+## Runtime Agents
+
+- `workflow` and `maestro-operator` now also use canonical `.copilot/skills/` modules while remaining thin VS Code discovery wrappers.
 
 ## Automation Inventory
 
-- **[AUTOMATIONS.md](./AUTOMATIONS.md)** is documentation (an inventory), not a selectable Copilot custom agent. 
+- **[AUTOMATIONS.md](./AUTOMATIONS.md)** is documentation (an inventory), not a selectable Copilot custom agent.
 
 ## Spec Kit-Compatible Command Prompts
 
@@ -33,3 +38,4 @@ These directories hold slash-command style prompt files and are intentionally se
 ## Auto-Approve Wiring
 
 Subagents mapped in `.vscode/settings.json` under `chat.tools.subagent.autoApprove` will use the agent name omitting the `.md` extension.
+Approval profiles should be authored in `.copilot/config/` and only projected into `.vscode/` when explicitly configured.

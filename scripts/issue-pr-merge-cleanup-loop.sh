@@ -6,6 +6,7 @@ ISSUE_OVERRIDE=""
 DRY_RUN=0
 SKIP_RECONCILE=0
 NO_SPLIT_ISSUES=0
+CURRENT_REPO=""
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
@@ -36,6 +37,104 @@ Cleanup policy (after successful merge):
   rm -f .tmp/pr-body-<issue>.md .tmp/issue-<issue>-*.md
   ls -la .tmp/*<issue>* 2>/dev/null || echo "✓ Cleanup verified"
 EOF
+}
+
+resolve_repo() {
+  if [[ -n "$CURRENT_REPO" ]]; then
+    return 0
+  fi
+
+  CURRENT_REPO="$(gh repo view --json nameWithOwner --jq '.nameWithOwner' 2>/dev/null || true)"
+  if [[ -z "$CURRENT_REPO" ]]; then
+    CURRENT_REPO="blecx/maestro"
+  fi
+}
+
+read_json_field() {
+  local json_payload="$1"
+  local field_name="$2"
+  JSON_PAYLOAD="$json_payload" python3 -c '
+import json
+import sys
+import os
+
+field = sys.argv[1]
+payload = os.environ.get("JSON_PAYLOAD", "").strip()
+if not payload:
+    raise SystemExit(0)
+data = json.loads(payload)
+value = data.get(field)
+if value is None:
+    raise SystemExit(0)
+print(value)
+' "$field_name"
+}
+
+find_existing_issue_from_local_draft() {
+  resolve_repo
+
+  local drafts=()
+  while IFS= read -r draft; do
+    drafts+=("$draft")
+  done < <(find .tmp -maxdepth 1 -type f -name 'issue-*.md' ! -name 'issue-[0-9]*-*.md' | sort)
+
+  if [[ ${#drafts[@]} -ne 1 ]]; then
+    return 1
+  fi
+
+  local draft_path="${drafts[0]}"
+  local title
+  title="$(sed -n '1s/^# //p' "$draft_path")"
+  if [[ -z "$title" ]]; then
+    return 1
+  fi
+
+  local json_output issue_number issue_title slug pr_body_src
+  json_output="$(gh issue list --repo "$CURRENT_REPO" --state open --limit 20 --search "$title in:title" --json number,title 2>/dev/null || true)"
+  issue_number="$(JSON_PAYLOAD="$json_output" python3 -c '
+import json
+import os
+import sys
+
+title = sys.argv[1].strip().lower()
+payload = os.environ.get("JSON_PAYLOAD", "").strip() or "[]"
+matches = json.loads(payload)
+for item in matches:
+    candidate = str(item.get("title", "")).strip().lower()
+    if candidate == title:
+        print(item["number"])
+        break
+' "$title"
+  )"
+
+  if [[ -z "$issue_number" ]]; then
+    return 1
+  fi
+
+  slug="$(basename "$draft_path" .md)"
+  slug="${slug#issue-}"
+  pr_body_src=".tmp/pr-body-${slug}.md"
+
+  if [[ -f "$draft_path" && ! -f ".tmp/issue-${issue_number}-${slug}.md" ]]; then
+    cp "$draft_path" ".tmp/issue-${issue_number}-${slug}.md"
+  fi
+  if [[ -f "$pr_body_src" && ! -f ".tmp/pr-body-${issue_number}.md" ]]; then
+    cp "$pr_body_src" ".tmp/pr-body-${issue_number}.md"
+  fi
+
+  printf '%s|%s|%s\n' "$issue_number" "$title" "$draft_path"
+}
+
+verify_issue_exists() {
+  local issue="$1"
+  resolve_repo
+
+  if [[ "$DRY_RUN" == "1" ]]; then
+    echo "[dry-run] Would verify issue #$issue in $CURRENT_REPO"
+    return 0
+  fi
+
+  gh issue view "$issue" --repo "$CURRENT_REPO" --json number,state,title >/dev/null
 }
 
 require_option_value() {
@@ -173,16 +272,24 @@ while [[ "$count" -lt "$MAX_ISSUES" ]]; do
   issue=""
   if [[ -n "$ISSUE_OVERRIDE" ]]; then
     issue="$ISSUE_OVERRIDE"
+    verify_issue_exists "$issue"
     ISSUE_OVERRIDE=""
   else
-    echo "Selecting next issue..."
-    if [[ "$DRY_RUN" == "1" ]]; then
-      select_next_issue
-      issue="99999"
+    existing_issue_info="$(find_existing_issue_from_local_draft || true)"
+    if [[ -n "$existing_issue_info" ]]; then
+      issue="${existing_issue_info%%|*}"
+      existing_issue_title="$(printf '%s' "$existing_issue_info" | cut -d'|' -f2)"
+      echo "Continuing existing issue #$issue from local draft: $existing_issue_title"
     else
-      selection_output="$(select_next_issue)"
-      issue="$(printf '%s\n' "$selection_output" | tail -n1)"
-      printf '%s\n' "$selection_output" | sed '$d'
+      echo "Selecting next issue..."
+      if [[ "$DRY_RUN" == "1" ]]; then
+        select_next_issue
+        issue="99999"
+      else
+        selection_output="$(select_next_issue)"
+        issue="$(printf '%s\n' "$selection_output" | tail -n1)"
+        printf '%s\n' "$selection_output" | sed '$d'
+      fi
     fi
   fi
 
@@ -211,6 +318,9 @@ while [[ "$count" -lt "$MAX_ISSUES" ]]; do
     exit "$work_rc"
   fi
 
+  if [[ -f ".tmp/pr-body-$issue.md" ]]; then
+    echo "Using comprehensive PR handoff: .tmp/pr-body-$issue.md"
+  fi
   run_prmerge "$issue"
   cleanup_issue_tmp "$issue"
 

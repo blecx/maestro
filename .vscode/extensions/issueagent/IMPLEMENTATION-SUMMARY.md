@@ -21,7 +21,7 @@ Type `@issueagent` in VS Code chat to:
 
 ### Files Created
 
-```
+```text
 .vscode/extensions/issueagent/
 ├── package.json          # Extension manifest (chat participant registration)
 ├── extension.js          # Main implementation (300+ lines)
@@ -74,13 +74,13 @@ Users had to manually:
 
 User types in chat:
 
-```
+```text
 @issueagent
 ```
 
 And sees:
 
-```
+```text
 🤖 Autonomous Issue Agent Starting...
 
 📋 Phase 1: Issue Selection
@@ -206,7 +206,7 @@ Possible improvements:
 
 ## Architecture Diagram
 
-```
+```text
 User Chat Input: "@issueagent"
          ↓
 VS Code Chat Participant (extension.js)
@@ -236,7 +236,7 @@ Issue #N    Update KB
 
 - **scripts/next-issue.py** - Issue selection with reconciliation
 - **scripts/work-issue.py** - Autonomous agent CLI
-- **agents/autonomous_workflow_agent.py** - Core agent logic
+- **agents/maestro_adapter.py** - Default issue-runner adapter used by `scripts/work-issue.py`
 - **agents/tools.py** - Tool functions
 
 ### Configuration

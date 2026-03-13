@@ -4,6 +4,13 @@
 <file>
 # Resolve Issue Workflow (Module)
 
+Use this skill as the canonical implementation source for `resolve-issue`.
+
+## Use When
+
+- A specific issue number is provided for implementation.
+- The user asks to pick the next issue and execute one issue-to-PR slice.
+
 ## Steps
 
 1. Select issue (backend-first, lowest number) and confirm scope.
@@ -15,11 +22,29 @@
 7. Create PR using required template sections.
 8. Address CI failures by root cause and re-validate.
 
+## Required Planning Shape
+
+- Goal
+- Scope / non-goals
+- Acceptance criteria
+- Target files/modules
+- Validation commands
+
+Prefer tool-driven discovery over pasting large context into chat.
+
 ## Validation Baseline
 
 - Backend: `black`, `flake8`, `pytest`
 - Frontend: `npm run lint`, `npm run build`, tests if configured
 - Include command outputs/evidence in PR body.
+
+## Repo Rules
+
+- Select backend/TUI/CLI issues before client/UX issues.
+- Keep one issue per PR.
+- Use `.tmp/`, never `/tmp`.
+- Never touch `projectDocs/` or `configs/llm.json`.
+- Apply the canonical UX delegation policy before finalizing UI/UX-impacting work.
 
 ## Guardrails
 
@@ -27,6 +52,15 @@
 - Keep diffs reviewable and DDD-compliant.
 - Use `.tmp/` for transient artifacts.
 - Follow `./ux/delegation-policy.md` as the canonical delegation rule source.
+
+## Completion Contract
+
+Return a concise result that states:
+
+- implemented issue,
+- validation status,
+- PR or blocking condition,
+- any follow-up split/dependency if scope exceeded the slice.
 
 </file>
 </skill>

@@ -1,5 +1,4 @@
 {
-  "chat.agent.maxRequests": 50,
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
   "python.terminal.activateEnvironment": true,
   "python.analysis.typeCheckingMode": "basic",
@@ -11,19 +10,6 @@
     "no:playwright"
   ],
   "task.allowAutomaticTasks": "on",
-  "issueagent.customAgent": "resolve-issue",
-  "chat.allowAnonymousAccess": true,
-  "chat.checkpoints.showFileChanges": true,
-  "chat.customAgentInSubagent.enabled": true,
-  "chat.tools.subagent.autoApprove": {
-    "create-issue": true,
-    "resolve-issue": true,
-    "close-issue": true,
-    "pr-merge": true,
-    "Plan": true,
-    "tutorial": true,
-    "maestro-operator": true
-  },
   "chat.tools.terminal.autoApprove": {
     "bash": true,
     "python3": true,
@@ -123,17 +109,26 @@
       "approve": true,
       "matchCommandLine": true,
       "description": "Allow cd with command chaining"
-    },
-    "/^\\s*.+$/": {
-      "approve": true,
-      "matchCommandLine": true,
-      "description": "Low-friction mode: approve nearly all terminal command lines"
-    },
-    "/^\\s*.*(?:\\/tmp\\/|\\.tmp\\/|\\$TMPDIR|TMPDIR=).*$/": {
-      "approve": true,
-      "matchCommandLine": true,
-      "description": "Approve command lines that reference /tmp, .tmp, or TMPDIR"
     }
+  },
+  "terminal.integrated.env.linux": {
+    "TMPDIR": "${workspaceFolder}/.tmp",
+    "TMP": "${workspaceFolder}/.tmp",
+    "TEMP": "${workspaceFolder}/.tmp"
+  },
+  "chat.agent.maxRequests": 50,
+  "issueagent.customAgent": "resolve-issue",
+  "chat.allowAnonymousAccess": true,
+  "chat.checkpoints.showFileChanges": true,
+  "chat.customAgentInSubagent.enabled": true,
+  "chat.tools.subagent.autoApprove": {
+    "create-issue": true,
+    "resolve-issue": true,
+    "close-issue": true,
+    "pr-merge": true,
+    "Plan": true,
+    "tutorial": true,
+    "maestro-operator": true
   },
   "mcp": {
     "servers": {
@@ -168,10 +163,5 @@
         "url": "http://127.0.0.1:3018/mcp"
       }
     }
-  },
-  "terminal.integrated.env.linux": {
-    "TMPDIR": "${workspaceFolder}/.tmp",
-    "TMP": "${workspaceFolder}/.tmp",
-    "TEMP": "${workspaceFolder}/.tmp"
   }
 }

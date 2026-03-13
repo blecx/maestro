@@ -181,7 +181,7 @@ async function handleCreateIssueRunCommand(request, stream) {
   stream.markdown('### Why this exists\n');
   stream.markdown(
     '- VS Code\'s agent menu lists **chat participants** provided by extensions (like `@issueagent`).\n' +
-      '- The file `.github/prompts/agents/create-issue.md` is a **workflow spec**, not a participant by itself.\n' +
+      '- The canonical `create-issue` workflow lives in `.copilot/skills/issue-creation-workflow/SKILL.md`; the `.github/agents/create-issue.md` file is only the VS Code discovery wrapper.\n' +
       '- This participant bridges discoverability without duplicating the workflow.\n',
   );
 }

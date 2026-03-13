@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+"""Configure explicit VS Code agent settings from canonical .copilot config."""
+
+import argparse
+import json
+from pathlib import Path
+from typing import Any, Dict
+
+
+CONFIG_PATH = Path(__file__).parent.parent / ".copilot/config/vscode-agent-settings.json"
+WORKSPACE_SETTINGS_PATH = Path(__file__).parent.parent / ".vscode/settings.json"
+
+
+def load_json(path: Path) -> Dict[str, Any]:
+    if not path.exists():
+        return {}
+
+    with open(path, "r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def merge_settings(existing: Dict[str, Any], new: Dict[str, Any]) -> Dict[str, Any]:
+    result = dict(existing)
+    for key, value in new.items():
+        if isinstance(result.get(key), dict) and isinstance(value, dict):
+            result[key] = merge_settings(result[key], value)
+        else:
+            result[key] = value
+    return result
+
+
+def collect_drift(expected: Any, actual: Any, path: str = "") -> list[str]:
+    drifts: list[str] = []
+
+    if isinstance(expected, dict):
+        if not isinstance(actual, dict):
+            drifts.append(f"{path or '<root>'}: expected object, found {type(actual).__name__}")
+            return drifts
+
+        for key, value in expected.items():
+            child_path = f"{path}.{key}" if path else key
+            if key not in actual:
+                drifts.append(f"{child_path}: missing")
+                continue
+            drifts.extend(collect_drift(value, actual[key], child_path))
+        return drifts
+
+    if expected != actual:
+        drifts.append(f"{path}: expected={expected!r} actual={actual!r}")
+
+    return drifts
+
+
+def write_json(path: Path, data: Dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(data, handle, indent=2, ensure_ascii=False)
+        handle.write("\n")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Configure or verify explicit VS Code agent settings."
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Check for drift without modifying files.",
+    )
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+
+    expected = load_json(CONFIG_PATH).get("workspace", {})
+    existing = load_json(WORKSPACE_SETTINGS_PATH)
+
+    if args.check:
+        drifts = collect_drift(expected, existing)
+        if not drifts:
+            print("✅ Workspace agent settings match canonical .copilot config")
+            return 0
+        print("❌ Workspace agent settings drift detected:")
+        for drift in drifts[:20]:
+            print(f"- {drift}")
+        if len(drifts) > 20:
+            print(f"- ... and {len(drifts) - 20} more")
+        return 1
+
+    updated = merge_settings(existing, expected)
+    write_json(WORKSPACE_SETTINGS_PATH, updated)
+    print("✅ Workspace agent settings projected from .copilot config")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

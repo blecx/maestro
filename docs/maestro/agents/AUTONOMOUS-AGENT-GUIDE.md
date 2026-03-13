@@ -1,6 +1,6 @@
 # Autonomous AI Agent - Complete Guide (v1)
 
-**REAL AI-Powered Agent using Microsoft Agent Framework + GitHub Models**
+## REAL AI-Powered Agent Using Microsoft Agent Framework And GitHub Models
 
 **Last Updated:** 2026-03-02  
 **Status:** v1 — superseded by MAESTRO design. v1 code remains fully functional while MAESTRO is implemented (issues #708–#715).
@@ -50,7 +50,7 @@ cp configs/llm.github.json.example configs/llm.json
 nano configs/llm.json
 ```
 
-**Get your token:** https://github.com/settings/tokens (needs `repo` scope)
+**Get your token:** [GitHub personal access tokens](https://github.com/settings/tokens) (needs `repo` scope)
 
 ### 2. Run the Agent
 
@@ -69,7 +69,7 @@ source .venv/bin/activate
 
 Open VS Code chat and type:
 
-```
+```text
 @resolve-issue /run
 ```
 
@@ -83,7 +83,7 @@ See [.vscode/extensions/issueagent/README.md](../../.vscode/extensions/issueagen
 
 ### Architecture
 
-```
+```text
 User → CLI (work-issue.py)
          ↓
      Agent (Microsoft Agent Framework)
@@ -105,28 +105,28 @@ User → CLI (work-issue.py)
 
 ### The 6-Phase Workflow
 
-**Phase 1: Context & Analysis**
+#### Phase 1: Context & Analysis
 
 - Fetches issue from GitHub
 - Analyzes requirements using LLM
 - Gathers relevant code files
 - Loads patterns from knowledge base
 
-**Phase 2: Planning**
+#### Phase 2: Planning
 
 - Creates implementation plan document
 - Breaks down into testable steps
 - Estimates time based on historical data
 - Identifies risks and mitigation
 
-**Phase 3: Implementation**
+#### Phase 3: Implementation
 
 - Creates feature branch
 - Writes tests first (TDD approach)
 - Implements code changes
 - Commits incrementally with descriptive messages
 
-**Phase 4: Testing**
+#### Phase 4: Testing
 
 - Runs build commands
 - Executes test suites
@@ -134,14 +134,14 @@ User → CLI (work-issue.py)
 - Fixes issues automatically
 - Retries until tests pass
 
-**Phase 5: Review**
+#### Phase 5: Review
 
 - Self-reviews against acceptance criteria
 - Checks for removed functionality
 - Verifies code conventions
 - Ensures no debug code remains
 
-**Phase 6: PR Creation**
+#### Phase 6: PR Creation
 
 - Generates PR title and description
 - Creates pull request via GitHub CLI
@@ -296,7 +296,7 @@ Run the suite that matches the repo(s) you changed:
 
 ### Custom System Instructions
 
-Edit `agents/autonomous_workflow_agent.py`, method `_build_system_instructions()` to:
+For historical customization, this guide originally referenced a removed single-file autonomous runtime. In the current runtime, equivalent behavior should be adjusted through the active runtime files and canonical `.copilot/skills/` modules instead:
 
 - Add project-specific guidelines
 - Change workflow phases
@@ -449,8 +449,9 @@ Agent automatically retries test failures with LLM analysis. If persistent:
 
 ```text
 agents/
-├── autonomous_workflow_agent.py    # Main agent implementation
-├── tools.py                        # 11 tool functions
+├── maestro_adapter.py              # Default issue-runner adapter
+├── agent_registry.py               # Runtime alias resolution
+├── tools.py                        # Shared tool functions
 ├── llm_client.py                   # GitHub Models client
 ├── README.md                       # Agent system overview
 └── knowledge/                      # Knowledge base (auto-updated)
@@ -471,7 +472,7 @@ configs/
 .vscode/
 └── tasks.json                      # VS Code task integration
 
-docs/agents/
+docs/maestro/agents/
 └── AUTONOMOUS-AGENT-GUIDE.md       # This file
 ```
 
@@ -483,7 +484,7 @@ agents/
 └── base_agent.py                   # OLD: Base class for manual agent
 ```
 
-**Note:** The old `workflow_agent.py` is kept for reference but superseded by `autonomous_workflow_agent.py`.
+**Note:** The old `workflow_agent.py` is kept for reference but superseded by the current Maestro-based runtime path.
 
 ---
 
@@ -525,7 +526,7 @@ agents/
 - ❌ Learning happens AFTER (separate step)
 - ❌ Manual knowledge base updates
 
-### After (Autonomous autonomous_workflow_agent.py)
+### After (Current Maestro-based runtime)
 
 - ✅ Real GPT-5.1-codex AI reasoning
 - ✅ Autonomous decision making

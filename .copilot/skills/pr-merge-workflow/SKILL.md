@@ -4,6 +4,13 @@
 <file>
 # PR Merge Workflow (Module)
 
+Use this skill as the canonical implementation source for `pr-merge`.
+
+## Use When
+
+- A PR is ready or nearly ready and needs merge validation.
+- An issue number needs to be resolved through PR discovery and merge.
+
 ## Steps
 
 1. Verify PR is open, mergeable, and not draft.
@@ -13,11 +20,20 @@
 5. Clean `.tmp` files for this issue/PR.
 6. Sync local `main` and verify final state.
 
+## Required Checks
+
+- Choose the correct repo and validation gate before merge.
+- Require real validation evidence in the PR body.
+- For UI/UX-affecting changes, require recorded UX authority resolution.
+- Capture merge metrics when tooling supports it.
+
 ## Guardrails
 
 - Do not fix failing code/tests in this workflow.
 - Delegate implementation changes to `resolve-issue`.
 - Document any admin override rationale.
+- Never use `/tmp`; use `.tmp/`.
+- Never merge with failing CI.
 
 </file>
 </skill>
