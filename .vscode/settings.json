@@ -47,6 +47,7 @@
     "npm audit": true,
     "npx vitest": true,
     "vitest": true,
+    "/bash": true,
     "gh": true,
     "rg": true,
     "fd": true,
