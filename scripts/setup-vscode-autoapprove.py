@@ -137,7 +137,7 @@ def reconcile_settings(base: Dict[str, Any], profile_name: str) -> Dict[str, Any
     
     return cleaned
 
-def configure_workspace(profile: str, global_only: bool = False, workspace_only: bool = False, check: bool = False) -> int:
+def configure_workspace(profile: str, global_only: bool = False, workspace_only: bool = False, check: bool = False, dry_run: bool = False) -> int:
     root_dir = Path(__file__).parent.parent
     
     paths = []
@@ -159,21 +159,22 @@ def configure_workspace(profile: str, global_only: bool = False, workspace_only:
     }
         
     for path in paths:
-        if path.parent.parent.name == "_external" and not path.parent.parent.exists():
+        # Check if the external path exists but safely skip
+        if path.parts[-3:-2] == ("AI-Agent-Framework-Client",) and not path.parent.parent.exists():
             continue
             
         try:
             settings = read_json_file(path)
             
+            actual_root = {}
+            if "chat.tools.subagent.autoApprove" in settings:
+                actual_root["chat.tools.subagent.autoApprove"] = settings["chat.tools.subagent.autoApprove"]
+            if "chat.tools.terminal.autoApprove" in settings:
+                actual_root["chat.tools.terminal.autoApprove"] = settings["chat.tools.terminal.autoApprove"]
+                
+            drifts = collect_drift(expected_root, actual_root)
+            
             if check:
-                # We only check drift for the keys this script cares about
-                actual_root = {}
-                if "chat.tools.subagent.autoApprove" in settings:
-                    actual_root["chat.tools.subagent.autoApprove"] = settings["chat.tools.subagent.autoApprove"]
-                if "chat.tools.terminal.autoApprove" in settings:
-                    actual_root["chat.tools.terminal.autoApprove"] = settings["chat.tools.terminal.autoApprove"]
-                    
-                drifts = collect_drift(expected_root, actual_root)
                 if drifts:
                     print(f"❌ Settings drift detected in {path}:")
                     for d in drifts:
@@ -181,8 +182,23 @@ def configure_workspace(profile: str, global_only: bool = False, workspace_only:
                     drift_count += 1
                 else:
                     print(f"✅ Settings match profile '{profile}' in {path}")
+            elif dry_run:
+                print(f"🔍 Dry Run: Previewing projection for {path}...")
+                if not drifts:
+                    print("✅ No changes needed. Settings are fully reconciled.")
+                else:
+                    print("📝 Would reconcile the following drift:")
+                    for drift in drifts:
+                        if "extra managed key" in drift:
+                            print(f"  🗑️  Would remove: {drift}")
+                        else:
+                            print(f"  - {drift}")
             else:
                 updated = reconcile_settings(settings, profile)
+                if drifts:
+                    removed = [d for d in drifts if "extra managed key" in d]
+                    if removed:
+                        print(f"🧹 Removed {len(removed)} stale managed keys in {path}")
                 write_json_file(path, updated)
                 print(f"✅ Updated {profile} profile in: {path}")
                 success_count += 1
@@ -201,11 +217,12 @@ def main():
     parser.add_argument("--global-only", action="store_true", help="Only configure global user settings")
     parser.add_argument("--workspace-only", action="store_true", help="Only configure workspace settings")
     parser.add_argument("--check", action="store_true", help="Check config instead of updating")
+    parser.add_argument("--dry-run", action="store_true", help="Preview changes without modifying files")
     parser.add_argument("--profile", choices=["safe", "trusted-workflow", "low-friction"], default="trusted-workflow", help="Approval profile to use")
     args = parser.parse_args()
 
     try:
-        sys.exit(configure_workspace(args.profile, args.global_only, args.workspace_only, args.check))
+        sys.exit(configure_workspace(args.profile, args.global_only, args.workspace_only, args.check, args.dry_run))
     except Exception as e:
         print(f"❌ Failed: {e}")
         sys.exit(1)

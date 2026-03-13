@@ -110,11 +110,6 @@
         "TMP": "${workspaceFolder}/.tmp",
         "TEMP": "${workspaceFolder}/.tmp"
     },
-    "chat.agent.maxRequests": 50,
-    "issueagent.customAgent": "resolve-issue",
-    "chat.allowAnonymousAccess": true,
-    "chat.checkpoints.showFileChanges": true,
-    "chat.customAgentInSubagent.enabled": true,
     "chat.tools.subagent.autoApprove": {
         "Plan": true,
         "create-issue": true,
@@ -123,6 +118,11 @@
         "pr-merge": true,
         "ralph-agent": true
     },
+    "chat.agent.maxRequests": 50,
+    "issueagent.customAgent": "resolve-issue",
+    "chat.allowAnonymousAccess": true,
+    "chat.checkpoints.showFileChanges": true,
+    "chat.customAgentInSubagent.enabled": true,
     "mcp": {
         "servers": {
             "context7": {

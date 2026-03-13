@@ -80,6 +80,8 @@ That model is deprecated because it duplicated policy, hid source-of-truth owner
 
 ## Projection and Managed Keys
 
-Our projection tools utilize a **reconciliation** strategy. This means that for top-level keys managed by this repository (such as `chat.tools.subagent.autoApprove`, `chat.tools.terminal.autoApprove`, `issueagent.customAgent`, and `mcp`), the canonical repository sources completely overwrite any settings you have in the workspace `.vscode/settings.json`.
+Our projection tools utilize a **reconciliation** strategy. This means that for any settings keys prefixed by managed domains (such as `chat.`, `mcp`, `github.copilot.`, `issueagent.`), the canonical repository sources in `.copilot/config/` will completely override and reconcile known keys, while stripping any unknown or stale keys in the workspace `.vscode/settings.json`.
 
 If you add a custom unknown sub-key to `mcp` within `.vscode/settings.json`, it will be identified as drift during the `--check` phase and wiped out upon running the projection scripts.
+
+You can run the projection scripts with the `--dry-run` flag to preview which managed keys are stale and would be removed without actually modifying your settings files.
