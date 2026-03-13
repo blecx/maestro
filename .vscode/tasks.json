@@ -18,6 +18,22 @@
       }
     },
     {
+      "label": "⚙️ Configure Approval Profile (Trusted Workflow)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["${workspaceFolder}/scripts/setup-low-approval.sh", "trusted-workflow"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": true,
+        "clear": true
+      }
+    },
+    {
       "label": "⚙️ Configure Approval Profile (Safe)",
       "type": "shell",
       "command": "bash",

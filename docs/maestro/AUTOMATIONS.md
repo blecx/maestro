@@ -112,3 +112,4 @@ The following are no longer valid assumptions and should not be reintroduced:
 - `agents/autonomous_workflow_agent.py` as the runtime default.
 - hidden folder-open setup that silently enables low-friction approvals.
 - `.vscode/` as the canonical home for agent policy.
+- `docs/maestro/APPROVAL_PROFILES.md` - Explicit guide to trust boundaries and profile selection.

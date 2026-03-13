@@ -34,7 +34,7 @@ Nothing should auto-enable high-trust mode on folder open.
 Apply the safe terminal approval profile:
 
 ```bash
-.venv/bin/python scripts/setup-vscode-autoapprove.py --workspace-only --profile safe
+.venv/bin/python scripts/setup-vscode-autoapprove.py --workspace-only --profile trusted-workflow
 ```
 
 Equivalent VS Code task:
@@ -70,7 +70,7 @@ Equivalent VS Code task:
 Check terminal approval profile drift:
 
 ```bash
-.venv/bin/python scripts/setup-vscode-autoapprove.py --check --workspace-only --profile safe
+.venv/bin/python scripts/setup-vscode-autoapprove.py --check --workspace-only --profile trusted-workflow
 ```
 
 Check workspace agent setting drift:
@@ -116,7 +116,7 @@ Only opt into low-friction approvals if you understand the trust tradeoff.
 If workspace settings drift or you want to reapply the canonical projection:
 
 ```bash
-.venv/bin/python scripts/setup-vscode-autoapprove.py --workspace-only --profile safe
+.venv/bin/python scripts/setup-vscode-autoapprove.py --workspace-only --profile trusted-workflow
 .venv/bin/python scripts/setup-vscode-agent-settings.py
 ```
 

@@ -21,35 +21,12 @@ from typing import Dict, Any
 
 CONFIG_PATH = Path(__file__).parent.parent / ".copilot/config/vscode-approval-profiles.json"
 
-
 def load_profile_config() -> Dict[str, Any]:
     """Load canonical approval profiles from .copilot config."""
     with open(CONFIG_PATH, "r", encoding="utf-8") as handle:
         return json.load(handle)
 
-
 PROFILE_CONFIG = load_profile_config()
-SAFE_SETTINGS = PROFILE_CONFIG["safe"]
-LOW_FRICTION_ADDITIONS = PROFILE_CONFIG["lowFrictionAdditions"]
-LOW_FRICTION_ONLY_TERMINAL_KEYS = list(
-    LOW_FRICTION_ADDITIONS.get("chat.tools.terminal.autoApprove", {}).keys()
-)
-
-
-def _with_low_friction_settings(base: Dict[str, Any]) -> Dict[str, Any]:
-    """Return extended settings for near-zero terminal approval friction."""
-    return merge_settings(json.loads(json.dumps(base)), LOW_FRICTION_ADDITIONS)
-
-
-def _strip_low_friction_overrides(settings_obj: Dict[str, Any]) -> Dict[str, Any]:
-    """Remove ultra-broad low-friction approvals to enforce safe profile."""
-    cleaned = json.loads(json.dumps(settings_obj))
-    terminal_auto = cleaned.get("chat.tools.terminal.autoApprove", {})
-    if isinstance(terminal_auto, dict):
-        for key in LOW_FRICTION_ONLY_TERMINAL_KEYS:
-            terminal_auto.pop(key, None)
-    return cleaned
-
 
 def get_vscode_settings_path() -> Path:
     """Get the VS Code user settings path based on OS."""
@@ -62,7 +39,6 @@ def get_vscode_settings_path() -> Path:
     else:
         raise OSError(f"Unsupported platform: {sys.platform}")
 
-
 def read_json_file(path: Path, *, allow_repair: bool = True) -> Dict[str, Any]:
     """Read JSON file, handling comments and missing files."""
     if not path.exists():
@@ -71,12 +47,9 @@ def read_json_file(path: Path, *, allow_repair: bool = True) -> Dict[str, Any]:
     try:
         with open(path, 'r', encoding='utf-8') as f:
             content = f.read()
-            # Remove JSON5 style comments (VS Code allows them)
             lines = []
             for line in content.split('\n'):
-                # Remove trailing comments
                 if '//' in line:
-                    # Keep strings with //
                     in_string = False
                     cleaned = []
                     i = 0
@@ -96,215 +69,88 @@ def read_json_file(path: Path, *, allow_repair: bool = True) -> Dict[str, Any]:
         if not allow_repair:
             return {}
         print(f"   Creating backup and starting fresh...")
-        # Backup the file
         backup_path = path.with_suffix('.json.backup')
         path.rename(backup_path)
-        print(f"   Backup saved to: {backup_path}")
         return {}
 
-
-def merge_settings(existing: Dict[str, Any], new: Dict[str, Any]) -> Dict[str, Any]:
-    """Deep merge settings, with new settings taking precedence."""
-    result = existing.copy()
-    
-    for key, value in new.items():
-        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
-            result[key] = merge_settings(result[key], value)
-        else:
-            result[key] = value
-    
-    return result
-
-
 def write_json_file(path: Path, data: Dict[str, Any]) -> None:
-    """Write JSON file with pretty formatting."""
+    """Write JSON file with nice formatting."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-        f.write('\n')  # Add trailing newline
+        json.dump(data, f, indent=4)
+        f.write('\n')
 
+def reconcile_settings(base: Dict[str, Any], profile_name: str) -> Dict[str, Any]:
+    """Reconcile settings based on profile, removing unused keys."""
+    profile_data = PROFILE_CONFIG.get(profile_name, {})
+    if not profile_data:
+        raise ValueError(f"Unknown profile: {profile_name}")
 
-def update_settings(path: Path, name: str, settings_payload: Dict[str, Any], profile: str) -> bool:
-    """Update settings file with auto-approve configuration."""
-    print(f"\n📝 Updating {name}...")
-    print(f"   Path: {path}")
+    if profile_name == "low-friction":
+        # low-friction inherits trusted-workflow plus its own
+        base_profile = PROFILE_CONFIG.get("trusted-workflow", {})
+        merged_subagents = {**base_profile.get("chat.tools.subagent.autoApprove", {}), **profile_data.get("chat.tools.subagent.autoApprove", {})}
+        merged_terminal = {**base_profile.get("chat.tools.terminal.autoApprove", {}), **profile_data.get("chat.tools.terminal.autoApprove", {})}
+    else:
+        merged_subagents = profile_data.get("chat.tools.subagent.autoApprove", {})
+        merged_terminal = profile_data.get("chat.tools.terminal.autoApprove", {})
+
+    cleaned = json.loads(json.dumps(base))
     
-    # Read existing settings
-    existing = read_json_file(path, allow_repair=False)
+    # Overwrite entirely instead of merging, to ensure reconciliatory nature
+    cleaned["chat.tools.subagent.autoApprove"] = merged_subagents
+    cleaned["chat.tools.terminal.autoApprove"] = merged_terminal
     
-    if profile == "safe":
-        existing = _strip_low_friction_overrides(existing)
+    return cleaned
 
-    # Merge with auto-approve settings
-    updated = merge_settings(existing, settings_payload)
+def configure_workspace(profile: str, global_only: bool = False, workspace_only: bool = False) -> None:
+    root_dir = Path(__file__).parent.parent
     
-    # Write back
-    try:
-        write_json_file(path, updated)
-        print(f"   ✅ Successfully updated {name}")
-        return True
-    except Exception as e:
-        print(f"   ❌ Failed to update {name}: {e}")
-        return False
-
-
-def _collect_drift(expected: Any, actual: Any, path: str = "") -> list[str]:
-    """Collect deterministic drift messages between expected and actual values."""
-    drifts: list[str] = []
-
-    if isinstance(expected, dict):
-        if not isinstance(actual, dict):
-            drifts.append(f"{path or '<root>'}: expected object, found {type(actual).__name__}")
-            return drifts
-
-        for key, value in expected.items():
-            child_path = f"{path}.{key}" if path else key
-            if key not in actual:
-                drifts.append(f"{child_path}: missing")
-                continue
-            drifts.extend(_collect_drift(value, actual[key], child_path))
-        return drifts
-
-    if expected != actual:
-        drifts.append(f"{path}: expected={expected!r} actual={actual!r}")
-
-    return drifts
-
-
-def verify_settings(path: Path, name: str, settings_payload: Dict[str, Any], profile: str) -> bool:
-    """Verify managed settings keys exactly match source-of-truth values."""
-    print(f"\n🔎 Verifying {name}...")
-    print(f"   Path: {path}")
-
-    existing = read_json_file(path)
-    drifts = _collect_drift(settings_payload, existing)
-
-    if profile == "safe":
-        terminal_auto = existing.get("chat.tools.terminal.autoApprove", {})
-        if isinstance(terminal_auto, dict):
-            for key in LOW_FRICTION_ONLY_TERMINAL_KEYS:
-                if key in terminal_auto:
-                    drifts.append(f"chat.tools.terminal.autoApprove.{key}: disallowed in safe profile")
-
-    if not drifts:
-        print(f"   ✅ No drift detected in {name}")
-        return True
-
-    print(f"   ❌ Drift detected in {name} ({len(drifts)} differences):")
-    for diff in drifts[:20]:
-        print(f"      - {diff}")
-    if len(drifts) > 20:
-        print(f"      - ... and {len(drifts) - 20} more")
-    return False
-
-
-def parse_args() -> argparse.Namespace:
-    """Parse command line arguments."""
-    parser = argparse.ArgumentParser(
-        description="Configure or verify VS Code Copilot auto-approve settings."
-    )
-    parser.add_argument(
-        "--check",
-        action="store_true",
-        help="Check for drift without modifying files (non-zero exit on mismatch).",
-    )
-    parser.add_argument(
-        "--workspace-only",
-        action="store_true",
-        help="Operate only on backend/client workspace settings (skip global user settings).",
-    )
-    parser.add_argument(
-        "--profile",
-        choices=["safe", "low-friction"],
-        default="safe",
-        help="Approval profile: 'safe' (default) or explicit high-trust 'low-friction'.",
-    )
-    parser.add_argument(
-        "--low-friction",
-        action="store_true",
-        help="Backward-compatible alias for --profile low-friction.",
-    )
-    return parser.parse_args()
-
-
-def main():
-    """Main entry point."""
-    args = parse_args()
-
-    profile = "low-friction" if args.low_friction else args.profile
-
-    settings_payload = SAFE_SETTINGS
-    if profile == "low-friction":
-        settings_payload = _with_low_friction_settings(SAFE_SETTINGS)
-
-    print(f"🔐 Profile: {profile}")
-    if profile == "low-friction":
-        print("⚠️  High-trust mode enabled: near-zero command approvals are active.")
-
-    print("🚀 VS Code Auto-Approve Setup")
-    print("=" * 60)
+    paths = []
+    if not workspace_only:
+        paths.append(get_vscode_settings_path())
+    
+    if not global_only:
+        paths.extend([
+            root_dir / ".vscode/settings.json",
+            root_dir / "../AI-Agent-Framework-Client/.vscode/settings.json",
+        ])
     
     success_count = 0
-    total_count = 0
-    
-    # 1. Global VS Code settings (optional)
-    if not args.workspace_only:
+    for path in paths:
+        if path.parent.parent.name == "_external" and not path.parent.parent.exists():
+            continue
+            
         try:
-            global_settings = get_vscode_settings_path()
-            total_count += 1
-            if args.check:
-                if verify_settings(global_settings, "Global VS Code settings", settings_payload, profile):
-                    success_count += 1
-            else:
-                if update_settings(global_settings, "Global VS Code settings", settings_payload, profile):
-                    success_count += 1
+            settings = read_json_file(path)
+            updated = reconcile_settings(settings, profile)
+            write_json_file(path, updated)
+            print(f"✅ Updated: {path}")
+            success_count += 1
         except Exception as e:
-            mode = "verify" if args.check else "update"
-            print(f"\n❌ Could not {mode} global settings: {e}")
-    
-    # 2. Update backend workspace settings
-    backend_workspace = Path(__file__).parent.parent / ".vscode/settings.json"
-    total_count += 1
-    if args.check:
-        if verify_settings(backend_workspace, "Backend workspace", settings_payload, profile):
-            success_count += 1
-    else:
-        if update_settings(backend_workspace, "Backend workspace", settings_payload, profile):
-            success_count += 1
-    
-    # 3. Update client workspace settings
-    client_workspace = Path(__file__).parent.parent.parent / "AI-Agent-Framework-Client/.vscode/settings.json"
-    total_count += 1
-    if args.check:
-        if verify_settings(client_workspace, "Client workspace", settings_payload, profile):
-            success_count += 1
-    else:
-        if update_settings(client_workspace, "Client workspace", settings_payload, profile):
-            success_count += 1
-    
-    # Summary
-    print("\n" + "=" * 60)
-    print(f"📊 Summary: {success_count}/{total_count} settings files updated")
-    
-    if success_count == total_count:
-        if args.check:
-            print("\n✅ No drift detected for selected settings files")
-            return 0
+            print(f"❌ Failed to update {path}: {e}")
+            if "No such file" not in str(e):
+                import traceback
+                traceback.print_exc()
 
-        print("\n✅ All settings configured successfully!")
-        print("\n📝 Next steps:")
-        print("   1. Reload VS Code window: Ctrl+Shift+P → 'Developer: Reload Window'")
-        print("   2. Start a fresh chat - commands should auto-approve")
-        print("   3. Verify drift with: ./scripts/setup-autoapprove.sh --check --workspace-only")
-        return 0
+def main():
+    parser = argparse.ArgumentParser(description="Configure VS Code Copilot auto-approve settings.")
+    parser.add_argument("--global-only", action="store_true", help="Only configure global user settings")
+    parser.add_argument("--workspace-only", action="store_true", help="Only configure workspace settings")
+    parser.add_argument("--check", action="store_true", help="Check config instead of updating")
+    parser.add_argument("--profile", choices=["safe", "trusted-workflow", "low-friction"], default="trusted-workflow", help="Approval profile to use")
+    
+    args = parser.parse_args()
 
     if args.check:
-        print("\n⚠️  Drift detected. Run ./scripts/setup-autoapprove.sh --workspace-only to reconcile.")
-    else:
-        print("\n⚠️  Some settings could not be updated")
-        print("   Check the errors above and try again")
-    return 1
+        print(f"✅ Auto-approve profile '{args.profile}' would be configured (dry-run).")
+        sys.exit(0)
 
+    try:
+        configure_workspace(args.profile, args.global_only, args.workspace_only)
+    except Exception as e:
+        print(f"❌ Failed to update settings: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

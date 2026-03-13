@@ -14,7 +14,7 @@ Use workspace-local projection first. Only add user-level settings when you inte
 For a fresh clone of this repository, run the explicit workspace projections instead of pasting large JSON blocks into VS Code user settings:
 
 ```bash
-bash scripts/setup-low-approval.sh safe
+bash scripts/setup-low-approval.sh trusted-workflow
 /usr/local/bin/python3.12 scripts/setup-vscode-agent-settings.py
 ```
 
@@ -62,7 +62,7 @@ If a global default conflicts with this repository's projected workspace setting
 Check workspace projections explicitly:
 
 ```bash
-python3 scripts/setup-vscode-autoapprove.py --check --profile safe
+python3 scripts/setup-vscode-autoapprove.py --check --profile trusted-workflow
 /usr/local/bin/python3.12 scripts/setup-vscode-agent-settings.py --check
 ```
 
