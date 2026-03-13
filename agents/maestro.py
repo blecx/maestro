@@ -151,7 +151,7 @@ class MaestroOrchestrator:
         issue_body: str,
         changed_files: list[str],
     ) -> OrchestratorResult:
-        async with MCPMultiClient(self._server_urls) as mcp:
+        async with MCPMultiClient([{"name": k, "url": v} for k, v in self._server_urls.items()]) as mcp:
             # ── 1. Route ─────────────────────────────────────────────
             router = RouterAgent(mcp)
             decision: RoutingDecision = await router.route(
