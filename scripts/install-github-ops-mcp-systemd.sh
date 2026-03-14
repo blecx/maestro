@@ -50,8 +50,8 @@ if [[ ! -f "${ENV_FILE}" ]]; then
 #   (or) GITHUB_TOKEN=...
 #
 # Restrict allowed repos (comma-separated). Defaults are:
-#   blecx/maestro, blecx/AI-Agent-Framework-Client
-# GITHUB_OPS_ALLOWED_REPOS=blecx/maestro,blecx/AI-Agent-Framework-Client
+#   blecx/maestro, blecx/maestro-client
+# GITHUB_OPS_ALLOWED_REPOS=blecx/maestro,blecx/maestro-client
 EOF
   sudo chmod 0600 "${ENV_FILE}"
   echo "Created ${ENV_FILE} template."

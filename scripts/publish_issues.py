@@ -29,8 +29,8 @@ _GH_SLEEP_SECONDS = DEFAULT_SLEEP_SECONDS
 _last_gh_call_monotonic: float | None = None
 
 REPO_MAP = {
-    "AI-Agent-Framework": "blecx/maestro",
-    "AI-Agent-Framework-Client": "blecx/AI-Agent-Framework-Client",
+    "maestro": "blecx/maestro",
+    "maestro-client": os.environ.get("CLIENT_REPO", "blecx/maestro-client"),
 }
 
 

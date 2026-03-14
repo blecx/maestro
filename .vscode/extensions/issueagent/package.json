@@ -6,12 +6,12 @@
   "publisher": "ai-agent-framework",
   "repository": {
     "type": "git",
-    "url": "https://github.com/blecx/AI-Agent-Framework.git"
+    "url": "https://github.com/blecx/maestro.git"
   },
   "bugs": {
-    "url": "https://github.com/blecx/AI-Agent-Framework/issues"
+    "url": "https://github.com/blecx/maestro/issues"
   },
-  "homepage": "https://github.com/blecx/AI-Agent-Framework",
+  "homepage": "https://github.com/blecx/maestro",
   "engines": {
     "vscode": "^1.90.0"
   },

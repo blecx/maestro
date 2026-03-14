@@ -112,7 +112,7 @@ review_configuration() {
   info "Reviewing resulting configuration (sanity checks)..."
 
   local backend_settings="${ROOT_DIR}/.vscode/settings.json"
-  local client_settings="${ROOT_DIR}/../AI-Agent-Framework-Client/.vscode/settings.json"
+  local client_settings="${ROOT_DIR}/${CLIENT_WORKSPACE_DIR:-../client}/.vscode/settings.json"
 
   require_file "$backend_settings"
   require_file "$client_settings"

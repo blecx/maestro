@@ -4,7 +4,7 @@ Tools for the workflow agent.
 
 These tools enable the agent to interact with GitHub, files, git, and testing.
 
-Note: This repository is multi-repo (backend + `../AI-Agent-Framework-Client`).
+Note: This repository is multi-repo (backend + `../client`).
 Most tools therefore accept an optional `working_directory` and/or `repo` argument so
 the agent can operate on the correct repository root.
 """

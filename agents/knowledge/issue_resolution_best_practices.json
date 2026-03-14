@@ -170,7 +170,7 @@
         {
           "practice": "Validate in correct working directory for multi-repo",
           "problem": "Backend and client have separate validation requirements",
-          "solution": "Client: cd ../AI-Agent-Framework-Client && npm run lint/test/build",
+          "solution": "Client: cd ../client && npm run lint/test/build",
           "validation": "Run all three validations in sequence for client changes",
           "first_seen": 59
         }
@@ -245,7 +245,7 @@
     "multi_repo_coordination": [
       "Identify if fix requires backend, client, or both repos",
       "Plan per-repo validation in correct working directory",
-      "Client: cd ../AI-Agent-Framework-Client && npm run lint && npm test -- --run && npm run build",
+      "Client: cd ../client && npm run lint && npm test -- --run && npm run build",
       "Backend: source .venv/bin/activate && python -m flake8 apps/api/ && pytest",
       "Update PR template cross-repo impact section with specific repos/services"
     ]

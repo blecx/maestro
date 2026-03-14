@@ -263,7 +263,7 @@ The agent itself uses:
 - `agents/knowledge/` - Learning database
 - `.github/copilot-instructions.md` - Project conventions
 
-See [docs/agents/AUTONOMOUS-AGENT-GUIDE.md](https://github.com/blecx/AI-Agent-Framework/blob/main/docs/agents/AUTONOMOUS-AGENT-GUIDE.md) for agent configuration.
+See [docs/agents/AUTONOMOUS-AGENT-GUIDE.md](https://github.com/blecx/maestro/blob/main/docs/agents/AUTONOMOUS-AGENT-GUIDE.md) for agent configuration.
 
 ## Troubleshooting
 
@@ -413,15 +413,15 @@ Possible improvements:
 
 ## Related Documentation
 
-- **[AUTONOMOUS-AGENT-GUIDE.md](https://github.com/blecx/AI-Agent-Framework/blob/main/docs/agents/AUTONOMOUS-AGENT-GUIDE.md)** - Complete agent documentation
-- **[WORK-ISSUE-WORKFLOW.md](https://github.com/blecx/AI-Agent-Framework/blob/main/docs/WORK-ISSUE-WORKFLOW.md)** - 6-phase workflow details
-- **[agents/README.md](https://github.com/blecx/AI-Agent-Framework/blob/main/agents/README.md)** - Agent system overview
+- **[AUTONOMOUS-AGENT-GUIDE.md](https://github.com/blecx/maestro/blob/main/docs/agents/AUTONOMOUS-AGENT-GUIDE.md)** - Complete agent documentation
+- **[WORK-ISSUE-WORKFLOW.md](https://github.com/blecx/maestro/blob/main/docs/WORK-ISSUE-WORKFLOW.md)** - 6-phase workflow details
+- **[agents/README.md](https://github.com/blecx/maestro/blob/main/agents/README.md)** - Agent system overview
 
 ## Support
 
 For issues or questions:
 
-1. Check [AUTONOMOUS-AGENT-GUIDE.md](https://github.com/blecx/AI-Agent-Framework/blob/main/docs/agents/AUTONOMOUS-AGENT-GUIDE.md) troubleshooting section
+1. Check [AUTONOMOUS-AGENT-GUIDE.md](https://github.com/blecx/maestro/blob/main/docs/agents/AUTONOMOUS-AGENT-GUIDE.md) troubleshooting section
 2. Run agent manually to isolate the issue: `./scripts/work-issue.py --issue N --dry-run`
 3. Check Python environment: `source .venv/bin/activate && python3 --version`
 4. Verify GitHub auth: `gh auth status`

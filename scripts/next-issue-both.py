@@ -2,7 +2,7 @@
 """Select the next issue across BOTH repositories.
 
 This repo already includes `scripts/next-issue.py`, which implements a Step-1
-selection workflow for the client repo (blecx/AI-Agent-Framework-Client).
+selection workflow for the client repo (blecx/maestro-client).
 
 This helper script:
 - Gets the next client Step-1 issue via `scripts/next-issue.py` (dry-run, no reconcile)
@@ -34,7 +34,7 @@ from typing import Any, Optional
 
 REPO_ROOT = Path(__file__).parent.parent
 
-CLIENT_REPO = "blecx/AI-Agent-Framework-Client"
+CLIENT_REPO = "blecx/maestro-client"
 BACKEND_REPO = "blecx/maestro"
 DEFAULT_GH_MIN_INTERVAL_SECONDS = 1.0
 _GH_LAST_REQUEST_TS: float | None = None

@@ -525,6 +525,5 @@ def load_default_policy() -> GitHubOpsPolicy:
         allowed_repos_env=os.getenv("GITHUB_OPS_ALLOWED_REPOS"),
         default_allowed_repos=[
             "blecx/maestro",
-            "blecx/AI-Agent-Framework-Client",
         ],
     )

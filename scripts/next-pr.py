@@ -3,7 +3,7 @@
 
 This helper scans open PRs across:
 - blecx/maestro (backend)
-- blecx/AI-Agent-Framework-Client (client)
+- ${CLIENT_REPO} (client)
 
 It ranks PRs by merge readiness (CI success, mergeable, clean merge state, not draft)
 so the pr-merge workflow can stay PR-focused.
@@ -36,7 +36,7 @@ RepoKey = Literal["backend", "client"]
 
 REPOS: dict[RepoKey, str] = {
     "backend": "blecx/maestro",
-    "client": "blecx/AI-Agent-Framework-Client",
+    "client": os.environ.get("CLIENT_REPO", "blecx/maestro-client"),
 }
 
 DEFAULT_GH_MIN_INTERVAL_SECONDS = 1.0
