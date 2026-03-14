@@ -12,7 +12,7 @@ ISO 21500 Project Management AI Agent - Full-stack app with FastAPI (Python 3.10
 
 1. **Start with a Plan/Spec**
    - Define clear goal, scope, acceptance criteria, and constraints
-   - Consider impact on related repo: [`blecx/maestro-Client`](https://github.com/blecx/maestro-Client)
+   - Consider impact on related repo: [`YOUR_ORG/YOUR_CLIENT_REPO`](https://github.com/YOUR_ORG/YOUR_CLIENT_REPO)
    - Document any cross-repo dependencies or API changes
 
 2. **Break Work into Small Issues**
@@ -26,8 +26,8 @@ ISO 21500 Project Management AI Agent - Full-stack app with FastAPI (Python 3.10
    - **Comprehensive descriptions:** Include goal, scope (in/out), acceptance criteria, API contract, technical approach, testing requirements, documentation updates
    - Link related issues across repositories when coordinating changes
    - **Repository placement:**
-     - **Backend issues** (API, services, domain models) → `blecx/maestro`
-     - **UX issues** (React components, client API clients) → `blecx/maestro-Client`
+     - **Backend issues** (API, services, domain models) → `YOUR_ORG/YOUR_REPO`
+     - **UX issues** (React components, client API clients) → `YOUR_ORG/YOUR_CLIENT_REPO`
 
 3. **Implement One Issue Per PR**
    - Keep diffs small and reviewable (prefer < 200 lines changed)
@@ -59,12 +59,12 @@ ISO 21500 Project Management AI Agent - Full-stack app with FastAPI (Python 3.10
 **When selecting the next issue to work on, ALWAYS follow this priority order:**
 
 1. **Priority 1: Backend/TUI/CLI issues**
-   - Repository: `blecx/maestro`
+   - Repository: `YOUR_ORG/YOUR_REPO`
    - Includes: API services, domain models, CLI tools, backend tests
    - Example issue numbers: #69-#78 (Step 2 backend)
 
 2. **Priority 2: Client/UX issues**
-   - Repository: `blecx/maestro-Client`
+   - Repository: `YOUR_ORG/YOUR_CLIENT_REPO`
    - Includes: React components, UI features, client tests
    - Example issue numbers: #102-#109 (Step 2 frontend)
 
@@ -377,14 +377,14 @@ When adding JavaScript dependencies:
 
 ### Working with maestro-client
 
-This backend often requires coordinated changes with the React/Vite client in [`blecx/maestro-Client`](https://github.com/blecx/maestro-Client).
+This backend often requires coordinated changes with the React/Vite client in [`YOUR_ORG/YOUR_CLIENT_REPO`](https://github.com/YOUR_ORG/YOUR_CLIENT_REPO).
 
 **When making API changes:**
 
 1. **Document breaking changes** in PR description
 2. **Version API endpoints** if breaking compatibility
 3. **Create matching client issue** before merging backend changes
-4. **Link issues across repos**: "Requires blecx/maestro-Client#123"
+4. **Link issues across repos**: "Requires YOUR_ORG/YOUR_CLIENT_REPO#123"
 5. **Test integration** by running both services together
 
 **Common coordination scenarios:**

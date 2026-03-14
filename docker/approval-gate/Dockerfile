@@ -5,7 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     APPROVAL_GATE_PORT=8001 \
     AGENT_BUS_URL=http://mcp-agent-bus:3031
 
-WORKDIR /workspace
+WORKDIR /factory
 
 RUN pip install --no-cache-dir \
     fastapi==0.109.1 \

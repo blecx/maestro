@@ -7,7 +7,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends git curl \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /workspace
+WORKDIR /factory
 
 # Install full requirements (includes agents package deps)
 COPY requirements.txt .

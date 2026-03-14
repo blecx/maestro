@@ -1,0 +1,16 @@
+# Phase 5: Runtime Packaging Boundaries
+.github/
+.copilot/
+.vscode/
+.tmp/
+agents/training/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+venv/
+.venv/

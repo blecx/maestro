@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 RUN mkdir -p /data
 
-WORKDIR /workspace
+WORKDIR /factory
 
 RUN pip install --no-cache-dir \
     mcp==1.12.4 \

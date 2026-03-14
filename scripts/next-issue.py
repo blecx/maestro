@@ -65,7 +65,7 @@ STATUS_FILE = _resolve_step1_file(
 KNOWLEDGE_FILE = REPO_ROOT / ".issue-resolution-knowledge.json"
 
 # GitHub repository
-GITHUB_REPO = "blecx/maestro"
+GITHUB_REPO = os.environ.get("TARGET_REPO", "YOUR_ORG/YOUR_REPO")
 
 # Configuration
 DEFAULT_TIMEOUT = 15  # seconds for individual operations

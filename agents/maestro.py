@@ -8,7 +8,7 @@ implement a GitHub issue end-to-end.
 
 Typical usage (programmatic):
     orq = MaestroOrchestrator(server_urls={...})
-    result = await orq.run_issue(42, "blecx/maestro", "Fix bug", "Body...")
+    result = await orq.run_issue(42, "YOUR_ORG/YOUR_REPO", "Fix bug", "Body...")
     print(result.pr_url)
 
 See: docs/agents/MAESTRO-DESIGN.md

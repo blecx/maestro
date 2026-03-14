@@ -3,9 +3,12 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     SEARCH_MCP_PORT=3013 \
-    REPO_FUNDAMENTALS_REPO_ROOT=/workspace
+    REPO_FUNDAMENTALS_REPO_ROOT=/target
 
-WORKDIR /workspace
+WORKDIR /factory
+COPY apps/__init__.py apps/__init__.py
+COPY apps/mcp/__init__.py apps/mcp/__init__.py
+COPY apps/mcp/repo_fundamentals/ apps/mcp/repo_fundamentals/
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ripgrep && \

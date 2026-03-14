@@ -24,7 +24,7 @@ Whenever a backend API contract (in `apps/api/routers/*.py` or `models.py`) is m
 
 ### 2. Cross-Linking Issues
 When performing GitHub operations or creating PRs that span both repos, use explicit Markdown dependency syntax to link them:
-- In the PR or Issue body, add: `Requires blecx/maestro-client#<ISSUE_NUMBER>`
+- In the PR or Issue body, add: `Requires YOUR_ORG/YOUR_CLIENT_REPO#<ISSUE_NUMBER>`
 - Ensure both the backend and client issues reference each other structurally.
 
 ### 3. Validation Routine

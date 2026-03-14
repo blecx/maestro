@@ -29,8 +29,8 @@ _GH_SLEEP_SECONDS = DEFAULT_SLEEP_SECONDS
 _last_gh_call_monotonic: float | None = None
 
 REPO_MAP = {
-    "maestro": "blecx/maestro",
-    "maestro-client": os.environ.get("CLIENT_REPO", "blecx/maestro-client"),
+    "maestro": os.environ.get("TARGET_REPO", "YOUR_ORG/YOUR_REPO"),
+    "maestro-client": os.environ.get("CLIENT_REPO", os.environ.get("CLIENT_REPO", "YOUR_ORG/YOUR_CLIENT_REPO")),
 }
 
 

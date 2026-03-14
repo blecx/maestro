@@ -46,7 +46,7 @@ resolve_repo() {
 
   CURRENT_REPO="$(gh repo view --json nameWithOwner --jq '.nameWithOwner' 2>/dev/null || true)"
   if [[ -z "$CURRENT_REPO" ]]; then
-    CURRENT_REPO="blecx/maestro"
+    CURRENT_REPO=${TARGET_REPO:-YOUR_ORG/YOUR_REPO}
   fi
 }
 

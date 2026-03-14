@@ -3,15 +3,14 @@ services:
     build:
       context: .
       dockerfile: docker/mcp-bash-gateway/Dockerfile
-    container_name: bash-gateway-mcp
     restart: unless-stopped
     environment:
       - BASH_GATEWAY_MCP_PORT=3011
       - BASH_GATEWAY_MCP_HOST=0.0.0.0
-      - BASH_GATEWAY_REPO_ROOT=/workspace
-      - BASH_GATEWAY_POLICY_PATH=${BASH_GATEWAY_POLICY_PATH:-/workspace/configs/bash_gateway_policy.default.yml}
-      - BASH_GATEWAY_AUDIT_DIR=/workspace/.tmp/agent-script-runs
+      - BASH_GATEWAY_REPO_ROOT=/target
+      - BASH_GATEWAY_POLICY_PATH=${BASH_GATEWAY_POLICY_PATH:-/target/configs/bash_gateway_policy.default.yml}
+      - BASH_GATEWAY_AUDIT_DIR=/target/.tmp/agent-script-runs
     ports:
-      - "127.0.0.1:3011:3011"
+      - "127.0.0.1:${PORT_BASH:-3011}:3011"
     volumes:
-      - ${PROJECT_WORKSPACE_DIR:-.}:/workspace
+      - ${PROJECT_WORKSPACE_DIR:-.}:/target

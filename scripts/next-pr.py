@@ -2,7 +2,7 @@
 """Recommend the next PR to merge (PR-first workflow).
 
 This helper scans open PRs across:
-- blecx/maestro (backend)
+- YOUR_ORG/YOUR_REPO (backend)
 - ${CLIENT_REPO} (client)
 
 It ranks PRs by merge readiness (CI success, mergeable, clean merge state, not draft)
@@ -35,8 +35,8 @@ RepoKey = Literal["backend", "client"]
 
 
 REPOS: dict[RepoKey, str] = {
-    "backend": "blecx/maestro",
-    "client": os.environ.get("CLIENT_REPO", "blecx/maestro-client"),
+    "backend": os.environ.get("TARGET_REPO", "YOUR_ORG/YOUR_REPO"),
+    "client": os.environ.get("CLIENT_REPO", os.environ.get("CLIENT_REPO", "YOUR_ORG/YOUR_CLIENT_REPO")),
 }
 
 DEFAULT_GH_MIN_INTERVAL_SECONDS = 1.0
