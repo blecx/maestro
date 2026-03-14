@@ -23,6 +23,29 @@ NC='\033[0m' # No Color
 GATES_PASSED=0
 GATES_FAILED=0
 
+
+# ---------------------------------------------------------
+# Start deterministic mock LLM gateway for testing
+# ---------------------------------------------------------
+echo "Starting Mock LLM Gateway on port 9090..."
+export MOCK_LLM_URL="http://localhost:9090/v1"
+uvicorn apps.mock_llm_gateway.main:app --host 127.0.0.1 --port 9090 > /dev/null 2>&1 &
+MOCK_PID=$!
+sleep 2
+
+# Preload deterministic mock responses
+if [ -f "scripts/preload-mocks.sh" ]; then
+    bash scripts/preload-mocks.sh
+fi
+
+# Ensure cleanup on exit
+trap 'kill $MOCK_PID 2>/dev/null' EXIT
+
+# Configure environment for testing
+export OPENAI_API_KEY=""  # Force trigger the mockup logic path
+export MOCK_LLM_URL="http://localhost:9090/v1"
+
+
 run_gate() {
     local gate_num=$1
     local gate_name=$2

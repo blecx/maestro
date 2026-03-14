@@ -6,7 +6,7 @@ phases because all state stays in a single message list + agent-bus.
 
 Lifecycle:
   1. Read full context packet from agent-bus
-  2. Generate implementation plan via LLM  
+  2. Generate implementation plan via LLM
   3. Write plan to agent-bus → transition to awaiting_approval
   4. Poll agent-bus until status == "approved" (human approval gate)
   5. Implement changes (file edits via LLM guidance)
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 
 MAX_VALIDATION_RETRIES = 3
 APPROVAL_POLL_INTERVAL_SEC = 5.0
-APPROVAL_TIMEOUT_SEC = 300.0   # 5 minutes before giving up waiting for human
+APPROVAL_TIMEOUT_SEC = 300.0  # 5 minutes before giving up waiting for human
 
 _MODEL_MAP = {
     "mini": "gpt-4o-mini",
@@ -152,59 +152,98 @@ class CoderAgent:
 
     async def _run_lifecycle(self, run_id: str) -> CoderResult:
         # ── Phase 1: Read context ─────────────────────────────────────
-        packet = await self._mcp.call_tool("bus_read_context_packet", {"run_id": run_id})
+        packet = await self._mcp.call_tool(
+            "bus_read_context_packet", {"run_id": run_id}
+        )
         run_info = packet["run"]
         existing_plan = packet.get("plan")
 
         # ── Phase 2: Generate plan (if not already approved) ──────────
         if existing_plan is None or run_info["status"] not in ("approved", "coding"):
-            await self._mcp.call_tool("bus_set_status", {"run_id": run_id, "status": "planning"})
+            await self._mcp.call_tool(
+                "bus_set_status", {"run_id": run_id, "status": "planning"}
+            )
             plan = await self._generate_plan(packet)
-            await self._mcp.call_tool("bus_write_plan", {
-                "run_id": run_id,
-                "goal": plan.get("goal", ""),
-                "files": plan.get("files", []),
-                "acceptance_criteria": plan.get("acceptance_criteria", []),
-                "validation_cmds": plan.get("validation_commands", []),
-                "estimated_minutes": plan.get("estimated_minutes"),
-            })
-            await self._mcp.call_tool("bus_set_status", {"run_id": run_id, "status": "awaiting_approval"})
-            await self._mcp.call_tool("bus_write_checkpoint", {
-                "run_id": run_id, "label": "plan_generated",
-                "metadata": {"files_count": len(plan.get("files", []))},
-            })
+            await self._mcp.call_tool(
+                "bus_write_plan",
+                {
+                    "run_id": run_id,
+                    "goal": plan.get("goal", ""),
+                    "files": plan.get("files", []),
+                    "acceptance_criteria": plan.get("acceptance_criteria", []),
+                    "validation_cmds": plan.get("validation_commands", []),
+                    "estimated_minutes": plan.get("estimated_minutes"),
+                },
+            )
+            await self._mcp.call_tool(
+                "bus_set_status", {"run_id": run_id, "status": "awaiting_approval"}
+            )
+            await self._mcp.call_tool(
+                "bus_write_checkpoint",
+                {
+                    "run_id": run_id,
+                    "label": "plan_generated",
+                    "metadata": {"files_count": len(plan.get("files", []))},
+                },
+            )
 
             # ── Phase 3: Wait for approval ────────────────────────────
             approved = await self._wait_for_approval(run_id)
             if not approved:
-                return CoderResult(run_id=run_id, error="Approval timeout — run manually approved or retry")
+                return CoderResult(
+                    run_id=run_id,
+                    error="Approval timeout — run manually approved or retry",
+                )
 
         # Re-read packet after approval (may have feedback)
-        packet = await self._mcp.call_tool("bus_read_context_packet", {"run_id": run_id})
+        packet = await self._mcp.call_tool(
+            "bus_read_context_packet", {"run_id": run_id}
+        )
 
         # ── Phase 4: Implement ────────────────────────────────────────
-        await self._mcp.call_tool("bus_set_status", {"run_id": run_id, "status": "coding"})
+        await self._mcp.call_tool(
+            "bus_set_status", {"run_id": run_id, "status": "coding"}
+        )
         files_changed = await self._implement(run_id, packet)
-        await self._mcp.call_tool("bus_write_checkpoint", {
-            "run_id": run_id, "label": "coding_complete",
-            "metadata": {"files_changed": files_changed},
-        })
+        await self._mcp.call_tool(
+            "bus_write_checkpoint",
+            {
+                "run_id": run_id,
+                "label": "coding_complete",
+                "metadata": {"files_changed": files_changed},
+            },
+        )
 
         # ── Phase 5: Validate ─────────────────────────────────────────
-        await self._mcp.call_tool("bus_set_status", {"run_id": run_id, "status": "validating"})
+        await self._mcp.call_tool(
+            "bus_set_status", {"run_id": run_id, "status": "validating"}
+        )
         plan_data = packet.get("plan") or {}
-        validation_cmds = plan_data.get("validation_cmds") or plan_data.get("validation_commands") or []
+        validation_cmds = (
+            plan_data.get("validation_cmds")
+            or plan_data.get("validation_commands")
+            or []
+        )
         passed = await self._validate_with_retry(run_id, validation_cmds)
 
         if passed:
-            await self._mcp.call_tool("bus_write_checkpoint", {
-                "run_id": run_id, "label": "validation_passed", "metadata": {},
-            })
+            await self._mcp.call_tool(
+                "bus_write_checkpoint",
+                {
+                    "run_id": run_id,
+                    "label": "validation_passed",
+                    "metadata": {},
+                },
+            )
 
         # ── Phase 6: Review + done ────────────────────────────────────
-        await self._mcp.call_tool("bus_set_status", {"run_id": run_id, "status": "reviewing"})
+        await self._mcp.call_tool(
+            "bus_set_status", {"run_id": run_id, "status": "reviewing"}
+        )
         if passed:
-            await self._mcp.call_tool("bus_set_status", {"run_id": run_id, "status": "pr_created"})
+            await self._mcp.call_tool(
+                "bus_set_status", {"run_id": run_id, "status": "pr_created"}
+            )
 
         return CoderResult(
             run_id=run_id,
@@ -221,6 +260,7 @@ class CoderAgent:
         """Add user message, call LLM, return assistant reply. Accumulates history."""
         if self._llm is None:
             from agents.llm_client import LLMClientFactory
+
             self._llm = LLMClientFactory.create_client_for_role("coding")
 
         if not self._messages:
@@ -248,7 +288,12 @@ class CoderAgent:
         try:
             return json.loads(raw)
         except json.JSONDecodeError:
-            return {"goal": "Plan generation failed", "files": [], "acceptance_criteria": [], "validation_commands": []}
+            return {
+                "goal": "Plan generation failed",
+                "files": [],
+                "acceptance_criteria": [],
+                "validation_commands": [],
+            }
 
     async def _implement(self, run_id: str, packet: dict[str, Any]) -> list[str]:
         """Ask LLM to produce file edits and apply them. Returns list of changed paths."""
@@ -278,12 +323,15 @@ class CoderAgent:
             files_changed.append(filepath)
 
             # Write snapshot to agent-bus
-            await self._mcp.call_tool("bus_write_snapshot", {
-                "run_id": run_id,
-                "filepath": filepath,
-                "content_before": before,
-                "content_after": content,
-            })
+            await self._mcp.call_tool(
+                "bus_write_snapshot",
+                {
+                    "run_id": run_id,
+                    "filepath": filepath,
+                    "content_before": before,
+                    "content_after": content,
+                },
+            )
 
         return files_changed
 
@@ -291,9 +339,7 @@ class CoderAgent:
     # Validation
     # ------------------------------------------------------------------
 
-    async def _validate_with_retry(
-        self, run_id: str, commands: list[str]
-    ) -> bool:
+    async def _validate_with_retry(self, run_id: str, commands: list[str]) -> bool:
         """Run validation commands, retrying in same thread up to MAX_VALIDATION_RETRIES."""
         if not commands:
             return True
@@ -302,14 +348,17 @@ class CoderAgent:
             all_passed = True
             for cmd in commands:
                 passed, stdout, stderr, rc = await self._run_command(cmd)
-                await self._mcp.call_tool("bus_write_validation", {
-                    "run_id": run_id,
-                    "command": cmd,
-                    "stdout": stdout,
-                    "stderr": stderr,
-                    "exit_code": rc,
-                    "passed": passed,
-                })
+                await self._mcp.call_tool(
+                    "bus_write_validation",
+                    {
+                        "run_id": run_id,
+                        "command": cmd,
+                        "stdout": stdout,
+                        "stderr": stderr,
+                        "exit_code": rc,
+                        "passed": passed,
+                    },
+                )
                 if not passed:
                     all_passed = False
 
@@ -322,7 +371,8 @@ class CoderAgent:
                     "bus_read_context_packet", {"run_id": run_id}
                 )
                 failures = [
-                    v for v in last_results.get("validation_results", [])
+                    v
+                    for v in last_results.get("validation_results", [])
                     if not v.get("passed")
                 ]
                 fix_prompt = (
@@ -341,12 +391,15 @@ class CoderAgent:
                             before = target.read_text() if target.exists() else None
                             target.parent.mkdir(parents=True, exist_ok=True)
                             target.write_text(content)
-                            await self._mcp.call_tool("bus_write_snapshot", {
-                                "run_id": run_id,
-                                "filepath": filepath,
-                                "content_before": before,
-                                "content_after": content,
-                            })
+                            await self._mcp.call_tool(
+                                "bus_write_snapshot",
+                                {
+                                    "run_id": run_id,
+                                    "filepath": filepath,
+                                    "content_before": before,
+                                    "content_after": content,
+                                },
+                            )
                 except json.JSONDecodeError:
                     pass
 
@@ -363,7 +416,12 @@ class CoderAgent:
             )
             stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), timeout=120)
             rc = proc.returncode or 0
-            return rc == 0, stdout_b.decode(errors="replace"), stderr_b.decode(errors="replace"), rc
+            return (
+                rc == 0,
+                stdout_b.decode(errors="replace"),
+                stderr_b.decode(errors="replace"),
+                rc,
+            )
         except asyncio.TimeoutError:
             return False, "", "Command timed out after 120s", 1
         except Exception as exc:  # noqa: BLE001
@@ -380,7 +438,9 @@ class CoderAgent:
             await asyncio.sleep(APPROVAL_POLL_INTERVAL_SEC)
             elapsed += APPROVAL_POLL_INTERVAL_SEC
             try:
-                packet = await self._mcp.call_tool("bus_read_context_packet", {"run_id": run_id})
+                packet = await self._mcp.call_tool(
+                    "bus_read_context_packet", {"run_id": run_id}
+                )
                 if packet["run"]["status"] == "approved":
                     return True
                 if packet["run"]["status"] == "failed":
@@ -396,6 +456,8 @@ class CoderAgent:
     async def _safe_set_status(self, run_id: str, status: str) -> None:
         """Best-effort status update — never raises."""
         try:
-            await self._mcp.call_tool("bus_set_status", {"run_id": run_id, "status": status})
+            await self._mcp.call_tool(
+                "bus_set_status", {"run_id": run_id, "status": status}
+            )
         except Exception:  # noqa: BLE001
             pass

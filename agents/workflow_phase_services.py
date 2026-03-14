@@ -106,7 +106,9 @@ class ContextPhaseService:
                     agent.log(f"  {issue}", "warning")
 
                 if not agent.dry_run:
-                    print("\n❌ Issue has quality issues that should be addressed first.")
+                    print(
+                        "\n❌ Issue has quality issues that should be addressed first."
+                    )
                     response = _prompt_or_default(
                         agent, "Continue anyway? (y/n): ", default="n"
                     )
@@ -245,10 +247,14 @@ class ImplementationPhaseService:
             "Please review scope, acceptance criteria, and likely risks before code changes."
         )
 
-        artifact_path = Path(".tmp") / f"copilot-pre-implementation-review-{issue_num}.md"
+        artifact_path = (
+            Path(".tmp") / f"copilot-pre-implementation-review-{issue_num}.md"
+        )
         artifact_path.parent.mkdir(parents=True, exist_ok=True)
         artifact_path.write_text(review_body + "\n", encoding="utf-8")
-        agent.log(f"Created pre-implementation review artifact: {artifact_path}", "info")
+        agent.log(
+            f"Created pre-implementation review artifact: {artifact_path}", "info"
+        )
 
         if agent.dry_run:
             agent.log("Dry-run: skipped GitHub Copilot review request comment", "info")
@@ -313,9 +319,7 @@ class TestingPhaseService:
         validation_commands = agent.smart_validation.get_validation_commands(repo_type)
 
         if not validation_commands:
-            agent.log(
-                "⚠️  No validation commands determined, using defaults", "warning"
-            )
+            agent.log("⚠️  No validation commands determined, using defaults", "warning")
             validation_commands = get_validation_commands(repo_type, "full")
         else:
             agent.log(
@@ -343,7 +347,9 @@ class TestingPhaseService:
 
                 if recovered:
                     agent.log(f"✅ Auto-recovered: {recovery_msg}", "success")
-                    result = agent.run_command(full_cmd, f"Retrying: {cmd}", check=False)
+                    result = agent.run_command(
+                        full_cmd, f"Retrying: {cmd}", check=False
+                    )
                     if result.returncode == 0:
                         agent.log(f"✅ {cmd} passed after recovery", "success")
                         continue
@@ -524,7 +530,9 @@ Fixes: #{issue_num}
 
         validate_script = Path("scripts/validate-pr-template.sh")
         if not validate_script.exists():
-            agent.log("PR template validator script not found; skipping preflight", "warning")
+            agent.log(
+                "PR template validator script not found; skipping preflight", "warning"
+            )
             return True
 
         repo_type = _detect_validation_repo_type(agent)
@@ -542,7 +550,10 @@ Fixes: #{issue_num}
 
         if agent.dry_run:
             body_file = self._build_pr_body(agent, issue_num)
-            agent.log(f"Would create PR with gh pr create --fill --body-file {body_file}", "info")
+            agent.log(
+                f"Would create PR with gh pr create --fill --body-file {body_file}",
+                "info",
+            )
             agent.log("Would run prmerge validation and merge", "info")
             return PhaseExecutionResult(True, {})
 

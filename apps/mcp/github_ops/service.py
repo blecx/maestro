@@ -51,7 +51,7 @@ def _summarize_checks(status_rollup: list[dict[str, Any]] | None) -> dict[str, A
         c in {"FAILURE", "CANCELLED", "TIMED_OUT", "ACTION_REQUIRED"} for c in uniq
     )
     has_success = "SUCCESS" in uniq
-    all_success = (len(uniq) == 1 and uniq[0] == "SUCCESS" and pending == 0)
+    all_success = len(uniq) == 1 and uniq[0] == "SUCCESS" and pending == 0
 
     return {
         "conclusions": uniq,
@@ -138,9 +138,7 @@ class GitHubOpsService:
             raise GitHubOpsServiceError(output or "Command timed out") from exc
 
         output = "\n".join(
-            chunk
-            for chunk in (proc.stdout.strip(), proc.stderr.strip())
-            if chunk
+            chunk for chunk in (proc.stdout.strip(), proc.stderr.strip()) if chunk
         )
         output = redact_secrets(output)
 
@@ -161,7 +159,9 @@ class GitHubOpsService:
         self.audit_store.save(record)
 
         if proc.returncode != 0:
-            raise GitHubOpsServiceError(output or f"Command failed: {' '.join(command)}")
+            raise GitHubOpsServiceError(
+                output or f"Command failed: {' '.join(command)}"
+            )
 
         return {
             "run_id": run_id,
@@ -185,7 +185,9 @@ class GitHubOpsService:
         try:
             data = json.loads(raw)
         except json.JSONDecodeError as exc:
-            raise GitHubOpsServiceError(f"Expected JSON output, got: {raw[:400]}") from exc
+            raise GitHubOpsServiceError(
+                f"Expected JSON output, got: {raw[:400]}"
+            ) from exc
         return {"run_id": result.get("run_id"), "data": data}
 
     def repos_allowed(self) -> dict[str, Any]:
@@ -267,8 +269,14 @@ class GitHubOpsService:
     def pr_checks_summary(self, *, repo: str, pr_number: int) -> dict[str, Any]:
         pr = self.pr_view(repo=repo, pr_number=pr_number)
         status_rollup = (pr.get("pr") or {}).get("statusCheckRollup")
-        summary = _summarize_checks(status_rollup if isinstance(status_rollup, list) else None)
-        return {"run_id": pr["run_id"], "summary": summary, "checks": status_rollup or []}
+        summary = _summarize_checks(
+            status_rollup if isinstance(status_rollup, list) else None
+        )
+        return {
+            "run_id": pr["run_id"],
+            "summary": summary,
+            "checks": status_rollup or [],
+        }
 
     def pr_checks_watch(
         self,

@@ -144,7 +144,9 @@ def memory_add_relationship(
     Returns:
         {"ok": True}
     """
-    _store.add_relationship(from_entity=from_entity, relation=relation, to_entity=to_entity)
+    _store.add_relationship(
+        from_entity=from_entity, relation=relation, to_entity=to_entity
+    )
     return {"ok": True}
 
 

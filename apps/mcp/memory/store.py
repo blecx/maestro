@@ -11,7 +11,6 @@ All writes are idempotent. All reads return empty lists/dicts rather than None.
 import json
 import sqlite3
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any, Optional
 
 
@@ -24,7 +23,13 @@ class MemoryStore:
 
     def __init__(self, db_path: str = ":memory:") -> None:
         self._db_path = db_path
-        self._conn = sqlite3.connect(db_path, check_same_thread=False)
+        self._conn = sqlite3.connect(
+            str(self._db_path),
+            check_same_thread=False,
+            isolation_level=None,
+        )
+        self._conn.execute("PRAGMA journal_mode=WAL;")
+        self._conn.execute("PRAGMA synchronous=NORMAL;")
         self._conn.row_factory = sqlite3.Row
         self._migrate()
 
@@ -36,6 +41,7 @@ class MemoryStore:
         self._conn.executescript(
             """
             CREATE TABLE IF NOT EXISTS lessons (
+                project_id      TEXT NOT NULL DEFAULT 'default',
                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
                 issue_number INTEGER NOT NULL,
                 repo        TEXT NOT NULL DEFAULT '',
@@ -46,15 +52,17 @@ class MemoryStore:
             );
 
             CREATE TABLE IF NOT EXISTS entities (
+                project_id      TEXT NOT NULL DEFAULT 'default',
                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
                 name        TEXT NOT NULL,
                 kind        TEXT NOT NULL,           -- 'file' | 'domain' | 'service' | 'issue'
                 metadata    TEXT NOT NULL DEFAULT '{}',
                 ts          TEXT NOT NULL,
-                UNIQUE(name, kind)
+                UNIQUE(project_id, name, kind)
             );
 
             CREATE TABLE IF NOT EXISTS relationships (
+                project_id      TEXT NOT NULL DEFAULT 'default',
                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
                 from_entity TEXT NOT NULL,
                 relation    TEXT NOT NULL,           -- 'belongs_to' | 'changed_by' | 'depends_on'
@@ -79,21 +87,35 @@ class MemoryStore:
         repo: str = "",
     ) -> int:
         """Store a lesson from one completed issue run. Returns row id."""
+        import os
+
+        project_id = os.getenv("PROJECT_WORKSPACE_ID", "default")
         cur = self._conn.execute(
             """
-            INSERT INTO lessons (issue_number, repo, outcome, summary, learnings, ts)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO lessons (project_id, issue_number, repo, outcome, summary, learnings, ts)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
             """,
-            (issue_number, repo, outcome, summary, json.dumps(learnings), _now()),
+            (
+                project_id,
+                issue_number,
+                repo,
+                outcome,
+                summary,
+                json.dumps(learnings),
+                _now(),
+            ),
         )
         self._conn.commit()
         return cur.lastrowid  # type: ignore[return-value]
 
     def get_lessons(self, issue_number: int) -> list[dict[str, Any]]:
         """Return all lessons for a given issue number."""
+        import os
+
+        project_id = os.getenv("PROJECT_WORKSPACE_ID", "default")
         rows = self._conn.execute(
-            "SELECT * FROM lessons WHERE issue_number = ? ORDER BY ts DESC",
-            (issue_number,),
+            "SELECT * FROM lessons WHERE issue_number = ? AND project_id = ? ORDER BY ts DESC",
+            (issue_number, project_id),
         ).fetchall()
         return [_row_to_dict(r) for r in rows]
 
@@ -103,12 +125,19 @@ class MemoryStore:
         Returns up to `limit` most-recent matching rows.
         Intentionally simple — no vector search in v1.
         """
+        import os
+
+        project_id = os.getenv("PROJECT_WORKSPACE_ID", "default")
         words = query.lower().split()
         if not words:
             return []
         # Build LIKE clause for each word
-        conditions = " AND ".join(["LOWER(summary || ' ' || learnings) LIKE ?" for _ in words])
+        conditions = " AND ".join(
+            ["LOWER(summary || ' ' || learnings) LIKE ?" for _ in words]
+        )
+        conditions = f"({conditions}) AND project_id = ?"
         params = [f"%{w}%" for w in words]
+        params.append(project_id)
         params.append(limit)
         rows = self._conn.execute(
             f"SELECT * FROM lessons WHERE {conditions} ORDER BY ts DESC LIMIT ?",
@@ -122,9 +151,12 @@ class MemoryStore:
 
     def get_recent_lessons(self, limit: int = 10) -> list[dict[str, Any]]:
         """Return the most recent `limit` lessons across all issues."""
+        import os
+
+        project_id = os.getenv("PROJECT_WORKSPACE_ID", "default")
         rows = self._conn.execute(
-            "SELECT * FROM lessons ORDER BY ts DESC LIMIT ?",
-            (limit,),
+            "SELECT * FROM lessons WHERE project_id = ? ORDER BY ts DESC LIMIT ?",
+            (project_id, limit),
         ).fetchall()
         return [_row_to_dict(r) for r in rows]
 
@@ -139,38 +171,49 @@ class MemoryStore:
         metadata: Optional[dict[str, Any]] = None,
     ) -> None:
         """Insert or update a knowledge graph entity node."""
+        import os
+
+        project_id = os.getenv("PROJECT_WORKSPACE_ID", "default")
         self._conn.execute(
             """
-            INSERT INTO entities (name, kind, metadata, ts)
-            VALUES (?, ?, ?, ?)
-            ON CONFLICT(name, kind) DO UPDATE SET metadata = excluded.metadata, ts = excluded.ts
+            INSERT INTO entities (project_id, name, kind, metadata, ts)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(project_id, name, kind) DO UPDATE SET metadata = excluded.metadata, ts = excluded.ts
             """,
-            (name, kind, json.dumps(metadata or {}), _now()),
+            (project_id, name, kind, json.dumps(metadata or {}), _now()),
         )
         self._conn.commit()
 
     def add_relationship(self, from_entity: str, relation: str, to_entity: str) -> None:
         """Add or ignore a relationship edge between two entities."""
+        import os
+
+        project_id = os.getenv("PROJECT_WORKSPACE_ID", "default")
         self._conn.execute(
             """
-            INSERT OR IGNORE INTO relationships (from_entity, relation, to_entity, ts)
-            VALUES (?, ?, ?, ?)
+            INSERT OR IGNORE INTO relationships (project_id, from_entity, relation, to_entity, ts)
+            VALUES (?, ?, ?, ?, ?)
             """,
-            (from_entity, relation, to_entity, _now()),
+            (project_id, from_entity, relation, to_entity, _now()),
         )
         self._conn.commit()
 
-    def get_related(self, entity: str, relation: Optional[str] = None) -> list[dict[str, Any]]:
+    def get_related(
+        self, entity: str, relation: Optional[str] = None
+    ) -> list[dict[str, Any]]:
         """Return all entities related to `entity`, optionally filtered by relation type."""
+        import os
+
+        project_id = os.getenv("PROJECT_WORKSPACE_ID", "default")
         if relation:
             rows = self._conn.execute(
-                "SELECT * FROM relationships WHERE from_entity = ? AND relation = ?",
-                (entity, relation),
+                "SELECT * FROM relationships WHERE from_entity = ? AND relation = ? AND project_id = ?",
+                (entity, relation, project_id),
             ).fetchall()
         else:
             rows = self._conn.execute(
-                "SELECT * FROM relationships WHERE from_entity = ?",
-                (entity,),
+                "SELECT * FROM relationships WHERE from_entity = ? AND project_id = ?",
+                (entity, project_id),
             ).fetchall()
         return [_row_to_dict(r) for r in rows]
 

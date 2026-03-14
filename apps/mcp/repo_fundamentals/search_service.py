@@ -20,7 +20,9 @@ class SearchService:
         self.path_guard = RepoPathGuard(self.repo_root)
 
     def _resolve_scope_dir(self, scope: str) -> tuple[Path, str]:
-        resolved_scope = self.path_guard.resolve_relative_path(scope, allow_nonexistent=False)
+        resolved_scope = self.path_guard.resolve_relative_path(
+            scope, allow_nonexistent=False
+        )
         if not resolved_scope.is_dir():
             raise ValueError("scope must resolve to a directory")
         return resolved_scope, str(resolved_scope.relative_to(self.repo_root))
@@ -43,9 +45,13 @@ class SearchService:
                 check=False,
             )
         except FileNotFoundError as exc:
-            raise ValueError("ripgrep (rg) is not installed in this environment") from exc
+            raise ValueError(
+                "ripgrep (rg) is not installed in this environment"
+            ) from exc
 
-    def _list_files_rg(self, scope_relative: str, include_glob: str, max_results: int) -> list[str]:
+    def _list_files_rg(
+        self, scope_relative: str, include_glob: str, max_results: int
+    ) -> list[str]:
         args = [*self._rg_base_args(include_glob), "--files", scope_relative]
         proc = self._run_rg(args)
 
@@ -53,15 +59,25 @@ class SearchService:
             stderr = proc.stderr.strip() or proc.stdout.strip() or "rg --files failed"
             raise ValueError(stderr)
 
-        files = [line.strip().removeprefix("./") for line in proc.stdout.splitlines() if line.strip()]
+        files = [
+            line.strip().removeprefix("./")
+            for line in proc.stdout.splitlines()
+            if line.strip()
+        ]
         return files[:max_results]
 
-    def list_files(self, scope: str = ".", include_glob: str = "**/*", max_results: int = 200) -> dict[str, Any]:
+    def list_files(
+        self, scope: str = ".", include_glob: str = "**/*", max_results: int = 200
+    ) -> dict[str, Any]:
         if max_results <= 0 or max_results > 2000:
             raise ValueError("max_results must be between 1 and 2000")
 
         _, scope_relative = self._resolve_scope_dir(scope)
-        files = self._list_files_rg(scope_relative=scope_relative, include_glob=include_glob, max_results=max_results)
+        files = self._list_files_rg(
+            scope_relative=scope_relative,
+            include_glob=include_glob,
+            max_results=max_results,
+        )
         return {
             "count": len(files),
             "files": files,
@@ -124,7 +140,11 @@ class SearchService:
 
             path_text = path_info.get("text")
             line_text = lines_info.get("text")
-            if not isinstance(path_text, str) or not isinstance(line_number, int) or not isinstance(line_text, str):
+            if (
+                not isinstance(path_text, str)
+                or not isinstance(line_number, int)
+                or not isinstance(line_text, str)
+            ):
                 continue
 
             matches.append(

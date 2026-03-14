@@ -21,6 +21,26 @@
 ###############################################################################
 
 services:
+  # ---------------------------------------------------------------------------
+  # mock-llm-gateway — deterministic responses for testing
+  # ---------------------------------------------------------------------------
+  mock-llm-gateway:
+    build:
+      context: .
+      dockerfile: docker/mock-llm-gateway/Dockerfile
+    image: maestro/mock-llm-gateway:latest
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    networks:
+      - maestro_net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9090/admin/mocks')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
 
   # ---------------------------------------------------------------------------
   # mcp-memory — knowledge graph for long-term agent memory
@@ -136,8 +156,16 @@ services:
 volumes:
   maestro_memory_data:
     driver: local
+    driver_opts:
+      type: none
+      device: ${MAESTRO_DATA_DIR:-/data/maestro}/memory/${MAESTRO_INSTANCE_ID:-default}
+      o: bind
   maestro_bus_data:
     driver: local
+    driver_opts:
+      type: none
+      device: ${MAESTRO_DATA_DIR:-/data/maestro}/bus/${MAESTRO_INSTANCE_ID:-default}
+      o: bind
 
 # ---------------------------------------------------------------------------
 # Networks
@@ -145,3 +173,4 @@ volumes:
 networks:
   maestro_net:
     driver: bridge
+    name: "maestro_net_${MAESTRO_INSTANCE_ID:-default}"

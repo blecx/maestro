@@ -1,0 +1,22 @@
+{
+    "prompt_match": "Create a new agent task run",
+    "response": {
+        "id": "chatcmpl-mock-123",
+        "object": "chat.completion",
+        "created": 1677652288,
+        "model": "mock-model",
+        "choices": [{
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "<tool_call>{\"name\": \"bus_create_run\", \"arguments\": {\"issue_number\": 1}}</tool_call>"
+            },
+            "finish_reason": "stop"
+        }],
+        "usage": {
+            "prompt_tokens": 10,
+            "completion_tokens": 20,
+            "total_tokens": 30
+        }
+    }
+}

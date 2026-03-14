@@ -9,7 +9,17 @@ from .path_guard import PathGuardError
 
 
 def _load_service() -> GitService:
-    repo_root = Path(os.getenv("REPO_FUNDAMENTALS_REPO_ROOT", "/workspace")).resolve()
+    base_root = Path(os.getenv("REPO_FUNDAMENTALS_REPO_ROOT", "/workspace")).resolve()
+    project_id = os.getenv("PROJECT_WORKSPACE_ID")
+    if project_id:
+        repo_root = (base_root / project_id).resolve()
+        # Chroot jail ensure it does not escape base_root
+        try:
+            repo_root.relative_to(base_root)
+        except ValueError:
+            repo_root = base_root
+    else:
+        repo_root = base_root
     return GitService(repo_root=repo_root)
 
 
@@ -89,7 +99,9 @@ def git_blame(
 ) -> dict:
     """Return git blame porcelain output for a validated path."""
     try:
-        return service.blame(path=path, rev=rev, line_start=line_start, line_end=line_end)
+        return service.blame(
+            path=path, rev=rev, line_start=line_start, line_end=line_end
+        )
     except (PathGuardError, ValueError) as exc:
         raise ValueError(str(exc)) from exc
 

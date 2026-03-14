@@ -51,7 +51,9 @@ class FilesystemService:
             "content": content,
         }
 
-    def write_text(self, path: str, content: str, create_parent: bool = True) -> dict[str, Any]:
+    def write_text(
+        self, path: str, content: str, create_parent: bool = True
+    ) -> dict[str, Any]:
         resolved = self._resolve_writable_path(path)
         if create_parent:
             resolved.parent.mkdir(parents=True, exist_ok=True)
@@ -81,7 +83,9 @@ class FilesystemService:
             resolved.unlink()
         return {"deleted": relative}
 
-    def move_path(self, source: str, destination: str, overwrite: bool = False) -> dict[str, Any]:
+    def move_path(
+        self, source: str, destination: str, overwrite: bool = False
+    ) -> dict[str, Any]:
         src = self._resolve_existing_path(source)
         dst = self._resolve_writable_path(destination)
         src_relative = str(src.relative_to(self.repo_root))
@@ -101,7 +105,9 @@ class FilesystemService:
         src.rename(dst)
         return {"moved_from": src_relative, "moved_to": dst_relative}
 
-    def copy_path(self, source: str, destination: str, overwrite: bool = False) -> dict[str, Any]:
+    def copy_path(
+        self, source: str, destination: str, overwrite: bool = False
+    ) -> dict[str, Any]:
         src = self._resolve_existing_path(source)
         dst = self._resolve_writable_path(destination)
         src_relative = str(src.relative_to(self.repo_root))

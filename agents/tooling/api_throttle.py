@@ -160,7 +160,9 @@ def extract_retry_after_seconds(text: str) -> float | None:
     return None
 
 
-def apply_rate_limit_penalty(channel: str = "llm", penalty_seconds: float | None = None) -> float:
+def apply_rate_limit_penalty(
+    channel: str = "llm", penalty_seconds: float | None = None
+) -> float:
     """Set a shared cooldown window after rate-limit responses.
 
     Returns the applied cooldown seconds.

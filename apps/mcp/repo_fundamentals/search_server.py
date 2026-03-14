@@ -10,7 +10,17 @@ from .search_service import SearchService
 
 
 def _load_service() -> SearchService:
-    repo_root = Path(os.getenv("REPO_FUNDAMENTALS_REPO_ROOT", "/workspace")).resolve()
+    base_root = Path(os.getenv("REPO_FUNDAMENTALS_REPO_ROOT", "/workspace")).resolve()
+    project_id = os.getenv("PROJECT_WORKSPACE_ID")
+    if project_id:
+        repo_root = (base_root / project_id).resolve()
+        # Chroot jail ensure it does not escape base_root
+        try:
+            repo_root.relative_to(base_root)
+        except ValueError:
+            repo_root = base_root
+    else:
+        repo_root = base_root
     return SearchService(repo_root=repo_root)
 
 
@@ -25,10 +35,14 @@ def search_safe_root() -> dict:
 
 
 @mcp.tool()
-def search_list_files(scope: str = ".", include_glob: str = "**/*", max_results: int = 200) -> dict:
+def search_list_files(
+    scope: str = ".", include_glob: str = "**/*", max_results: int = 200
+) -> dict:
     """List repository files within safe scope."""
     try:
-        return service.list_files(scope=scope, include_glob=include_glob, max_results=max_results)
+        return service.list_files(
+            scope=scope, include_glob=include_glob, max_results=max_results
+        )
     except (PathGuardError, ValueError) as exc:
         raise ValueError(str(exc)) from exc
 

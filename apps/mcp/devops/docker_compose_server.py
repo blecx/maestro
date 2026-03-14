@@ -35,8 +35,15 @@ def _load_targets() -> dict[str, str]:
 
 def _load_service() -> DockerComposeService:
     repo_root = Path(os.getenv("DOCKER_COMPOSE_MCP_REPO_ROOT", "/workspace")).resolve()
-    audit_dir = Path(os.getenv("DOCKER_COMPOSE_MCP_AUDIT_DIR", str(repo_root / ".tmp" / "mcp-docker-compose"))).resolve()
-    return DockerComposeService(repo_root=repo_root, compose_targets=_load_targets(), audit_dir=audit_dir)
+    audit_dir = Path(
+        os.getenv(
+            "DOCKER_COMPOSE_MCP_AUDIT_DIR",
+            str(repo_root / ".tmp" / "mcp-docker-compose"),
+        )
+    ).resolve()
+    return DockerComposeService(
+        repo_root=repo_root, compose_targets=_load_targets(), audit_dir=audit_dir
+    )
 
 
 service = _load_service()
@@ -59,7 +66,9 @@ def docker_compose_ps(target: str = "main") -> dict:
 
 
 @mcp.tool()
-def docker_compose_up(target: str = "main", build: bool = False, detach: bool = True) -> dict:
+def docker_compose_up(
+    target: str = "main", build: bool = False, detach: bool = True
+) -> dict:
     """Run docker compose up for one allowed target."""
     try:
         return service.compose_up(target=target, build=build, detach=detach)
@@ -77,7 +86,9 @@ def docker_compose_down(target: str = "main", remove_orphans: bool = True) -> di
 
 
 @mcp.tool()
-def docker_compose_logs(target: str = "main", service_name: str | None = None, tail: int = 200) -> dict:
+def docker_compose_logs(
+    target: str = "main", service_name: str | None = None, tail: int = 200
+) -> dict:
     """Fetch compose logs for one allowed target and optional service."""
     try:
         return service.compose_logs(target=target, service=service_name, tail=tail)

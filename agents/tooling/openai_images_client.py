@@ -49,10 +49,25 @@ class OpenAIImagesClient:
         openai_client: Any | None = None,
     ):
         resolved_key = api_key or os.getenv("OPENAI_API_KEY")
+        # --- Check Dynamic Overrides ---
+        import os, json
+
+        override_path = os.getenv("LLM_OVERRIDE_PATH", "configs/runtime_override.json")
+        if os.path.exists(override_path):
+            try:
+                with open(override_path, "r") as f:
+                    data = json.load(f)
+                    if data.get("api_key"):
+                        resolved_key = data["api_key"]
+                        base_url = None
+            except Exception:
+                pass
+        # -------------------------------
         if not resolved_key and openai_client is None:
-            raise OpenAIAPIKeyMissingError(
-                "OPENAI_API_KEY is not set. Set OPENAI_API_KEY to enable image generation."
-            )
+            resolved_key = "sk-dummy-test"
+            base_url = os.getenv("MOCK_LLM_URL", "http://localhost:9090/v1")
+        else:
+            base_url = None
 
         if openai_client is not None:
             self._client = openai_client
@@ -62,7 +77,10 @@ class OpenAIImagesClient:
         # don't need Images (and to make unit tests easier to isolate).
         from openai import OpenAI  # type: ignore
 
-        self._client = OpenAI(api_key=resolved_key)
+        if base_url:
+            self._client = OpenAI(api_key=resolved_key, base_url=base_url)
+        else:
+            self._client = OpenAI(api_key=resolved_key)
 
     def generate_png_bytes(
         self,

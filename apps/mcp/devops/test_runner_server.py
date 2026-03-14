@@ -9,7 +9,11 @@ from .test_runner_service import TestRunnerService, TestRunnerServiceError
 
 def _load_service() -> TestRunnerService:
     repo_root = Path(os.getenv("TEST_RUNNER_MCP_REPO_ROOT", "/workspace")).resolve()
-    audit_dir = Path(os.getenv("TEST_RUNNER_MCP_AUDIT_DIR", str(repo_root / ".tmp" / "mcp-test-runner"))).resolve()
+    audit_dir = Path(
+        os.getenv(
+            "TEST_RUNNER_MCP_AUDIT_DIR", str(repo_root / ".tmp" / "mcp-test-runner")
+        )
+    ).resolve()
     return TestRunnerService(repo_root=repo_root, audit_dir=audit_dir)
 
 

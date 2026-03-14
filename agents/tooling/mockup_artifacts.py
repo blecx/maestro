@@ -30,7 +30,9 @@ def list_mockup_images(directory: Path) -> list[Path]:
     return sorted(images, key=lambda p: p.name)
 
 
-def write_mockup_index_html(directory: Path, *, images: Sequence[Path] | None = None) -> Path:
+def write_mockup_index_html(
+    directory: Path, *, images: Sequence[Path] | None = None
+) -> Path:
     """Write an accessible index.html for a mockup artifact directory.
 
     - Creates the directory if missing.
@@ -39,7 +41,9 @@ def write_mockup_index_html(directory: Path, *, images: Sequence[Path] | None = 
     """
     directory.mkdir(parents=True, exist_ok=True)
 
-    resolved_images = list(images) if images is not None else list_mockup_images(directory)
+    resolved_images = (
+        list(images) if images is not None else list_mockup_images(directory)
+    )
     names = [p.name for p in resolved_images]
 
     no_images_block = ""
@@ -47,12 +51,12 @@ def write_mockup_index_html(directory: Path, *, images: Sequence[Path] | None = 
 
     if not names:
         no_images_block = (
-            "<p id=\"empty\"><strong>No images found.</strong> "
+            '<p id="empty"><strong>No images found.</strong> '
             "Add one or more image files (png/jpg/webp) to this folder and reload.</p>"
         )
     else:
         items = "\n".join(
-            f"<li><a href=\"#viewer\" onclick=\"show({i}); return false;\">{name}</a></li>"
+            f'<li><a href="#viewer" onclick="show({i}); return false;">{name}</a></li>'
             for i, name in enumerate(names)
         )
         gallery_block = f"""
@@ -73,7 +77,7 @@ def write_mockup_index_html(directory: Path, *, images: Sequence[Path] | None = 
         </ol>
         """
 
-    script_names = ",".join([f"\"{n}\"" for n in names])
+    script_names = ",".join([f'"{n}"' for n in names])
 
     html = f"""<!doctype html>
 <html lang=\"en\">
@@ -150,7 +154,9 @@ def write_mockup_index_html(directory: Path, *, images: Sequence[Path] | None = 
     return out_path
 
 
-def write_issue_mockup_index(issue_number: int, *, base_dir: Path | str = ".tmp/mockups") -> Path:
+def write_issue_mockup_index(
+    issue_number: int, *, base_dir: Path | str = ".tmp/mockups"
+) -> Path:
     """Convenience helper: compute folder, scan images, write index.html."""
     directory = get_mockup_dir(issue_number, base_dir=base_dir)
     return write_mockup_index_html(directory)

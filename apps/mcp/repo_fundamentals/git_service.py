@@ -37,7 +37,9 @@ class GitService:
     def _validated_paths(self, paths: list[str]) -> list[str]:
         validated: list[str] = []
         for path in paths:
-            resolved = self.path_guard.resolve_relative_path(path, allow_nonexistent=True)
+            resolved = self.path_guard.resolve_relative_path(
+                path, allow_nonexistent=True
+            )
             validated.append(str(resolved.relative_to(self.repo_root)))
         return validated
 

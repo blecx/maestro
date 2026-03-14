@@ -59,7 +59,9 @@ class WorkflowAgent(BaseAgent):
         self.phases = [
             AgentPhase("Phase 1: Context", "Read issue and gather context"),
             AgentPhase("Phase 2: Planning", "Create planning document"),
-            AgentPhase("Phase 3: Implementation", "Implement changes with test-first approach"),
+            AgentPhase(
+                "Phase 3: Implementation", "Implement changes with test-first approach"
+            ),
             AgentPhase("Phase 4: Testing", "Build and test changes"),
             AgentPhase("Phase 5: Review", "Self-review and Copilot review"),
             AgentPhase("Phase 6: PR & Merge", "Create PR and merge"),
@@ -275,6 +277,7 @@ class WorkflowAgent(BaseAgent):
         if ci_kb_path.exists():
             try:
                 import json
+
                 with open(ci_kb_path, "r") as f:
                     return json.load(f)
             except Exception:
@@ -283,6 +286,7 @@ class WorkflowAgent(BaseAgent):
 
     def _extract_pr_number(self, gh_output: str) -> Optional[int]:
         import re
+
         match = re.search(r"/pull/(\d+)", gh_output)
         return int(match.group(1)) if match else None
 
@@ -314,14 +318,20 @@ Examples:
     ./agents/workflow_agent.py --issue 26 --dry-run
         """,
     )
-    parser.add_argument("--issue", type=int, required=True, help="Issue number to process")
+    parser.add_argument(
+        "--issue", type=int, required=True, help="Issue number to process"
+    )
     parser.add_argument("--dry-run", action="store_true", help="No actual commands")
     parser.add_argument(
-        "--interactive", action="store_true",
-        help="Enable guided prompt pauses between phases."
+        "--interactive",
+        action="store_true",
+        help="Enable guided prompt pauses between phases.",
     )
     parser.add_argument(
-        "--kb-dir", type=str, default="agents/knowledge", help="Knowledge base directory"
+        "--kb-dir",
+        type=str,
+        default="agents/knowledge",
+        help="Knowledge base directory",
     )
 
     args = parser.parse_args()

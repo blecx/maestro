@@ -153,10 +153,14 @@ class MCPMultiClient:
             MCPCallError: The server returned an error or HTTP failure.
         """
         tool = self.get_tool(name)  # raises ToolNotFoundError if missing
-        return await self._rpc_call(tool.server_url, "tools/call", {
-            "name": name,
-            "arguments": args or {},
-        })
+        return await self._rpc_call(
+            tool.server_url,
+            "tools/call",
+            {
+                "name": name,
+                "arguments": args or {},
+            },
+        )
 
     # ------------------------------------------------------------------
     # Internal JSON-RPC helpers
@@ -166,9 +170,13 @@ class MCPMultiClient:
         self._req_id += 1
         return self._req_id
 
-    async def _rpc_call(self, base_url: str, method: str, params: dict[str, Any]) -> Any:
+    async def _rpc_call(
+        self, base_url: str, method: str, params: dict[str, Any]
+    ) -> Any:
         """Send a JSON-RPC 2.0 request to the MCP endpoint and return the result."""
-        assert self._http is not None, "Call connect() or use async context manager first"
+        assert (
+            self._http is not None
+        ), "Call connect() or use async context manager first"
 
         payload = {
             "jsonrpc": "2.0",
@@ -184,7 +192,9 @@ class MCPMultiClient:
             )
             resp.raise_for_status()
         except httpx.HTTPError as exc:
-            raise MCPCallError(f"HTTP error calling {base_url}/mcp ({method}): {exc}") from exc
+            raise MCPCallError(
+                f"HTTP error calling {base_url}/mcp ({method}): {exc}"
+            ) from exc
 
         try:
             data = resp.json()
@@ -206,11 +216,13 @@ class MCPMultiClient:
 
         tools = []
         for t in tools_raw:
-            tools.append(ToolInfo(
-                name=t.get("name", ""),
-                description=t.get("description", ""),
-                server_name=server_name,
-                server_url=base_url,
-                input_schema=t.get("inputSchema", {}),
-            ))
+            tools.append(
+                ToolInfo(
+                    name=t.get("name", ""),
+                    description=t.get("description", ""),
+                    server_name=server_name,
+                    server_url=base_url,
+                    input_schema=t.get("inputSchema", {}),
+                )
+            )
         return tools

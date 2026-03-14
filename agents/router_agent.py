@@ -36,11 +36,11 @@ class RoutingDecision:
     issue_number: int
     repo: str
     complexity_score: int
-    coder_model_tier: str              # "mini" | "full"
-    score_breakdown: dict[str, Any]   # per-dimension scores from ComplexityScorer
+    coder_model_tier: str  # "mini" | "full"
+    score_breakdown: dict[str, Any]  # per-dimension scores from ComplexityScorer
     planning_model_tier: str = "full"  # always premium for planning
     similar_issues: list[dict[str, Any]] = field(default_factory=list)
-    memory_adjustment: int = 0        # ±adjustment applied from memory lookup
+    memory_adjustment: int = 0  # ±adjustment applied from memory lookup
     estimated_minutes: Optional[int] = None
 
 
@@ -119,7 +119,9 @@ class RouterAgent:
         run_id = run_result["run_id"]
 
         # Step 5: transition status to "routing"
-        await self._mcp.call_tool("bus_set_status", {"run_id": run_id, "status": "routing"})
+        await self._mcp.call_tool(
+            "bus_set_status", {"run_id": run_id, "status": "routing"}
+        )
 
         return RoutingDecision(
             run_id=run_id,
@@ -143,9 +145,7 @@ class RouterAgent:
     # Internal helpers
     # ------------------------------------------------------------------
 
-    async def _memory_lookup(
-        self, query: str
-    ) -> tuple[list[dict[str, Any]], int]:
+    async def _memory_lookup(self, query: str) -> tuple[list[dict[str, Any]], int]:
         """Search mcp-memory for similar past issues.
 
         Returns (similar_issues_list, memory_adjustment_int).
@@ -172,9 +172,9 @@ class RouterAgent:
         failure_rate = failures / n
 
         if failure_rate > 0.5:
-            adj = 1    # harder than expected historically
+            adj = 1  # harder than expected historically
         elif failure_rate == 0.0 and n >= 2:
-            adj = -1   # consistently easy historically
+            adj = -1  # consistently easy historically
         else:
             adj = 0
 

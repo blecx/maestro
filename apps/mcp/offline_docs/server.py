@@ -15,9 +15,13 @@ def _load_service() -> OfflineDocsService:
             str(repo_root / ".tmp" / "mcp-offline-docs" / "docs_index.db"),
         )
     ).resolve()
-    source_env = os.getenv("OFFLINE_DOCS_INDEX_SOURCES", "docs,README.md,QUICKSTART.md,templates")
+    source_env = os.getenv(
+        "OFFLINE_DOCS_INDEX_SOURCES", "docs,README.md,QUICKSTART.md,templates"
+    )
     source_paths = [item.strip() for item in source_env.split(",") if item.strip()]
-    return OfflineDocsService(repo_root=repo_root, index_db_path=index_db, source_paths=source_paths)
+    return OfflineDocsService(
+        repo_root=repo_root, index_db_path=index_db, source_paths=source_paths
+    )
 
 
 service = _load_service()
@@ -52,7 +56,9 @@ def offline_docs_search(query: str, max_results: int = 20) -> dict:
 def offline_docs_read(path: str, start_line: int = 1, end_line: int = 200) -> dict:
     """Read indexed local doc content by path and line range."""
     try:
-        return service.read_document(path=path, start_line=start_line, end_line=end_line)
+        return service.read_document(
+            path=path, start_line=start_line, end_line=end_line
+        )
     except (OfflineDocsServiceError, ValueError) as exc:
         raise ValueError(str(exc)) from exc
 

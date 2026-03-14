@@ -61,7 +61,9 @@ class DockerComposeService:
             check=False,
         )
 
-        output = "\n".join(chunk for chunk in (proc.stdout.strip(), proc.stderr.strip()) if chunk)
+        output = "\n".join(
+            chunk for chunk in (proc.stdout.strip(), proc.stderr.strip()) if chunk
+        )
         status = "ok" if proc.returncode == 0 else "error"
         duration = time.perf_counter() - start
 
@@ -80,7 +82,9 @@ class DockerComposeService:
         )
 
         if proc.returncode != 0:
-            raise DockerComposeServiceError(output or f"Command failed: {' '.join(command)}")
+            raise DockerComposeServiceError(
+                output or f"Command failed: {' '.join(command)}"
+            )
 
         return {
             "run_id": run_id,
@@ -91,7 +95,12 @@ class DockerComposeService:
         }
 
     def list_targets(self) -> dict[str, Any]:
-        return {"targets": [{"name": key, "compose_file": value} for key, value in sorted(self.compose_targets.items())]}
+        return {
+            "targets": [
+                {"name": key, "compose_file": value}
+                for key, value in sorted(self.compose_targets.items())
+            ]
+        }
 
     def compose_ps(self, target: str) -> dict[str, Any]:
         compose_file = self._resolve_compose_file(target)
@@ -100,7 +109,9 @@ class DockerComposeService:
             command=["docker", "compose", "-f", compose_file, "ps", "--all"],
         )
 
-    def compose_up(self, target: str, build: bool = False, detach: bool = True) -> dict[str, Any]:
+    def compose_up(
+        self, target: str, build: bool = False, detach: bool = True
+    ) -> dict[str, Any]:
         compose_file = self._resolve_compose_file(target)
         command = ["docker", "compose", "-f", compose_file, "up"]
         if build:
@@ -116,12 +127,23 @@ class DockerComposeService:
             command.append("--remove-orphans")
         return self._run(tool="compose_down", command=command)
 
-    def compose_logs(self, target: str, service: str | None = None, tail: int = 200) -> dict[str, Any]:
+    def compose_logs(
+        self, target: str, service: str | None = None, tail: int = 200
+    ) -> dict[str, Any]:
         if tail <= 0 or tail > 5000:
             raise ValueError("tail must be between 1 and 5000")
 
         compose_file = self._resolve_compose_file(target)
-        command = ["docker", "compose", "-f", compose_file, "logs", "--no-color", "--tail", str(tail)]
+        command = [
+            "docker",
+            "compose",
+            "-f",
+            compose_file,
+            "logs",
+            "--no-color",
+            "--tail",
+            str(tail),
+        ]
         if service:
             command.append(service)
         return self._run(tool="compose_logs", command=command)

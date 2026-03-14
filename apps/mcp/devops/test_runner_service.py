@@ -97,7 +97,9 @@ class TestRunnerService:
             try:
                 cwd.relative_to(sibling_root)
             except ValueError:
-                raise ValueError("Profile cwd escapes allowed repository roots") from exc
+                raise ValueError(
+                    "Profile cwd escapes allowed repository roots"
+                ) from exc
 
         run_id = uuid.uuid4().hex
         start = time.perf_counter()
@@ -112,7 +114,9 @@ class TestRunnerService:
             timeout=profile.timeout_sec,
         )
 
-        output = "\n".join(chunk for chunk in (proc.stdout.strip(), proc.stderr.strip()) if chunk)
+        output = "\n".join(
+            chunk for chunk in (proc.stdout.strip(), proc.stderr.strip()) if chunk
+        )
         status = "ok" if proc.returncode == 0 else "error"
         duration = time.perf_counter() - start
 

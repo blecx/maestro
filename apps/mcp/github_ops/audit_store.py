@@ -53,7 +53,9 @@ class AuditStore:
         )
 
         file_path = self.base_dir / f"{safe_record.run_id}.json"
-        file_path.write_text(json.dumps(asdict(safe_record), indent=2), encoding="utf-8")
+        file_path.write_text(
+            json.dumps(asdict(safe_record), indent=2), encoding="utf-8"
+        )
         return file_path
 
     def get(self, run_id: str) -> dict[str, Any] | None:

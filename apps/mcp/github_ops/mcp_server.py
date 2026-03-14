@@ -141,13 +141,17 @@ def github_ops_workflow_runs_list(
 ) -> Dict[str, Any]:
     """List GitHub Actions workflow runs for a repo and branch."""
     try:
-        return service.workflow_runs_list(repo=repo, branch=branch, status=status, limit=limit)
+        return service.workflow_runs_list(
+            repo=repo, branch=branch, status=status, limit=limit
+        )
     except (GitHubOpsPolicyError, GitHubOpsServiceError, ValueError) as exc:
         raise _wrap_error(exc) from exc
 
 
 @mcp.tool()
-def github_ops_workflow_run_cancel(repo: str, run_id: int, dry_run: bool = False) -> Dict[str, Any]:
+def github_ops_workflow_run_cancel(
+    repo: str, run_id: int, dry_run: bool = False
+) -> Dict[str, Any]:
     """Cancel a workflow run by ID (supports dry_run)."""
     try:
         return service.workflow_run_cancel(repo=repo, run_id=run_id, dry_run=dry_run)

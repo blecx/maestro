@@ -15,7 +15,9 @@ class RepoPathGuard:
     def __post_init__(self) -> None:
         object.__setattr__(self, "repo_root", self.repo_root.resolve())
 
-    def resolve_relative_path(self, relative_path: str, *, allow_nonexistent: bool = True) -> Path:
+    def resolve_relative_path(
+        self, relative_path: str, *, allow_nonexistent: bool = True
+    ) -> Path:
         candidate = Path(relative_path)
 
         if candidate.is_absolute():

@@ -58,11 +58,12 @@ _DOMAIN_PATTERN = re.compile(
 @dataclass
 class ScoringBreakdown:
     """Per-dimension score breakdown for traceability."""
-    file_count_score: int     # 0-2
+
+    file_count_score: int  # 0-2
     cross_service_score: int  # 0-2
-    domain_count_score: int   # 0-2
-    breaking_score: int       # 0-2
-    test_gap_score: int       # 0-2
+    domain_count_score: int  # 0-2
+    breaking_score: int  # 0-2
+    test_gap_score: int  # 0-2
 
     @property
     def total(self) -> int:

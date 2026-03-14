@@ -1,4 +1,4 @@
-"""AgentBus — SQLite backend for the mcp-agent-bus server.
+"""AgentBus - SQLite backend for the mcp-agent-bus server.
 
 Tables:
   task_runs          : one row per agent task run
@@ -54,7 +54,13 @@ class AgentBus:
 
     def __init__(self, db_path: str = ":memory:") -> None:
         self._db_path = db_path
-        self._conn = sqlite3.connect(db_path, check_same_thread=False)
+        self._conn = sqlite3.connect(
+            str(self._db_path),
+            check_same_thread=False,
+            isolation_level=None,
+        )
+        self._conn.execute("PRAGMA journal_mode=WAL;")
+        self._conn.execute("PRAGMA synchronous=NORMAL;")
         self._conn.row_factory = sqlite3.Row
         self._migrate()
 
@@ -67,6 +73,7 @@ class AgentBus:
             """
             CREATE TABLE IF NOT EXISTS task_runs (
                 run_id          TEXT PRIMARY KEY,
+                project_id      TEXT NOT NULL DEFAULT 'default',
                 issue_number    INTEGER NOT NULL,
                 repo            TEXT NOT NULL DEFAULT '',
                 status          TEXT NOT NULL DEFAULT 'created',
@@ -132,20 +139,27 @@ class AgentBus:
         """Create a new task run and return its run_id."""
         run_id = str(uuid4())
         ts = _now()
+        import os
+
+        project_id = os.getenv("PROJECT_WORKSPACE_ID", "default")
         self._conn.execute(
             """
-            INSERT INTO task_runs (run_id, issue_number, repo, status, created_ts, updated_ts)
-            VALUES (?, ?, ?, 'created', ?, ?)
+            INSERT INTO task_runs (run_id, project_id, issue_number, repo, status, created_ts, updated_ts)
+            VALUES (?, ?, ?, ?, 'created', ?, ?)
             """,
-            (run_id, issue_number, repo, ts, ts),
+            (run_id, project_id, issue_number, repo, ts, ts),
         )
         self._conn.commit()
         return run_id
 
     def get_run(self, run_id: str) -> Optional[dict[str, Any]]:
         """Return run metadata or None if not found."""
+        import os
+
+        project_id = os.getenv("PROJECT_WORKSPACE_ID", "default")
         row = self._conn.execute(
-            "SELECT * FROM task_runs WHERE run_id = ?", (run_id,)
+            "SELECT * FROM task_runs WHERE run_id = ? AND project_id = ?",
+            (run_id, project_id),
         ).fetchone()
         return dict(row) if row else None
 
@@ -169,8 +183,12 @@ class AgentBus:
 
     def list_pending_approval(self) -> list[dict[str, Any]]:
         """Return all runs currently awaiting human approval."""
+        import os
+
+        project_id = os.getenv("PROJECT_WORKSPACE_ID", "default")
         rows = self._conn.execute(
-            "SELECT * FROM task_runs WHERE status = 'awaiting_approval' ORDER BY created_ts ASC"
+            "SELECT * FROM task_runs WHERE status = 'awaiting_approval' AND project_id = ? ORDER BY created_ts ASC",
+            (project_id,),
         ).fetchall()
         return [dict(r) for r in rows]
 
@@ -188,6 +206,8 @@ class AgentBus:
         estimated_minutes: Optional[int] = None,
     ) -> None:
         """Write (or replace) the implementation plan for a run."""
+        if self.get_run(run_id) is None:
+            raise ValueError("Run not found for project.")
         self._conn.execute(
             """
             INSERT INTO plans (run_id, goal, files, acceptance_criteria, validation_cmds, estimated_minutes, ts)
@@ -214,6 +234,9 @@ class AgentBus:
 
     def approve_run(self, run_id: str, feedback: str = "") -> None:
         """Mark the plan as approved and update run status to 'approved'."""
+        # In sqlite we can't easily JOIN an UPDATE, so let's check permission first.
+        if not self.get_run(run_id):
+            raise ValueError("Run not found for project.")
         self._conn.execute(
             "UPDATE plans SET approved = 1, feedback = ? WHERE run_id = ?",
             (feedback, run_id),
@@ -222,6 +245,8 @@ class AgentBus:
 
     def get_plan(self, run_id: str) -> Optional[dict[str, Any]]:
         """Return the plan for a run, with JSON fields deserialized."""
+        if self.get_run(run_id) is None:
+            return None
         row = self._conn.execute(
             "SELECT * FROM plans WHERE run_id = ?", (run_id,)
         ).fetchone()
@@ -259,6 +284,8 @@ class AgentBus:
 
     def get_snapshots(self, run_id: str) -> list[dict[str, Any]]:
         """Return all file snapshots for a run."""
+        if self.get_run(run_id) is None:
+            return []
         rows = self._conn.execute(
             "SELECT * FROM file_snapshots WHERE run_id = ? ORDER BY ts ASC",
             (run_id,),
@@ -279,6 +306,8 @@ class AgentBus:
         passed: bool,
     ) -> None:
         """Record the result of a validation command (test/lint run)."""
+        if self.get_run(run_id) is None:
+            raise ValueError("Run not found for project.")
         self._conn.execute(
             """
             INSERT INTO validation_results (run_id, command, stdout, stderr, exit_code, passed, ts)
@@ -290,6 +319,8 @@ class AgentBus:
 
     def get_validations(self, run_id: str, limit: int = 10) -> list[dict[str, Any]]:
         """Return the most recent validation results for a run."""
+        if self.get_run(run_id) is None:
+            return []
         rows = self._conn.execute(
             """
             SELECT * FROM validation_results WHERE run_id = ?
@@ -324,6 +355,8 @@ class AgentBus:
 
     def get_checkpoints(self, run_id: str) -> list[dict[str, Any]]:
         """Return all checkpoints for a run in chronological order."""
+        if self.get_run(run_id) is None:
+            return []
         rows = self._conn.execute(
             "SELECT * FROM checkpoints WHERE run_id = ? ORDER BY ts ASC",
             (run_id,),
@@ -344,7 +377,7 @@ class AgentBus:
     # ------------------------------------------------------------------
 
     def read_context_packet(self, run_id: str) -> dict[str, Any]:
-        """Return all run data in one call — the core MAESTRO primitive.
+        """Return all run data in one call - the core MAESTRO primitive.
 
         Any agent can call this once to get the full issue context,
         approved plan, all file snapshots, and recent validation results.

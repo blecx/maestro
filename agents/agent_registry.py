@@ -26,11 +26,11 @@ def _load_agent_class(spec: str) -> Type[MaestroAdapter]:
     module = import_module(module_name)
     cls = getattr(module, class_name, None)
     if cls is None:
-        raise ValueError(f"Agent class '{class_name}' not found in module '{module_name}'.")
-    if not issubclass(cls, MaestroAdapter):
         raise ValueError(
-            f"Agent class '{class_name}' must inherit MaestroAdapter."
+            f"Agent class '{class_name}' not found in module '{module_name}'."
         )
+    if not issubclass(cls, MaestroAdapter):
+        raise ValueError(f"Agent class '{class_name}' must inherit MaestroAdapter.")
     return cls
 
 

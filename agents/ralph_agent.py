@@ -60,7 +60,12 @@ class RalphAgent(MaestroAdapter):
         base = super()._build_system_instructions()
         file_overlay = self._load_github_agent_overlay()
         if file_overlay:
-            return base + "\n" + file_overlay + f"\n\nIssue Context:\n- Current issue number: #{self.issue_number}\n"
+            return (
+                base
+                + "\n"
+                + file_overlay
+                + f"\n\nIssue Context:\n- Current issue number: #{self.issue_number}\n"
+            )
 
         ralph_overlay = f"""
 

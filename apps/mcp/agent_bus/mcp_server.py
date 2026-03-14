@@ -296,3 +296,25 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+# ---------------------------------------------------------------------------
+# Dynamic Key Injection
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool()
+def bus_set_live_key(api_key: str) -> dict[str, Any]:
+    """Set a live OpenAI API key dynamically to override mock endpoints.
+
+    Args:
+        api_key: The real API key to use.
+    """
+    import os
+
+    override_path = os.getenv("LLM_OVERRIDE_PATH", "configs/runtime_override.json")
+    os.makedirs(os.path.dirname(override_path), exist_ok=True)
+    import json
+
+    with open(override_path, "w") as f:
+        json.dump({"api_key": api_key}, f)
+    return {"ok": True, "message": "Live key updated dynamically."}

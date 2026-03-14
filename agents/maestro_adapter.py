@@ -2,9 +2,11 @@
 Adapter to wrap MAESTRO inside the v1 AutonomousWorkflowAgent interface.
 This bridges `scripts/work-issue.py` to `agents/maestro.py`.
 """
+
 from typing import Optional
 from pathlib import Path
 from agents.maestro import MaestroOrchestrator
+
 
 class MaestroAdapter:
     """Provides a compatible interface for older work-issue scripts using MAESTRO."""
@@ -38,7 +40,7 @@ class MaestroAdapter:
             full_body = f"{issue_summary}\n\n[Agent Instructions Override]\n{self.system_instructions}"
 
         orq = MaestroOrchestrator(workspace_root=Path.cwd())
-        
+
         # Determine repo (could be passed in, currently defaults to blecx/AI-Agent-Framework)
         # Using a fixed default here for compatibility, can be extracted from env.
         repo = "blecx/AI-Agent-Framework"
@@ -47,7 +49,7 @@ class MaestroAdapter:
             issue_number=self.issue_number,
             repo=repo,
             issue_title=pr_title,
-            issue_body=full_body
+            issue_body=full_body,
         )
         return result.success
 

@@ -71,13 +71,17 @@ class OfflineDocsService:
 
     def _get_meta(self, key: str) -> str | None:
         with self._connect() as conn:
-            row = conn.execute("SELECT value FROM index_meta WHERE key = ?", (key,)).fetchone()
+            row = conn.execute(
+                "SELECT value FROM index_meta WHERE key = ?", (key,)
+            ).fetchone()
         return str(row[0]) if row else None
 
     def _iter_source_files(self) -> list[Path]:
         files: list[Path] = []
         for source in self.source_paths:
-            resolved = self.path_guard.resolve_relative_path(source, allow_nonexistent=False)
+            resolved = self.path_guard.resolve_relative_path(
+                source, allow_nonexistent=False
+            )
             if resolved.is_file():
                 files.append(resolved)
                 continue
@@ -214,7 +218,9 @@ class OfflineDocsService:
             "matches": matches,
         }
 
-    def read_document(self, path: str, start_line: int = 1, end_line: int = 200) -> dict[str, Any]:
+    def read_document(
+        self, path: str, start_line: int = 1, end_line: int = 200
+    ) -> dict[str, Any]:
         if start_line <= 0 or end_line <= 0:
             raise ValueError("start_line and end_line must be >= 1")
         if end_line < start_line:
@@ -224,7 +230,9 @@ class OfflineDocsService:
         relative = resolved.relative_to(self.repo_root).as_posix()
 
         with self._connect() as conn:
-            row = conn.execute("SELECT content, line_count FROM docs WHERE path = ?", (relative,)).fetchone()
+            row = conn.execute(
+                "SELECT content, line_count FROM docs WHERE path = ?", (relative,)
+            ).fetchone()
 
         if not row:
             raise OfflineDocsServiceError(

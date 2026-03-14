@@ -26,13 +26,15 @@ def _build_parser() -> argparse.ArgumentParser:
         description="MAESTRO: AI agent pipeline for GitHub issue implementation",
     )
     parser.add_argument(
-        "--issue", "-i",
+        "--issue",
+        "-i",
         type=int,
         required=True,
         help="GitHub issue number to implement",
     )
     parser.add_argument(
-        "--repo", "-r",
+        "--repo",
+        "-r",
         required=True,
         help="Repository in owner/name format (e.g. blecx/AI-Agent-Framework)",
     )
@@ -86,18 +88,23 @@ async def _run(args: argparse.Namespace) -> int:
     )
 
     if args.output_json:
-        print(json.dumps({
-            "issue_number": result.issue_number,
-            "repo": result.repo,
-            "run_id": result.run_id,
-            "pr_url": result.pr_url,
-            "files_changed": result.files_changed,
-            "complexity_score": result.complexity_score,
-            "model_tier": result.model_tier,
-            "tests_passed": result.tests_passed,
-            "error": result.error,
-            "success": result.success,
-        }, indent=2))
+        print(
+            json.dumps(
+                {
+                    "issue_number": result.issue_number,
+                    "repo": result.repo,
+                    "run_id": result.run_id,
+                    "pr_url": result.pr_url,
+                    "files_changed": result.files_changed,
+                    "complexity_score": result.complexity_score,
+                    "model_tier": result.model_tier,
+                    "tests_passed": result.tests_passed,
+                    "error": result.error,
+                    "success": result.success,
+                },
+                indent=2,
+            )
+        )
     else:
         _print_result(result)
 
