@@ -702,6 +702,8 @@ The validation contract in `SoftwareFactoryVsocdeTestsuite.md` is mandatory and 
 
 The external dependency and remote GitHub configuration contract in `externalDevendenciesSoftwareFactory.md` is also mandatory and must be included alongside the documents below.
 
+The operator runbook in `howto-extract-softwareFactory.md` is also mandatory and must be included alongside the documents below.
+
 ### `SoftwareFactoryVsocdeTestsuite.md`
 
 Must include:
@@ -724,6 +726,17 @@ Must include:
 - the required branch protection, merge policy, and required status check model
 - the remote-bootstrap and verification procedure for reproducing merge guardrails
 - the distinction between factory-repo remote requirements and host-repo remote projection modes
+
+### `howto-extract-softwareFactory.md`
+
+Must include:
+
+- the exact step-by-step workflow for extracting the factory from `maestro`
+- the ordered execution phases for inventory, copy, neutralization, env unification, runtime packaging, and validation
+- the step-by-step handling of external dependencies and remote GitHub configuration
+- the minimum execution checklist for operators performing the extraction
+- the common extraction failure modes to watch for
+- the extraction definition of done
 
 ### `README.md`
 
@@ -1032,6 +1045,8 @@ The final `softwareFactoryVscode` repository must contain at minimum:
 - source map
 - troubleshooting
 - test-suite contract (`SoftwareFactoryVsocdeTestsuite.md`)
+- external dependency contract (`externalDevendenciesSoftwareFactory.md`)
+- extraction runbook (`howto-extract-softwareFactory.md`)
 
 ---
 
@@ -1094,6 +1109,7 @@ The follow-up step must complete all items below.
 - [ ] Add upgrade validation
 - [ ] Add `SoftwareFactoryVsocdeTestsuite.md` to the standalone repo and align CI to it
 - [ ] Add `externalDevendenciesSoftwareFactory.md` to the standalone repo and align remote-bootstrap docs/scripts to it
+- [ ] Add `howto-extract-softwareFactory.md` to the standalone repo as the operator extraction runbook
 - [ ] Write release docs
 - [ ] Publish first release
 
