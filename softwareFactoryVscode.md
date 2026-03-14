@@ -12,6 +12,7 @@ The resulting repository must:
 - be fully self-contained,
 - include all required runtime and development-time factory artefacts,
 - include the companion validation specification `SoftwareFactoryVsocdeTestsuite.md`,
+- include the VS Code workspace configuration required to make the host workspace behave like this repository,
 - include all required MCP servers, Docker assets, bootstrap scripts, and documentation,
 - avoid shipping Maestro-application-specific artefacts,
 - support installation into a blank host repository,
@@ -141,6 +142,11 @@ Use the following top-level structure.
 ```text
 softwareFactoryVscode/
 ├── SoftwareFactoryVsocdeTestsuite.md
+├── .vscode/
+│   ├── settings.json
+│   ├── tasks.json
+│   ├── extensions.json
+│   └── extensions/
 ├── .copilot/
 │   ├── config/
 │   └── skills/
@@ -216,6 +222,7 @@ Notes:
 - `factory_runtime/` is the canonical package-owned runtime root.
 - If preserving current folder names is required initially, a transition phase may temporarily keep `agents/` and `apps/` at top level, but the end-state should favor a clearer package-owned runtime boundary.
 - Compose files should move under `compose/` for clarity.
+- `.vscode/` is developer/workspace configuration only. It must never become a runtime dependency, but it must be present or projectable so the host workspace behaves like this one.
 
 ---
 
@@ -227,6 +234,10 @@ Extract and adapt the following from the current repo.
 
 #### Developer/meta factory assets
 
+- `.vscode/settings.json`
+- `.vscode/tasks.json`
+- `.vscode/extensions.json`
+- `.vscode/extensions/**` only if a package-owned workspace extension state is intentionally required and documented
 - `.copilot/config/**`
 - `.copilot/skills/**`
 - `.github/agents/**`
@@ -309,6 +320,132 @@ Rule:
 
 - host-visible, recoverable, or orchestrated temp/state files must not rely on host-global `/tmp`
 
+### VS Code workspace parity cleanup
+
+The extracted package must explicitly preserve the workspace-level VS Code behavior currently required in this repository, but in a neutralized and package-owned form.
+
+This includes at minimum:
+
+- workspace `python.defaultInterpreterPath`
+- pytest workspace settings
+- terminal temp-directory redirection to workspace-local `.tmp`
+- `chat.tools.terminal.autoApprove` policy configuration
+- `chat.tools.subagent.autoApprove` configuration
+- `issueagent.customAgent` and related agent settings where still applicable
+- MCP server wiring in workspace settings
+- task definitions in `.vscode/tasks.json`
+- extension recommendations in `.vscode/extensions.json`
+
+The extracted package must also define an explicit extension support matrix to preserve the same seamless user experience and automation level.
+
+At minimum, the package must classify extensions into these tiers:
+
+- **Required external extensions**: needed for the intended developer workflow and automation UX
+- **Required workspace-local extensions**: package-owned extensions shipped inside the repository if the workflow depends on them
+- **Recommended extensions**: not mandatory, but strongly recommended for parity and productivity
+- **Optional extensions**: nice-to-have enhancements that must not be required for correctness
+
+The expected baseline matrix should include at least the following categories and default examples:
+
+- **Copilot experience**
+  - required external: `GitHub.copilot`, `GitHub.copilot-chat`
+- **Python language support**
+  - required external: `ms-python.python`, `ms-python.vscode-pylance`
+- **JavaScript/TypeScript linting and formatting**
+  - recommended external: `dbaeumer.vscode-eslint`, `esbenp.prettier-vscode`
+- **GitHub and PR workflow support**
+  - recommended external: `GitHub.vscode-pull-request-github`
+- **Container/dev environment support**
+  - recommended external: `ms-vscode-remote.remote-containers`
+- **Docker workflow support**
+  - recommended external: `ms-azuretools.vscode-docker`
+- **Workspace-local issue workflow extension**
+  - required workspace-local if the package continues to rely on `issueagent.customAgent` or equivalent chat participant routing
+
+Context7 should be treated carefully:
+
+- the default assumption should be that **Context7 is provided by the MCP server wiring**, not by a required VS Code extension
+- if a Context7-related editor extension is later adopted, it must be documented as recommended or optional unless the workflow truly depends on it
+
+### Concrete proposed extension matrix based on this repository
+
+Use the following concrete recommendation as the default carry-forward matrix for `softwareFactoryVscode`.
+
+#### Hard-required
+
+These are required to preserve the intended automation and developer workflow baseline.
+
+- `GitHub.copilot`
+- `GitHub.copilot-chat`
+- `ms-python.python`
+- `ms-python.vscode-pylance`
+
+#### Recommended
+
+These are not strictly required for correctness, but they are strongly recommended to preserve the same seamless user experience and day-to-day productivity level as this repository.
+
+- `dbaeumer.vscode-eslint`
+- `esbenp.prettier-vscode`
+- `GitHub.vscode-pull-request-github`
+- `ms-vscode-remote.remote-containers`
+- `ms-azuretools.vscode-docker`
+
+#### Optional
+
+These may improve workflow quality but must not be required for the factory to function correctly.
+
+- any future Context7-related editor extension, if adopted later
+- language-specific extensions for host-project technologies beyond the baseline Python/Copilot workflow
+- additional formatter or editor productivity extensions that are user-preference driven rather than workflow-critical
+
+#### Deprecated / not to carry over by default
+
+These must not be copied forward in their current repo-specific form.
+
+- the current Maestro-branded workspace-local extension under `.vscode/extensions/issueagent` in its existing identity (`publisher: maestro`, repository links to `blecx/maestro`, and Maestro-specific naming)
+- any extension metadata or workspace-local extension source that still references `maestro`, `blecx/maestro`, or Maestro-specific issue workflow branding
+
+If equivalent custom chat-participant functionality is still required after extraction, it must be reintroduced only as a **neutralized** workspace-local extension owned by `softwareFactoryVscode` with updated naming, repository metadata, settings contract, and documentation.
+
+### Concrete proposed `.vscode/extensions.json` target example
+
+Unless a future implementation chooses a different documented projection model, the package should use the following default target shape for `.vscode/extensions.json`.
+
+This example intentionally distinguishes between broadly recommended marketplace extensions and extensions that are intentionally **not** carried over in their current Maestro-specific form.
+
+```json
+{
+  "recommendations": [
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "GitHub.vscode-pull-request-github",
+    "ms-vscode-remote.remote-containers",
+    "ms-azuretools.vscode-docker"
+  ],
+  "unwantedRecommendations": ["maestro.issueagent"]
+}
+```
+
+Notes for this example:
+
+- `GitHub.copilot` and `GitHub.copilot-chat` are listed because the intended workflow and custom-agent experience depend on them.
+- `ms-python.python` and `ms-python.vscode-pylance` are listed because the current automation and validation workflow is Python-centric.
+- ESLint and Prettier are recommended to preserve code-quality ergonomics for JavaScript/TypeScript host projects, but they are not required for core factory correctness.
+- GitHub PR, containers, and Docker support are recommended to preserve the current review and environment-management experience.
+- `maestro.issueagent` is shown as unwanted in this example to make clear that the current Maestro-branded local extension must not be carried forward unchanged.
+- If the extracted package later ships a neutralized replacement extension, replace `maestro.issueagent` with the new neutral extension ID and move it to the appropriate required or recommended category based on the final workflow contract.
+
+These settings must be either:
+
+- shipped directly as canonical workspace configuration, or
+- generated/projected deterministically from package-owned source files such as `.copilot/config/**`
+
+The end result must make a fresh host workspace behave like this repository without requiring undocumented manual VS Code setup.
+
 ---
 
 ## Required environment contract
@@ -389,6 +526,34 @@ Preferred end-state:
 
 Never required for runtime startup.
 
+### Context7 Docker/MCP artefact and setup contract
+
+`softwareFactoryVscode` must explicitly include Context7 as a first-class factory artefact, because in this repository it is delivered via a Docker image and connected through MCP wiring.
+
+The standalone package must include at minimum:
+
+- the Context7 Docker image definition (currently represented by `docker/context7/Dockerfile`)
+- the Context7 compose definition (currently represented by `docker-compose.context7.yml` or its future equivalent under `compose/`)
+- the runtime environment variable contract for `PORT_CONTEXT7`
+- support for the optional `CONTEXT7_API_KEY`
+- `.vscode/settings.json` MCP server wiring for the local Context7 endpoint
+- installation and verification documentation for bringing the Context7 service up locally
+
+The default setup contract should be:
+
+- build or start Context7 via the packaged compose stack
+- expose the service on the package-managed local port for Context7
+- configure VS Code MCP wiring to the local HTTP MCP endpoint
+- treat `CONTEXT7_API_KEY` as optional unless a chosen runtime mode requires it
+
+The installation docs must explicitly describe:
+
+- where the Context7 Dockerfile lives
+- how the Context7 service is started
+- how `CONTEXT7_API_KEY` is supplied when available
+- how to verify the Context7 MCP endpoint is reachable
+- how the system should behave if the key is absent
+
 ---
 
 ## Required installation flow
@@ -420,6 +585,7 @@ Run a package-owned bootstrap command that:
 - creates `.factory.lock.json`
 - creates `.factory.env` from `.env.example` or equivalent
 - projects selected configuration into host-visible locations if required
+- projects or generates `.vscode/settings.json`, `.vscode/tasks.json`, and `.vscode/extensions.json` so the workspace behaves like this one
 - verifies Docker and Python prerequisites
 
 ### Step 4 — Configure runtime env
@@ -431,6 +597,8 @@ Run a package-owned runtime env generator that writes:
 ### Step 5 — Start factory services
 
 Run the package-owned compose launcher.
+
+This startup flow must explicitly include Context7 as part of the documented factory stack, either in the default compose launch path or in a clearly documented optional profile if the package chooses not to enable it by default.
 
 ### Step 6 — Validate installation
 
@@ -553,6 +721,7 @@ Must include:
 - quick start
 - architecture overview
 - link to install and upgrade docs
+- note whether `.vscode` is shipped directly or projected/generated
 
 ### `docs/INSTALL.md`
 
@@ -566,6 +735,9 @@ Must include:
 - starting services
 - validation steps
 - troubleshooting
+- how `.vscode/settings.json`, `.vscode/tasks.json`, and `.vscode/extensions.json` are created or updated
+- how the Context7 Docker/MCP service is built, started, configured, and verified
+- how `CONTEXT7_API_KEY` is supplied when available and how the package behaves when it is absent
 
 ### `docs/TESTING.md`
 
@@ -576,6 +748,24 @@ Must include:
 - how to run static, build, runtime, isolation, and upgrade checks separately
 - where logs and diagnostics are collected
 - how the test suite maps to `SoftwareFactoryVsocdeTestsuite.md`
+- how to verify projected VS Code settings, tasks, MCP server wiring, and extension recommendations
+
+### `docs/VSCODE-WORKSPACE.md`
+
+Must include:
+
+- the canonical workspace settings required for parity with this repository
+- which parts are shipped directly versus projected/generated
+- MCP server wiring expectations in `.vscode/settings.json`
+- terminal auto-approve and subagent auto-approve policy expectations
+- task definitions required in `.vscode/tasks.json`
+- extension recommendations in `.vscode/extensions.json`
+- the required/recommended/optional extension matrix with explicit VS Code extension IDs
+- which extensions are external marketplace dependencies versus workspace-local bundled extensions
+- whether the workspace-local `issueagent` extension remains part of the package and under what contract
+- why Context7 is delivered primarily through MCP wiring rather than a mandatory editor extension
+- any optional `.vscode/extensions/**` content and why it exists
+- the concrete proposed extension matrix split into hard-required, recommended, optional, and deprecated/not-to-carry-over entries
 
 ### `docs/UPGRADE.md`
 
@@ -606,6 +796,7 @@ Must include:
 - project-isolated compose model
 - service classes
 - security and policy assumptions
+- the role of `.vscode/` as workspace configuration rather than runtime dependency
 
 ### `docs/EXTRACTION-SOURCE-MAP.md`
 
@@ -629,6 +820,7 @@ All validation design and CI coverage must satisfy the requirements defined in `
 - neutrality check: no forbidden `maestro`, `maestro-Client`, `_external/maestro-Client`, or `blecx/maestro` references outside migration docs/source maps
 - variable-contract check: compose and scripts use the same canonical env names
 - packaging check: `.dockerignore` and runtime builds exclude meta assets
+- VS Code workspace parity check: required `.vscode` files, MCP wiring, task labels, and workspace settings are present and consistent with the documented contract
 
 ## Runtime checks
 
@@ -789,7 +981,7 @@ The final `softwareFactoryVscode` repository must contain at minimum:
 - devops MCPs
 - offline docs MCP
 - GitHub ops MCP
-- context7 MCP connector or wrapper if required by current architecture
+- Context7 MCP service delivered via Docker image and compose artefacts
 - mock LLM gateway if required for local deterministic validation
 
 ### Runtime orchestration
@@ -802,6 +994,10 @@ The final `softwareFactoryVscode` repository must contain at minimum:
 
 ### Developer tooling
 
+- VS Code workspace settings
+- VS Code task definitions
+- VS Code extension recommendations
+- VS Code extension support matrix and installation guidance
 - Copilot config
 - GitHub agent wrappers
 - installation helpers
@@ -813,6 +1009,7 @@ The final `softwareFactoryVscode` repository must contain at minimum:
 
 - install
 - testing
+- VS Code workspace setup
 - upgrade
 - maintenance
 - architecture
@@ -843,7 +1040,10 @@ The follow-up implementation must explicitly decide, record, and implement each 
 3. Whether `factory_runtime/` replaces current top-level `agents/` and `apps/` now or in a later compatibility phase.
 4. Which MCP services remain first-party versus treated as opaque isolated services.
 5. Whether projection writes directly into host `.copilot/` and `.github/agents/` or keeps them package-local with symlink/copy projection.
-6. Whether the package publishes a Python CLI entrypoint in addition to scripts.
+6. Whether `.vscode/settings.json`, `.vscode/tasks.json`, and `.vscode/extensions.json` are canonical files or generated projections.
+7. Which VS Code extensions are required, recommended, optional, or workspace-local bundled for parity with this repository.
+8. Whether a neutralized replacement for the current workspace-local `issueagent` extension is still necessary.
+9. Whether the package publishes a Python CLI entrypoint in addition to scripts.
 
 These decisions must be captured in docs and manifests, not left implicit.
 
@@ -869,6 +1069,9 @@ The follow-up step must complete all items below.
 - [ ] Add projection flow
 - [ ] Add lock file and upgrade flow
 - [ ] Add override model
+- [ ] Add canonical or generated `.vscode` workspace settings, tasks, and extension recommendations
+- [ ] Add explicit required/recommended/optional VS Code extension matrix and installation guidance
+- [ ] Add Context7 Docker image, compose setup contract, and installation/verification guidance explicitly to the package
 - [ ] Add fresh install validation
 - [ ] Add concurrency validation
 - [ ] Add upgrade validation
