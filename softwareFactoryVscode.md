@@ -700,6 +700,8 @@ The standalone repo must ship the following docs.
 
 The validation contract in `SoftwareFactoryVsocdeTestsuite.md` is mandatory and must be included alongside the documents below.
 
+The external dependency and remote GitHub configuration contract in `externalDevendenciesSoftwareFactory.md` is also mandatory and must be included alongside the documents below.
+
 ### `SoftwareFactoryVsocdeTestsuite.md`
 
 Must include:
@@ -709,6 +711,19 @@ Must include:
 - CI and release-gate expectations
 - failure-mode coverage
 - the canonical kickoff prompt for implementing the automated test suite
+
+### `externalDevendenciesSoftwareFactory.md`
+
+Must include:
+
+- the complete external dependency model for the standalone package
+- the GitHub-hosted artefacts that must be versioned in the repo
+- the remote repository settings that cannot be transferred by `git clone`
+- the repository secrets and variables contract
+- the local operator authentication and GitHub CLI contract
+- the required branch protection, merge policy, and required status check model
+- the remote-bootstrap and verification procedure for reproducing merge guardrails
+- the distinction between factory-repo remote requirements and host-repo remote projection modes
 
 ### `README.md`
 
@@ -1000,6 +1015,7 @@ The final `softwareFactoryVscode` repository must contain at minimum:
 - VS Code extension support matrix and installation guidance
 - Copilot config
 - GitHub agent wrappers
+- GitHub workflow/template artefacts and remote configuration spec
 - installation helpers
 - projection scripts
 - repo setup scripts
@@ -1072,10 +1088,12 @@ The follow-up step must complete all items below.
 - [ ] Add canonical or generated `.vscode` workspace settings, tasks, and extension recommendations
 - [ ] Add explicit required/recommended/optional VS Code extension matrix and installation guidance
 - [ ] Add Context7 Docker image, compose setup contract, and installation/verification guidance explicitly to the package
+- [ ] Add GitHub workflow/template artefacts plus remote repository bootstrap and protection contract
 - [ ] Add fresh install validation
 - [ ] Add concurrency validation
 - [ ] Add upgrade validation
 - [ ] Add `SoftwareFactoryVsocdeTestsuite.md` to the standalone repo and align CI to it
+- [ ] Add `externalDevendenciesSoftwareFactory.md` to the standalone repo and align remote-bootstrap docs/scripts to it
 - [ ] Write release docs
 - [ ] Publish first release
 
