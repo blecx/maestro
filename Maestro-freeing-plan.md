@@ -17,7 +17,7 @@ To permanently fix the architectural decay, we must establish a rigid separation
 
 **The Current Problem:** Maestro Agents currently try to inherit or read prompt schemas from the Software Factory Agent layer, or rely on hard-coded legacy paths pointing to `AI-Agent-Framework`. This is a strict architectural anti-pattern.
 
-## 3. Implementation Phases (Completed)
+## 3. Implementation Phases
 
 ### Phase 1: Decoupling from AI-Agent-Framework (The Standalone Step)
 
