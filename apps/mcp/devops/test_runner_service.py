@@ -59,13 +59,13 @@ class TestRunnerService:
             ),
             "frontend.lint": TestProfile(
                 name="frontend.lint",
-                cwd="../client/client",
+                cwd="${CLIENT_DIR:-../client}/client",
                 command=["npm", "run", "lint"],
                 timeout_sec=1200,
             ),
             "frontend.build": TestProfile(
                 name="frontend.build",
-                cwd="../client/client",
+                cwd="${CLIENT_DIR:-../client}/client",
                 command=["npm", "run", "build"],
                 timeout_sec=1200,
             ),

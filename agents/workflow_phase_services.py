@@ -312,7 +312,7 @@ class TestingPhaseService:
 
         start_time = time.time()
 
-        client_dir = Path("../client")
+        client_dir = Path("${CLIENT_DIR:-../client}")
         repo_type = _detect_validation_repo_type(agent)
 
         agent.log("🔍 Analyzing changes for smart validation...", "progress")
