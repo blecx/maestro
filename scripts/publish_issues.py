@@ -29,7 +29,7 @@ _GH_SLEEP_SECONDS = DEFAULT_SLEEP_SECONDS
 _last_gh_call_monotonic: float | None = None
 
 REPO_MAP = {
-    "AI-Agent-Framework": "blecx/AI-Agent-Framework",
+    "AI-Agent-Framework": "blecx/maestro",
     "AI-Agent-Framework-Client": "blecx/AI-Agent-Framework-Client",
 }
 

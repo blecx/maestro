@@ -6,7 +6,7 @@ selection workflow for the client repo (blecx/AI-Agent-Framework-Client).
 
 This helper script:
 - Gets the next client Step-1 issue via `scripts/next-issue.py` (dry-run, no reconcile)
-- Gets a simple "next" backend issue via `gh issue list --repo blecx/AI-Agent-Framework`
+- Gets a simple "next" backend issue via `gh issue list --repo blecx/maestro`
 - Prefers the client Step-1 issue when one is available
 
 Usage:
@@ -35,7 +35,7 @@ from typing import Any, Optional
 REPO_ROOT = Path(__file__).parent.parent
 
 CLIENT_REPO = "blecx/AI-Agent-Framework-Client"
-BACKEND_REPO = "blecx/AI-Agent-Framework"
+BACKEND_REPO = "blecx/maestro"
 DEFAULT_GH_MIN_INTERVAL_SECONDS = 1.0
 _GH_LAST_REQUEST_TS: float | None = None
 

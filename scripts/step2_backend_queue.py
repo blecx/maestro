@@ -2,7 +2,7 @@
 """Manage Step 2 backend execution queue readiness labels.
 
 This script enforces queue governance for issues #613-#622 in
-`blecx/AI-Agent-Framework`:
+`blecx/maestro`:
 
 - exactly one OPEN issue is `status:ready` (the first OPEN in queue order)
 - all later OPEN issues are `status:blocked`
@@ -26,7 +26,7 @@ from dataclasses import dataclass
 from typing import Any
 
 
-REPO = "blecx/AI-Agent-Framework"
+REPO = "blecx/maestro"
 QUEUE = [613, 614, 615, 616, 617, 618, 619, 620, 621, 622]
 TRACKER_ISSUE = 623
 

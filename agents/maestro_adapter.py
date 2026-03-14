@@ -41,9 +41,9 @@ class MaestroAdapter:
 
         orq = MaestroOrchestrator(workspace_root=Path.cwd())
 
-        # Determine repo (could be passed in, currently defaults to blecx/AI-Agent-Framework)
+        # Determine repo (could be passed in, currently defaults to blecx/maestro)
         # Using a fixed default here for compatibility, can be extracted from env.
-        repo = "blecx/AI-Agent-Framework"
+        repo = "blecx/maestro"
 
         result = await orq.run_issue(
             issue_number=self.issue_number,

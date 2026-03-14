@@ -2,7 +2,7 @@
 """Recommend the next PR to merge (PR-first workflow).
 
 This helper scans open PRs across:
-- blecx/AI-Agent-Framework (backend)
+- blecx/maestro (backend)
 - blecx/AI-Agent-Framework-Client (client)
 
 It ranks PRs by merge readiness (CI success, mergeable, clean merge state, not draft)
@@ -35,7 +35,7 @@ RepoKey = Literal["backend", "client"]
 
 
 REPOS: dict[RepoKey, str] = {
-    "backend": "blecx/AI-Agent-Framework",
+    "backend": "blecx/maestro",
     "client": "blecx/AI-Agent-Framework-Client",
 }
 

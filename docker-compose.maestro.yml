@@ -144,7 +144,7 @@ services:
       MEMORY_MCP_URL: "http://mcp-memory:3030"
       AGENT_BUS_URL: "http://mcp-agent-bus:3031"
       APPROVAL_GATE_URL: "http://approval-gate:8001"
-      AGENT_REPO: "${AGENT_REPO:-blecx/AI-Agent-Framework}"
+      AGENT_REPO: "${AGENT_REPO:-.}"
       AGENT_WORKSPACE: "/workspace"
     volumes:
       # Mount the workspace so the worker can edit files

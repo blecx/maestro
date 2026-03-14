@@ -271,7 +271,7 @@ Token Budget Mode:
             created = _create_split_issues_via_gh(
                 issue_number=args.issue,
                 drafts=split_drafts,
-                repo=os.environ.get("WORK_ISSUE_REPO", "blecx/AI-Agent-Framework"),
+                repo=os.environ.get("WORK_ISSUE_REPO", "blecx/maestro"),
             )
             _cleanup_split_transient_files(args.issue)
             print(f"\nSPLIT_ISSUES_CREATED: {len(created)}")
