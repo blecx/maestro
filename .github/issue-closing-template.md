@@ -77,7 +77,7 @@ Use this template when closing completed issues.
 
 ## Implementation Summary
 
-Implemented API Service Layer Infrastructure providing a robust, type-safe interface to the AI-Agent-Framework backend API with comprehensive error handling, retry logic, and full test coverage.
+Implemented API Service Layer Infrastructure providing a robust, type-safe interface to the maestro backend API with comprehensive error handling, retry logic, and full test coverage.
 
 ## Acceptance Criteria
 

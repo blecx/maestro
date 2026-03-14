@@ -13,7 +13,7 @@ The `@resolve-issue` chat participant provides an interactive way to run the aut
 
 ### Prerequisites
 
-1. **Workspace open:** AI-Agent-Framework must be open in VS Code
+1. **Workspace open:** maestro must be open in VS Code
 2. **Python environment:** `.venv` must be set up (`./setup.sh`)
 3. **GitHub authentication:** `gh auth login` must be complete
 4. **Extension installed:** The issueagent extension must be loaded

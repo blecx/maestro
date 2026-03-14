@@ -160,7 +160,7 @@ def configure_workspace(profile: str, global_only: bool = False, workspace_only:
         
     for path in paths:
         # Check if the external path exists but safely skip
-        if path.parts[-3:-2] == ("AI-Agent-Framework-Client",) and not path.parent.parent.exists():
+        if path.parts[-3:-2] == ("maestro-Client",) and not path.parent.parent.exists():
             continue
             
         try:

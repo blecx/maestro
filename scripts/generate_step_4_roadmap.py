@@ -22,7 +22,7 @@ DEFAULT_OUT = ROOT / "planning/issues/step-4.yml"
 TEMPLATE = """# Step 4 — LLM UI mockups + clickable prototype + designer skills.
 # Constraint: keep issue bodies compact to fit strict token budgets.
 
-AI-Agent-Framework:
+maestro:
   - number: "S4-BE-01"
     size_estimate: "M"
     title: "Step 4 — OpenAI Images client + mockup artifact writer"

@@ -547,7 +547,7 @@ def _check_prerequisites() -> bool:
 
     # Check Node/npm if frontend or standalone client repo exists
     project_root = Path(__file__).resolve().parent.parent
-    client_repo = project_root.parent / "AI-Agent-Framework-Client"
+    client_repo = project_root.parent / "maestro-Client"
     frontend_repo = client_repo / "client"
     if frontend_repo.exists():
         if shutil.which("node"):

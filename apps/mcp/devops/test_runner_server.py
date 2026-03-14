@@ -18,7 +18,7 @@ def _load_service() -> TestRunnerService:
 
 
 service = _load_service()
-mcp = FastMCP("AI-Agent-Framework Test Runner MCP", json_response=True)
+mcp = FastMCP("maestro Test Runner MCP", json_response=True)
 
 
 @mcp.tool()

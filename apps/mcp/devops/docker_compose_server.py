@@ -47,7 +47,7 @@ def _load_service() -> DockerComposeService:
 
 
 service = _load_service()
-mcp = FastMCP("AI-Agent-Framework Docker Compose MCP", json_response=True)
+mcp = FastMCP("maestro Docker Compose MCP", json_response=True)
 
 
 @mcp.tool()

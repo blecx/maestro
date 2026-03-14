@@ -194,7 +194,7 @@ async function handleRunCommand(request, stream, token) {
 
   if (!workspaceFolder) {
     stream.markdown(
-      '❌ No workspace folder open. Please open the AI-Agent-Framework workspace.',
+      '❌ No workspace folder open. Please open the maestro workspace.',
     );
     return;
   }
@@ -282,7 +282,7 @@ async function handleRalphRunCommand(stream, token) {
 
   if (!workspaceFolder) {
     stream.markdown(
-      '❌ No workspace folder open. Please open the AI-Agent-Framework workspace.',
+      '❌ No workspace folder open. Please open the maestro workspace.',
     );
     return;
   }

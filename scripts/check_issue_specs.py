@@ -40,7 +40,7 @@ SECTION_ALIASES = {
     "cross_repo": ["## Cross-Repository Coordination"],
 }
 
-KNOWN_REPO_KEYS = {"AI-Agent-Framework", "AI-Agent-Framework-Client"}
+KNOWN_REPO_KEYS = {"maestro", "maestro-Client"}
 
 COMMAND_HINT_RE = re.compile(
     r"(pytest|python\s+-m|npm\s+run|npm\s+--prefix\s+\S+\s+run|uvicorn|curl|gh\s+issue)",
