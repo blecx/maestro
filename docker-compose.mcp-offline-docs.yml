@@ -1,4 +1,3 @@
-name: offline-docs-mcp
 
 services:
   offline-docs-mcp:
@@ -17,4 +16,4 @@ services:
     ports:
       - "127.0.0.1:3017:3017"
     volumes:
-      - ./:/workspace
+      - ${PROJECT_WORKSPACE_DIR:-.}:/workspace

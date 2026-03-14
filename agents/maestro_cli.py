@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 from agents.maestro import MaestroOrchestrator
+from agents.mcp_lifecycle import MCPBootloader
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -70,6 +71,16 @@ def _build_parser() -> argparse.ArgumentParser:
         dest="output_json",
         help="Output result as JSON",
     )
+    parser.add_argument(
+        "--kill-mcps-on-exit",
+        action="store_true",
+        help="Force the teardown of the MCP Docker network as the process terminates",
+    )
+    parser.add_argument(
+        "--force-rebuild-mcps",
+        action="store_true",
+        help="Forcefully purge and rebuild the MCP mesh containers on startup",
+    )
     return parser
 
 
@@ -78,37 +89,50 @@ async def _run(args: argparse.Namespace) -> int:
     if args.body_file:
         body = Path(args.body_file).read_text()
 
-    orq = MaestroOrchestrator(workspace_root=Path(args.workspace).resolve())
-    result = await orq.run_issue(
-        issue_number=args.issue,
-        repo=args.repo,
-        issue_title=args.title,
-        issue_body=body,
-        changed_files=args.files,
+    workspace_root = Path(args.workspace).resolve()
+
+    bootloader = MCPBootloader(
+        workspace_root=workspace_root,
+        kill_mcps_on_exit=args.kill_mcps_on_exit,
+        force_rebuild_mcps=args.force_rebuild_mcps,
     )
+    bootloader.setup_signal_handlers()
+    await bootloader.initialize()
 
-    if args.output_json:
-        print(
-            json.dumps(
-                {
-                    "issue_number": result.issue_number,
-                    "repo": result.repo,
-                    "run_id": result.run_id,
-                    "pr_url": result.pr_url,
-                    "files_changed": result.files_changed,
-                    "complexity_score": result.complexity_score,
-                    "model_tier": result.model_tier,
-                    "tests_passed": result.tests_passed,
-                    "error": result.error,
-                    "success": result.success,
-                },
-                indent=2,
-            )
+    try:
+        orq = MaestroOrchestrator(workspace_root=workspace_root)
+        result = await orq.run_issue(
+            issue_number=args.issue,
+            repo=args.repo,
+            issue_title=args.title,
+            issue_body=body,
+            changed_files=args.files,
         )
-    else:
-        _print_result(result)
 
-    return 0 if result.success else 1
+        if args.output_json:
+            print(
+                json.dumps(
+                    {
+                        "issue_number": result.issue_number,
+                        "repo": result.repo,
+                        "run_id": result.run_id,
+                        "pr_url": result.pr_url,
+                        "files_changed": result.files_changed,
+                        "complexity_score": result.complexity_score,
+                        "model_tier": result.model_tier,
+                        "tests_passed": result.tests_passed,
+                        "error": result.error,
+                        "success": result.success,
+                    },
+                    indent=2,
+                )
+            )
+        else:
+            _print_result(result)
+
+        return 0 if result.success else 1
+    finally:
+        bootloader.teardown()
 
 
 def _print_result(result) -> None:

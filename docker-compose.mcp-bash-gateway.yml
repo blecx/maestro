@@ -14,4 +14,4 @@ services:
     ports:
       - "127.0.0.1:3011:3011"
     volumes:
-      - ./:/workspace
+      - ${PROJECT_WORKSPACE_DIR:-.}:/workspace

@@ -52,6 +52,7 @@ services:
     image: maestro/mcp-memory:latest
     restart: unless-stopped
     environment:
+      PROJECT_WORKSPACE_ID: "${PROJECT_WORKSPACE_ID:-default}"
       MEMORY_MCP_PORT: "${MEMORY_MCP_PORT:-3030}"
       MEMORY_DB_PATH: "/data/memory.db"
     volumes:
@@ -77,6 +78,7 @@ services:
     image: maestro/mcp-agent-bus:latest
     restart: unless-stopped
     environment:
+      PROJECT_WORKSPACE_ID: "${PROJECT_WORKSPACE_ID:-default}"
       AGENT_BUS_PORT: "${AGENT_BUS_PORT:-3031}"
       AGENT_BUS_DB_PATH: "/data/agent_bus.db"
     volumes:
@@ -105,6 +107,7 @@ services:
       mcp-agent-bus:
         condition: service_healthy
     environment:
+      PROJECT_WORKSPACE_ID: "${PROJECT_WORKSPACE_ID:-default}"
       APPROVAL_GATE_PORT: "${APPROVAL_GATE_PORT:-8001}"
       AGENT_BUS_URL: "http://mcp-agent-bus:3031"
     ports:
@@ -135,6 +138,7 @@ services:
       approval-gate:
         condition: service_healthy
     environment:
+      PROJECT_WORKSPACE_ID: "${PROJECT_WORKSPACE_ID:-default}"
       OPENAI_API_KEY: "${OPENAI_API_KEY}"
       GITHUB_TOKEN: "${GITHUB_TOKEN}"
       MEMORY_MCP_URL: "http://mcp-memory:3030"

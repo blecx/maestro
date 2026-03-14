@@ -6,6 +6,24 @@ import hashlib
 
 app = FastAPI(title="Mock LLM Gateway")
 
+
+@app.post("/admin/set-live-key")
+async def set_live_key(request: Request):
+    try:
+        data = await request.json()
+    except Exception:
+        data = {}
+    api_key = data.get("api_key")
+    if api_key:
+        import os, json
+        override_path = os.getenv("LLM_OVERRIDE_PATH", "configs/runtime_override.json")
+        os.makedirs(os.path.dirname(override_path), exist_ok=True)
+        with open(override_path, "w") as f:
+            json.dump({"api_key": api_key, "base_url": "https://api.openai.com/v1"}, f)
+        return {"status": "success", "message": "Live key updated natively via Gateway"}
+    return {"status": "error", "message": "No api_key provided"}
+
+
 # In-memory store for mocks: request fingerprint -> mock response
 mock_responses: Dict[str, Any] = {}
 
