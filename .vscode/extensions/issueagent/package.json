@@ -1,17 +1,17 @@
 {
   "name": "issueagent",
-  "displayName": "Resolve Issue (AI-Agent-Framework)",
-  "description": "Run the AI-Agent-Framework issue resolution workflow from VS Code chat",
+  "displayName": "Resolve Issue (maestro)",
+  "description": "Run the maestro issue resolution workflow from VS Code chat",
   "version": "1.0.0",
-  "publisher": "ai-agent-framework",
+  "publisher": "maestro",
   "repository": {
     "type": "git",
-    "url": "https://github.com/blecx/AI-Agent-Framework.git"
+    "url": "https://github.com/blecx/maestro.git"
   },
   "bugs": {
-    "url": "https://github.com/blecx/AI-Agent-Framework/issues"
+    "url": "https://github.com/blecx/maestro/issues"
   },
-  "homepage": "https://github.com/blecx/AI-Agent-Framework",
+  "homepage": "https://github.com/blecx/maestro",
   "engines": {
     "vscode": "^1.90.0"
   },

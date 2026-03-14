@@ -31,7 +31,7 @@ services:
     image: maestro/mock-llm-gateway:latest
     restart: unless-stopped
     ports:
-      - "9090:9090"
+      - "${PORT_TUI:-9090}:9090"
     networks:
       - maestro_net
     healthcheck:
@@ -144,13 +144,13 @@ services:
       MEMORY_MCP_URL: "http://mcp-memory:3030"
       AGENT_BUS_URL: "http://mcp-agent-bus:3031"
       APPROVAL_GATE_URL: "http://approval-gate:8001"
-      AGENT_REPO: "${AGENT_REPO:-blecx/AI-Agent-Framework}"
-      AGENT_WORKSPACE: "/workspace"
+      AGENT_REPO: "${AGENT_REPO:-.}"
+      AGENT_WORKSPACE: "/target"
     volumes:
       # Mount the workspace so the worker can edit files
       - type: bind
         source: "${WORKSPACE_PATH:-.}"
-        target: /workspace
+        target: /target
     networks:
       - maestro_net
 

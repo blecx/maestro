@@ -3,7 +3,7 @@
 
 set -e
 
-REPO="blecx/AI-Agent-Framework"
+REPO=${TARGET_REPO:-YOUR_ORG/YOUR_REPO}
 GH_API_SLEEP_SECONDS="${GH_API_SLEEP_SECONDS:-1}"
 
 gh_t() {

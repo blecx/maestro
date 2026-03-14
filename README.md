@@ -55,3 +55,14 @@ Primary docs:
 - **[Fresh Clone Bootstrap](docs/maestro/BOOTSTRAP.md)** - explicit setup and projection steps for a new workspace.
 - **[VS Code Settings Guidance](docs/maestro/VSCODE-GLOBAL-SETTINGS.md)** - projection-first guidance for workspace and optional user settings.
 - **[Agents Overview](docs/maestro/AGENTS_README.md)** - current Copilot custom-agent registry and wrapper model.
+
+---
+
+## Agent Typology
+
+Maestro enforces a strict boundary between development-time aids and runtime applications:
+
+- **Software Factory Agents** (residing in `.github/`, `.copilot/`) assist developers in building the app.
+- **Maestro Agents** (residing in `agents/`, `apps/`) are the runtime orchestrators that serve the end user.
+
+Please ensure prompts for Maestro Agents are placed in `agents/prompts/` and never commingled with developer tooling.

@@ -3,9 +3,12 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     OFFLINE_DOCS_MCP_PORT=3017 \
-    OFFLINE_DOCS_MCP_REPO_ROOT=/workspace
+    OFFLINE_DOCS_MCP_REPO_ROOT=/target
 
-WORKDIR /workspace
+WORKDIR /factory
+COPY apps/__init__.py apps/__init__.py
+COPY apps/mcp/__init__.py apps/mcp/__init__.py
+COPY apps/mcp/offline_docs/ apps/mcp/offline_docs/
 
 RUN pip install --no-cache-dir \
     mcp==1.12.4 \

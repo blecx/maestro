@@ -5,7 +5,7 @@
 # Cross-Repo Coordination Checklist
 
 ## Objective
-Provides actionable instructions for coordinating API contract changes between the AI-Agent-Framework backend and the separate AI-Agent-Framework-Client frontend repository.
+Provides actionable instructions for coordinating API contract changes between the maestro backend and the separate maestro-client frontend repository.
 
 ## When to Use
 - Use this when modifying backend FastAPI routers, Pydantic models, or API endpoints.
@@ -19,12 +19,12 @@ Provides actionable instructions for coordinating API contract changes between t
 ### 1. Impact Detection
 Whenever a backend API contract (in `apps/api/routers/*.py` or `models.py`) is modified, verify the frontend impact:
 - Search for impacted frontend API clients using `grep`:
-  `grep -rnw "../AI-Agent-Framework-Client/client/src/domain" -e "<Endpoint_or_Model_Name>"`
+  `grep -rnw "../maestro-client/client/src/domain" -e "<Endpoint_or_Model_Name>"`
 - If matching files are found, plan a complementary update for the client repository.
 
 ### 2. Cross-Linking Issues
 When performing GitHub operations or creating PRs that span both repos, use explicit Markdown dependency syntax to link them:
-- In the PR or Issue body, add: `Requires blecx/AI-Agent-Framework-Client#<ISSUE_NUMBER>`
+- In the PR or Issue body, add: `Requires YOUR_ORG/YOUR_CLIENT_REPO#<ISSUE_NUMBER>`
 - Ensure both the backend and client issues reference each other structurally.
 
 ### 3. Validation Routine
@@ -32,7 +32,7 @@ Before finalizing any cross-repo changes, validate the full stack works together
 1. Start the backend server:
    `cd apps/api && PROJECT_DOCS_PATH=../../projectDocs ../../.venv/bin/uvicorn main:app --reload`
 2. Start the frontend developer server (in a separate terminal or background):
-   `cd ../AI-Agent-Framework-Client/client && npm run dev`
+   `cd ../maestro-client/client && npm run dev`
 3. Execute the modified API workflow through the frontend UI or via API calls (using `curl` or tests) to confirm the contracts match.
 
 ### 4. Delivery Rules (Backward Compatibility)

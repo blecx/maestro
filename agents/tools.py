@@ -4,7 +4,7 @@ Tools for the workflow agent.
 
 These tools enable the agent to interact with GitHub, files, git, and testing.
 
-Note: This repository is multi-repo (backend + `../AI-Agent-Framework-Client`).
+Note: This repository is multi-repo (backend + `${CLIENT_DIR:-../client}`).
 Most tools therefore accept an optional `working_directory` and/or `repo` argument so
 the agent can operate on the correct repository root.
 """
@@ -329,7 +329,7 @@ def _resolve_working_directory(working_directory: str) -> str:
     if provided_path.exists():
         return working_directory
 
-    if working_directory in {"AI-Agent-Framework", "./AI-Agent-Framework"}:
+    if working_directory in {"maestro", "./maestro"}:
         return str(repo_root)
 
     candidate = repo_root / working_directory

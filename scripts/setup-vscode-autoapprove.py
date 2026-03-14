@@ -5,7 +5,7 @@ Setup VS Code auto-approve settings for Copilot agents.
 This script automatically configures auto-approve settings in:
 1. Global VS Code user settings (~/.config/Code/User/settings.json)
 2. Backend workspace (.vscode/settings.json)
-3. Client workspace (../AI-Agent-Framework-Client/.vscode/settings.json)
+3. Client workspace (${CLIENT_DIR:-../client}/.vscode/settings.json)
 
 Run this script to enable auto-approve for all Copilot agent commands
 without manual copy-paste.
@@ -147,7 +147,7 @@ def configure_workspace(profile: str, global_only: bool = False, workspace_only:
     if not global_only:
         paths.extend([
             root_dir / ".vscode/settings.json",
-            root_dir / "../AI-Agent-Framework-Client/.vscode/settings.json",
+            root_dir / "${CLIENT_DIR:-../client}/.vscode/settings.json",
         ])
     
     success_count = 0
@@ -160,7 +160,7 @@ def configure_workspace(profile: str, global_only: bool = False, workspace_only:
         
     for path in paths:
         # Check if the external path exists but safely skip
-        if path.parts[-3:-2] == ("AI-Agent-Framework-Client",) and not path.parent.parent.exists():
+        if path.parts[-3:-2] == ("maestro-Client",) and not path.parent.parent.exists():
             continue
             
         try:

@@ -1,10 +1,10 @@
 """MAESTRO CLI — run the orchestrator from the command line.
 
 Usage:
-    python -m agents.maestro_cli --issue 42 --repo blecx/AI-Agent-Framework
+    python -m agents.maestro_cli --issue 42 --repo YOUR_ORG/YOUR_REPO
 
 Or import and call directly:
-    python agents/maestro_cli.py --issue 42 --repo blecx/AI-Agent-Framework
+    python agents/maestro_cli.py --issue 42 --repo YOUR_ORG/YOUR_REPO
 
 Implements: GitHub issue #715
 """
@@ -37,7 +37,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "--repo",
         "-r",
         required=True,
-        help="Repository in owner/name format (e.g. blecx/AI-Agent-Framework)",
+        help="Repository in owner/name format (e.g. YOUR_ORG/YOUR_REPO)",
     )
     parser.add_argument(
         "--title",

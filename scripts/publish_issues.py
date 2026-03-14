@@ -29,8 +29,8 @@ _GH_SLEEP_SECONDS = DEFAULT_SLEEP_SECONDS
 _last_gh_call_monotonic: float | None = None
 
 REPO_MAP = {
-    "AI-Agent-Framework": "blecx/AI-Agent-Framework",
-    "AI-Agent-Framework-Client": "blecx/AI-Agent-Framework-Client",
+    "maestro": os.environ.get("TARGET_REPO", "YOUR_ORG/YOUR_REPO"),
+    "maestro-client": os.environ.get("CLIENT_REPO", os.environ.get("CLIENT_REPO", "YOUR_ORG/YOUR_CLIENT_REPO")),
 }
 
 
@@ -119,7 +119,7 @@ def _render_legacy_body(entry: dict[str, Any]) -> str:
     validations = template.get("validation", [])
     validation_lines = "\n".join(f"- `{cmd}`" for cmd in validations) if validations else "- `pytest -q`"
 
-    cross_repo = "Yes - see dependencies" if entry.get("repo") == "AI-Agent-Framework-Client" else "No"
+    cross_repo = "Yes - see dependencies" if entry.get("repo") == "maestro-Client" else "No"
 
     return "\n".join(
         [
@@ -192,7 +192,7 @@ def _load_specs(files: list[Path]) -> list[IssueSpec]:
                     )
                 )
 
-    specs.sort(key=lambda s: (s.repo_alias != "AI-Agent-Framework", s.source_file.name, s.source_id, s.title))
+    specs.sort(key=lambda s: (s.repo_alias != "maestro", s.source_file.name, s.source_id, s.title))
     return specs
 
 

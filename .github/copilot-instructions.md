@@ -1,4 +1,4 @@
-# Copilot Instructions for AI-Agent-Framework
+# Copilot Instructions for maestro
 
 ## Overview
 
@@ -12,7 +12,7 @@ ISO 21500 Project Management AI Agent - Full-stack app with FastAPI (Python 3.10
 
 1. **Start with a Plan/Spec**
    - Define clear goal, scope, acceptance criteria, and constraints
-   - Consider impact on related repo: [`blecx/AI-Agent-Framework-Client`](https://github.com/blecx/AI-Agent-Framework-Client)
+   - Consider impact on related repo: [`YOUR_ORG/YOUR_CLIENT_REPO`](https://github.com/YOUR_ORG/YOUR_CLIENT_REPO)
    - Document any cross-repo dependencies or API changes
 
 2. **Break Work into Small Issues**
@@ -26,8 +26,8 @@ ISO 21500 Project Management AI Agent - Full-stack app with FastAPI (Python 3.10
    - **Comprehensive descriptions:** Include goal, scope (in/out), acceptance criteria, API contract, technical approach, testing requirements, documentation updates
    - Link related issues across repositories when coordinating changes
    - **Repository placement:**
-     - **Backend issues** (API, services, domain models) → `blecx/AI-Agent-Framework`
-     - **UX issues** (React components, client API clients) → `blecx/AI-Agent-Framework-Client`
+     - **Backend issues** (API, services, domain models) → `YOUR_ORG/YOUR_REPO`
+     - **UX issues** (React components, client API clients) → `YOUR_ORG/YOUR_CLIENT_REPO`
 
 3. **Implement One Issue Per PR**
    - Keep diffs small and reviewable (prefer < 200 lines changed)
@@ -59,12 +59,12 @@ ISO 21500 Project Management AI Agent - Full-stack app with FastAPI (Python 3.10
 **When selecting the next issue to work on, ALWAYS follow this priority order:**
 
 1. **Priority 1: Backend/TUI/CLI issues**
-   - Repository: `blecx/AI-Agent-Framework`
+   - Repository: `YOUR_ORG/YOUR_REPO`
    - Includes: API services, domain models, CLI tools, backend tests
    - Example issue numbers: #69-#78 (Step 2 backend)
 
 2. **Priority 2: Client/UX issues**
-   - Repository: `blecx/AI-Agent-Framework-Client`
+   - Repository: `YOUR_ORG/YOUR_CLIENT_REPO`
    - Includes: React components, UI features, client tests
    - Example issue numbers: #102-#109 (Step 2 frontend)
 
@@ -104,7 +104,7 @@ ISO 21500 Project Management AI Agent - Full-stack app with FastAPI (Python 3.10
 4. **Dependency Direction:** Infrastructure depends on domain, not vice versa
 5. **Testability:** Services are mockable and unit-testable
 
-#### Backend Structure (AI-Agent-Framework)
+#### Backend Structure (maestro)
 
 ```
 apps/api/
@@ -124,7 +124,7 @@ apps/api/
     └── proposals.py
 ```
 
-#### Frontend Structure (AI-Agent-Framework-Client)
+#### Frontend Structure (maestro-client)
 
 ```
 client/src/
@@ -213,7 +213,7 @@ cd apps/api && PROJECT_DOCS_PATH=../../projectDocs uvicorn main:app --reload  # 
 **Frontend (optional, 2-3 min):**
 
 ```bash
-cd ../AI-Agent-Framework-Client/client && npm install  # ~4s
+cd ../maestro-client/client && npm install  # ~4s
 npm run dev  # http://localhost:5173
 npm run build  # ~120ms
 ```
@@ -227,7 +227,7 @@ docker compose up --build  # Web: :8080, API: :8000
 
 **Prerequisites:** Python 3.10+ (3.12 tested), Node 20+, Git, Docker 28+ (optional)
 
-## Validation Steps (Backend - AI-Agent-Framework)
+## Validation Steps (Backend - maestro)
 
 ### Critical Environment Requirements
 
@@ -264,7 +264,7 @@ docker compose up --build  # Web: :8080, API: :8000
 4. **Test Frontend** (if changed)
 
    ```bash
-   cd ../AI-Agent-Framework-Client/client
+   cd ../maestro-client/client
    npm install
    npm run lint
    npm run build  # Should complete in ~120ms
@@ -289,7 +289,7 @@ docker compose up --build  # Web: :8080, API: :8000
 
 **Backend (apps/api/):** main.py (76L, FastAPI app), **domain/** (18 files, DDD architecture: 7 domains averaging 82L), models.py (76L, backward-compat facade), services/ (command_service.py 291L, git_manager.py 193L, llm_service.py 94L), routers/ (projects.py 78L, commands.py 71L, artifacts.py 48L). Two requirements.txt: root=dev+test deps, apps/api/=runtime only (Docker).
 
-**Frontend (../AI-Agent-Framework-Client/client):** React/Vite app with AppNavigation, ProjectList, ProjectView, Guided Builder, and Help docs.
+**Frontend (../maestro-client/client):** React/Vite app with AppNavigation, ProjectList, ProjectView, Guided Builder, and Help docs.
 
 **Config:** configs/llm.default.json (LM Studio default), templates/prompts/iso21500/_.j2 (Jinja2), templates/output/iso21500/_.md (Markdown), docker/ (Dockerfiles + nginx.conf).
 
@@ -308,7 +308,7 @@ docker compose up --build  # Web: :8080, API: :8000
 
 **Manual testing:** Also validate via API docs (/docs) or web UI for interactive verification.
 
-**Linting (optional):** `python -m black apps/api/`, `python -m flake8 apps/api/`, `cd ../AI-Agent-Framework-Client/client && npm run lint`.
+**Linting (optional):** `python -m black apps/api/`, `python -m flake8 apps/api/`, `cd ../maestro-client/client && npm run lint`.
 
 **Validation:** Test API health (`curl localhost:8000/health`), create project via POST /projects, check git log in projectDocs/, run commands via web UI or API.
 
@@ -342,7 +342,7 @@ When adding Python dependencies:
 
 When adding JavaScript dependencies:
 
-- Run from `../AI-Agent-Framework-Client/client`: `npm install <package>`
+- Run from `../maestro-client/client`: `npm install <package>`
 - Commit updated `package.json` and `package-lock.json`
 - Test build: `npm run build`
 
@@ -375,16 +375,16 @@ When adding JavaScript dependencies:
 
 ## Cross-Repository Coordination
 
-### Working with AI-Agent-Framework-Client
+### Working with maestro-client
 
-This backend often requires coordinated changes with the React/Vite client in [`blecx/AI-Agent-Framework-Client`](https://github.com/blecx/AI-Agent-Framework-Client).
+This backend often requires coordinated changes with the React/Vite client in [`YOUR_ORG/YOUR_CLIENT_REPO`](https://github.com/YOUR_ORG/YOUR_CLIENT_REPO).
 
 **When making API changes:**
 
 1. **Document breaking changes** in PR description
 2. **Version API endpoints** if breaking compatibility
 3. **Create matching client issue** before merging backend changes
-4. **Link issues across repos**: "Requires blecx/AI-Agent-Framework-Client#123"
+4. **Link issues across repos**: "Requires YOUR_ORG/YOUR_CLIENT_REPO#123"
 5. **Test integration** by running both services together
 
 **Common coordination scenarios:**
@@ -451,17 +451,17 @@ For breaking changes, coordinate timing with client maintainers.
 cd apps/api && PROJECT_DOCS_PATH=../../projectDocs uvicorn main:app --reload
 
 # Run frontend dev server
-cd ../AI-Agent-Framework-Client/client && npm install && npm run dev
+cd ../maestro-client/client && npm install && npm run dev
 
 # Build frontend for production
-cd ../AI-Agent-Framework-Client/client && npm run build
+cd ../maestro-client/client && npm run build
 
 # Docker deployment
 mkdir -p projectDocs && docker compose up --build
 
 # Lint code
 python -m black apps/api/ && python -m flake8 apps/api/  # Python
-cd ../AI-Agent-Framework-Client/client && npm run lint  # JavaScript
+cd ../maestro-client/client && npm run lint  # JavaScript
 
 # Check API health
 curl http://localhost:8000/health

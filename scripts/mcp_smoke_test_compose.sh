@@ -35,7 +35,7 @@ check_endpoint_406() {
 echo "[smoke] MCP compose smoke test"
 
 check_compose_service "context7-mcp" "$ROOT_DIR/docker-compose.context7.yml" "context7"
-check_compose_service "ai-agent-framework" "$ROOT_DIR/docker-compose.mcp-bash-gateway.yml" "bash-gateway-mcp"
+check_compose_service "maestro" "$ROOT_DIR/docker-compose.mcp-bash-gateway.yml" "bash-gateway-mcp"
 check_compose_service "repo-fundamentals-mcp" "$ROOT_DIR/docker-compose.repo-fundamentals-mcp.yml" "git-mcp"
 check_compose_service "repo-fundamentals-mcp" "$ROOT_DIR/docker-compose.repo-fundamentals-mcp.yml" "search-mcp"
 check_compose_service "repo-fundamentals-mcp" "$ROOT_DIR/docker-compose.repo-fundamentals-mcp.yml" "filesystem-mcp"

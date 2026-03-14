@@ -271,7 +271,7 @@ Token Budget Mode:
             created = _create_split_issues_via_gh(
                 issue_number=args.issue,
                 drafts=split_drafts,
-                repo=os.environ.get("WORK_ISSUE_REPO", "blecx/AI-Agent-Framework"),
+                repo=os.environ.get("WORK_ISSUE_REPO", os.environ.get("TARGET_REPO", "YOUR_ORG/YOUR_REPO")),
             )
             _cleanup_split_transient_files(args.issue)
             print(f"\nSPLIT_ISSUES_CREATED: {len(created)}")
@@ -547,7 +547,7 @@ def _check_prerequisites() -> bool:
 
     # Check Node/npm if frontend or standalone client repo exists
     project_root = Path(__file__).resolve().parent.parent
-    client_repo = project_root.parent / "AI-Agent-Framework-Client"
+    client_repo = project_root.parent / "maestro-Client"
     frontend_repo = client_repo / "client"
     if frontend_repo.exists():
         if shutil.which("node"):

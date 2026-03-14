@@ -14,9 +14,9 @@ class RalphAgent(MaestroAdapter):
     """High-discipline issue resolver with skill and review gates."""
 
     def _load_github_agent_overlay(self) -> str:
-        """Load Ralph instructions from .github/agents definition when available."""
+        """Load Ralph instructions from agents/prompts definition when available."""
         project_root = Path(__file__).resolve().parent.parent
-        agent_file = project_root / ".github" / "agents" / "ralph-agent.md"
+        agent_file = project_root /  "agents" / "prompts" / "ralph-agent.md"
         if not agent_file.exists():
             return ""
 

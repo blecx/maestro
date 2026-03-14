@@ -315,7 +315,7 @@
       "command": "npm",
       "args": ["run", "dev"],
       "options": {
-        "cwd": "${workspaceFolder}/../AI-Agent-Framework-Client/client"
+        "cwd": "${workspaceFolder}/../maestro-client/client"
       },
       "isBackground": true,
       "problemMatcher": {
@@ -376,7 +376,7 @@
       "command": "npm",
       "args": ["run", "build"],
       "options": {
-        "cwd": "${workspaceFolder}/../AI-Agent-Framework-Client/client"
+        "cwd": "${workspaceFolder}/../maestro-client/client"
       },
       "problemMatcher": [],
       "presentation": {
@@ -396,7 +396,7 @@
       "command": "npm",
       "args": ["run", "lint"],
       "options": {
-        "cwd": "${workspaceFolder}/../AI-Agent-Framework-Client/client"
+        "cwd": "${workspaceFolder}/../maestro-client/client"
       },
       "problemMatcher": ["$eslint-stylish"],
       "presentation": {

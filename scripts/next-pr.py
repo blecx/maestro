@@ -2,8 +2,8 @@
 """Recommend the next PR to merge (PR-first workflow).
 
 This helper scans open PRs across:
-- blecx/AI-Agent-Framework (backend)
-- blecx/AI-Agent-Framework-Client (client)
+- YOUR_ORG/YOUR_REPO (backend)
+- ${CLIENT_REPO} (client)
 
 It ranks PRs by merge readiness (CI success, mergeable, clean merge state, not draft)
 so the pr-merge workflow can stay PR-focused.
@@ -35,8 +35,8 @@ RepoKey = Literal["backend", "client"]
 
 
 REPOS: dict[RepoKey, str] = {
-    "backend": "blecx/AI-Agent-Framework",
-    "client": "blecx/AI-Agent-Framework-Client",
+    "backend": os.environ.get("TARGET_REPO", "YOUR_ORG/YOUR_REPO"),
+    "client": os.environ.get("CLIENT_REPO", os.environ.get("CLIENT_REPO", "YOUR_ORG/YOUR_CLIENT_REPO")),
 }
 
 DEFAULT_GH_MIN_INTERVAL_SECONDS = 1.0

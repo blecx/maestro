@@ -30,7 +30,7 @@ APPROVAL_PROFILES_PATH = ROOT / ".copilot" / "config" / "vscode-approval-profile
 SETTINGS_FILES = [
     {"path": ROOT / ".vscode" / "settings.json", "required": True},
     {
-        "path": ROOT / "_external" / "AI-Agent-Framework-Client" / ".vscode" / "settings.json",
+        "path": ROOT / "_external" / "maestro-Client" / ".vscode" / "settings.json",
         "required": False,
     },
 ]
