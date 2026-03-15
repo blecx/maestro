@@ -1,6 +1,6 @@
 # ADR-010: Project-Isolated MCP Deployment for Opaque or Single-Tenant Services
 
-**Status:** Proposed
+**Status:** Accepted
 
 **Context:** Maestro runs a mixed set of Dockerized dependencies, including first-party MCP services and third-party or otherwise opaque images. Some services can be improved to support explicit project-aware behavior, but others cannot be safely or economically retrofitted for strict multi-project use within a shared container instance.
 
