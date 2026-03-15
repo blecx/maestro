@@ -1,0 +1,10 @@
+[
+  {"name": "status:ready", "color": "0e8a16", "description": "Ready for implementation or review"},
+  {"name": "status:blocked", "color": "b60205", "description": "Blocked by dependency or decision"},
+  {"name": "size:S", "color": "bfdadc", "description": "Small change"},
+  {"name": "size:M", "color": "fef2c0", "description": "Medium change"},
+  {"name": "size:L", "color": "fbca04", "description": "Large change"},
+  {"name": "area:runtime", "color": "1d76db", "description": "Runtime services and compose"},
+  {"name": "area:workspace", "color": "5319e7", "description": "VS Code, projection, or developer tooling"},
+  {"name": "area:docs", "color": "0052cc", "description": "Documentation or process guidance"}
+]

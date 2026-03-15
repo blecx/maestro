@@ -1,0 +1,42 @@
+{
+  "workspace": {
+    "chat.agent.maxRequests": 50,
+    "chat.allowAnonymousAccess": true,
+    "chat.checkpoints.showFileChanges": true,
+    "chat.customAgentInSubagent.enabled": true,
+    "mcp": {
+      "servers": {
+        "context7": {
+          "url": "http://127.0.0.1:${PORT_CONTEXT7}/mcp",
+          "headers": {
+            "CONTEXT7_API_KEY": "${env:CONTEXT7_API_KEY}"
+          }
+        },
+        "bashGateway": {
+          "url": "http://127.0.0.1:${PORT_BASH}/mcp"
+        },
+        "git": {
+          "url": "http://127.0.0.1:${PORT_GIT}/mcp"
+        },
+        "search": {
+          "url": "http://127.0.0.1:${PORT_SEARCH}/mcp"
+        },
+        "filesystem": {
+          "url": "http://127.0.0.1:${PORT_FS}/mcp"
+        },
+        "dockerCompose": {
+          "url": "http://127.0.0.1:${PORT_COMPOSE}/mcp"
+        },
+        "testRunner": {
+          "url": "http://127.0.0.1:${PORT_TEST}/mcp"
+        },
+        "offlineDocs": {
+          "url": "http://127.0.0.1:${PORT_DOCS}/mcp"
+        },
+        "githubOps": {
+          "url": "http://127.0.0.1:${PORT_GITHUB}/mcp"
+        }
+      }
+    }
+  }
+}

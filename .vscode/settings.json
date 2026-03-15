@@ -110,6 +110,12 @@
         "TMP": "${workspaceFolder}/.tmp",
         "TEMP": "${workspaceFolder}/.tmp"
     },
+    "files.exclude": {
+        "**/.softwareFactoryVscode": true
+    },
+    "search.exclude": {
+        "**/.softwareFactoryVscode": true
+    },
     "chat.tools.subagent.autoApprove": {
         "Plan": true,
         "create-issue": true,

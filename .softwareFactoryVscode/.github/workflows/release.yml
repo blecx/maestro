@@ -1,0 +1,17 @@
+name: release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate release summary
+        run: |
+          echo 'Release validation is handled by ci-release-gate.' > RELEASE_SUMMARY.txt
+          cat RELEASE_SUMMARY.txt

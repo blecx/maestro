@@ -1,0 +1,20 @@
+#!/bin/bash
+# softwareFactoryVscode pre-commit hook: runtime and workspace quality gates
+
+echo "=> Running softwareFactoryVscode pre-commit quality gates..."
+
+if [ -f ".venv/bin/activate" ]; then
+    source .venv/bin/activate
+elif [ -d "venv" ]; then
+    source venv/bin/activate
+else
+    echo "=> WARNING: Active python environment not found. Skipping AI checks."
+    exit 0
+fi
+
+python scripts/check_neutrality.py || exit 1
+python scripts/check_variable_contract.py || exit 1
+python scripts/check_boundaries.py || exit 1
+
+echo "=> softwareFactoryVscode quality gates passed."
+exit 0

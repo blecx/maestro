@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "projectionVersion": 1,
+  "projectedFiles": [],
+  "hostOverrideRoots": [],
+  "notes": [
+    "The software factory remains self-contained under .softwareFactoryVscode/.",
+    "Tool-owned .vscode, .copilot, and .github material is not projected into the host repository."
+  ]
+}

@@ -1,0 +1,21 @@
+name: ci-upgrade
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/project_upgrade.py'
+      - 'scripts/_factorylib.py'
+      - 'manifests/upgrade-rules.json'
+      - '.vscode/**'
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --upgrade pip && pip install -r requirements.txt
+      - run: python scripts/test_upgrade_path.py

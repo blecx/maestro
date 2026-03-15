@@ -6,6 +6,10 @@ This document is the **step-by-step extraction workflow** for turning the reusab
 
 It is intentionally operational.
 
+Preserved migration goal line (kept verbatim):
+
+> Always keept the goal, that we like to move the software factory to a new project taking all of its capability, but nothing from maestor.
+
 Use it when the goal is to:
 
 - extract the Software Factory from `maestro`,
@@ -46,6 +50,7 @@ The extraction must carry over the **factory**, not the Maestro application.
 - Dockerfiles and compose files for those services
 - runtime orchestration scripts
 - bootstrap and projection logic
+- hidden-tree bootstrap and isolation logic
 - `.copilot/` configuration and skills that are part of the reusable factory
 - `.github/agents/` wrappers that belong to the reusable workflow layer
 - `.vscode/` workspace behavior required for the factory workflow
@@ -73,6 +78,7 @@ Keep these rules true throughout the entire workflow.
 5. **Remote GitHub behavior must be treated as part of the environment**, not as an afterthought.
 6. **The package must be usable in a blank host repo** through documented bootstrap steps.
 7. **External dependencies must be classified and documented**, not rediscovered later by pain.
+8. **Take all reusable software-factory capability, but nothing from `maestro`.** If an artifact is not reusable factory capability, do not extract it.
 
 ---
 
@@ -432,7 +438,7 @@ Carry over or rewrite the setup helpers that make the workspace operable without
 
 Expected output:
 
-- a clean host workspace can acquire the same intended editor behavior through shipped or projected files
+ a clean host workspace can acquire the same intended editor behavior through the shipped hidden-tree assets in `.softwareFactoryVscode/` plus documented host-local bootstrap artifacts
 
 ---
 
@@ -580,16 +586,16 @@ It must:
 - create `.tmp/softwareFactoryVscode/`
 - create `.factory.lock.json`
 - create `.factory.env`
-- project `.vscode/` files as needed
+- leave tool-owned `.vscode/`, `.github/`, and `.copilot/` inside `.softwareFactoryVscode/`
 - prepare runtime env generation
 
-### Step 10.3 — Create projection entrypoint
+### Step 10.3 — Create projection/isolation entrypoint
 
 Provide a projector such as:
 
 - `scripts/project_projector.py`
 
-It must deterministically apply package defaults plus host overrides.
+It must describe or enforce the hidden-tree isolation model and must not mutate host-project `.vscode/`, `.github/`, or `.copilot/` files by default.
 
 ### Step 10.4 — Create runtime lifecycle entrypoints
 
@@ -606,7 +612,7 @@ Expected output:
 
 ---
 
-## Phase 11 — Add upgrade and override handling
+## Phase 11 — Add upgrade and isolation handling
 
 ### Step 11.1 — Add the version lock model
 
@@ -620,12 +626,11 @@ Create `.factory.lock.json` with fields for:
 
 ### Step 11.2 — Add override locations
 
-Create host-owned override paths such as:
+Record the hidden-tree isolation rule explicitly:
 
-- `.factory.overrides/copilot/`
-- `.factory.overrides/github-agents/`
-- `.factory.overrides/runtime/`
-- `.factory.overrides/docs/`
+- `.softwareFactoryVscode/` owns tool configuration
+- host repo owns host configuration
+- upgrades must preserve that boundary
 
 ### Step 11.3 — Add the upgrade command
 
@@ -637,8 +642,8 @@ It must:
 
 - detect current version
 - switch to target version
-- preserve overrides
-- regenerate projections
+- preserve host/tool separation
+- refresh runtime metadata without projecting tool-owned files into the host repo
 - rerun validation
 - produce a migration summary
 

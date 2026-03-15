@@ -4,6 +4,10 @@
 
 This document is the authoritative specification for the **external dependencies, GitHub-hosted configuration, and remote repository requirements** that must accompany `softwareFactoryVscode`.
 
+Preserved migration goal line (kept verbatim):
+
+> Always keept the goal, that we like to move the software factory to a new project taking all of its capability, but nothing from maestor.
+
 It exists because a Git repository clone alone is **not sufficient** to reproduce the full Software Factory behavior seen in this workspace.
 
 Some required behavior lives outside ordinary source files, including:
@@ -26,6 +30,8 @@ This specification complements:
 ## Mandatory outcome
 
 The future standalone repository **`softwareFactoryVscode`** must ship with everything needed to recreate not only the local package contents, but also the **remote GitHub operating envelope** required for the factory workflow.
+
+This external-dependency contract must therefore preserve reusable factory capability while importing no `maestro`-specific remote behavior unless it has been explicitly generalized into a neutral factory requirement.
 
 That means the final deliverable must include:
 
@@ -520,6 +526,12 @@ Requirements needed for maintaining the `softwareFactoryVscode` repository itsel
 
 Requirements needed only when the host repository adopts the package’s GitHub workflows, templates, or issue/PR automation.
 
+Default architectural rule:
+
+- host repositories do **not** receive tool-owned `.github/`, `.copilot/`, or `.vscode/` material from `softwareFactoryVscode` by default
+- the tool remains self-contained under `.softwareFactoryVscode/`
+- any host-repo governance projection must be an explicit, separately documented opt-in mode
+
 The package must not silently assume that every host repo wants the full GitHub governance surface.
 
 Instead, it must define projection modes such as:
@@ -527,6 +539,10 @@ Instead, it must define projection modes such as:
 - **Local-only mode** — no GitHub workflow projection into host
 - **Docs-only mode** — host receives guidance, not active GitHub automation
 - **Full-governance mode** — host receives templates, workflows, labels, and bootstrap instructions for remote setup
+
+Preferred default mode:
+
+- **Local-only mode** with the tool living under `.softwareFactoryVscode/` as a hidden working tree
 
 ---
 

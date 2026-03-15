@@ -1,0 +1,133 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "⚙️ Factory: Bootstrap Host",
+      "type": "shell",
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/${FACTORY_INSTALL_PATH}/scripts/bootstrap_host.py",
+        "--target",
+        "${workspaceFolder}",
+        "--factory-root",
+        "${workspaceFolder}/${FACTORY_INSTALL_PATH}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": true,
+        "clear": true
+      }
+    },
+    {
+      "label": "🧬 Factory: Generate Runtime Env",
+      "type": "shell",
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/${FACTORY_INSTALL_PATH}/scripts/project_runtime_env.py",
+        "--target",
+        "${workspaceFolder}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": false,
+        "clear": true
+      },
+      "group": "build"
+    },
+    {
+      "label": "🚀 Factory: Runtime Up",
+      "type": "shell",
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/${FACTORY_INSTALL_PATH}/scripts/project_runtime_up.py",
+        "--target",
+        "${workspaceFolder}",
+        "--build"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": false
+      },
+      "group": "build"
+    },
+    {
+      "label": "🛑 Factory: Runtime Down",
+      "type": "shell",
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/${FACTORY_INSTALL_PATH}/scripts/project_runtime_down.py",
+        "--target",
+        "${workspaceFolder}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": false,
+        "clear": false
+      }
+    },
+    {
+      "label": "✅ Factory: Validate Runtime",
+      "type": "shell",
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/${FACTORY_INSTALL_PATH}/scripts/project_runtime_validate.py",
+        "--target",
+        "${workspaceFolder}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": true,
+        "clear": true
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "🧪 Factory: Static Checks",
+      "type": "shell",
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/${FACTORY_INSTALL_PATH}/scripts/check_vscode_workspace.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/${FACTORY_INSTALL_PATH}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": false,
+        "clear": true
+      },
+      "group": "test"
+    }
+  ]
+}

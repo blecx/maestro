@@ -1,0 +1,10 @@
+# Default ownership for package-critical areas
+* @owner
+/.github/ @owner
+/.copilot/ @owner
+/compose/ @owner
+/docker/ @owner
+/factory_runtime/ @owner
+/scripts/ @owner
+/manifests/ @owner
+/docs/ @owner

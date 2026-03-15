@@ -6,13 +6,23 @@ This document is the authoritative implementation specification for extracting t
 
 The intent of this specification is that a follow-up implementation step can execute it end-to-end without needing to infer missing decisions.
 
+Preserved migration goal line (kept verbatim):
+
+> Always keept the goal, that we like to move the software factory to a new project taking all of its capability, but nothing from maestor.
+
+Normative interpretation of that preserved line:
+
+- move every reusable software-factory capability into the new project,
+- preserve runtime, tooling, validation, and operational behavior,
+- and carry **nothing** from `maestro` except documented extraction history and source mapping.
+
 The resulting repository must:
 
 - be named **`softwareFactoryVscode`**,
 - be fully self-contained,
 - include all required runtime and development-time factory artefacts,
 - include the companion validation specification `SoftwareFactoryVsocdeTestsuite.md`,
-- include the VS Code workspace configuration required to make the host workspace behave like this repository,
+- include the VS Code workspace configuration required for the tool working tree itself,
 - include all required MCP servers, Docker assets, bootstrap scripts, and documentation,
 - avoid shipping Maestro-application-specific artefacts,
 - support installation into a blank host repository,
@@ -30,12 +40,12 @@ This repo will be the canonical home of the reusable factory.
 
 It must be consumable from a host project by cloning it before project start, preferably as a pinned nested repository at one of these paths:
 
-- `.factory/softwareFactoryVscode`
+- `.softwareFactoryVscode`
 - `tools/softwareFactoryVscode`
 
 Preferred default:
 
-- **`.factory/softwareFactoryVscode`**
+- **`.softwareFactoryVscode`**
 
 The factory must not require any Maestro application code such as `apps/api/`, Maestro-specific frontend artefacts, or references to `maestro-Client`.
 
@@ -50,6 +60,7 @@ The factory must not require any Maestro application code such as `apps/api/`, M
 5. Remove all Maestro-project-specific naming, paths, defaults, and documentation from the extracted package.
 6. Preserve per-project isolated Docker/MCP deployment.
 7. Preserve or improve current architectural guards.
+8. Preserve all reusable software-factory capability while carrying nothing from `maestro` except explicitly documented source provenance.
 
 ---
 
@@ -108,13 +119,23 @@ The host project must consume `softwareFactoryVscode` as a versioned dependency 
 
 Preferred modes, in order:
 
-1. **Git submodule** at `.factory/softwareFactoryVscode`
-2. **Pinned nested clone** at `.factory/softwareFactoryVscode`
+1. **Git submodule** at `.softwareFactoryVscode`
+2. **Pinned nested clone** at `.softwareFactoryVscode`
 3. **Generated bundle install** only if Git nesting is not allowed
 
 Default recommendation:
 
 - use a Git submodule for reproducible upgrades and rollback
+
+### Hidden working-tree rule
+
+The factory must live in a hidden working tree so its tool-owned metadata does not become part of the host-project domain by accident.
+
+Default rule:
+
+- keep the tool inside **`.softwareFactoryVscode/`**
+- keep tool-owned `.vscode/`, `.github/`, and `.copilot/` inside that hidden tree
+- do **not** project those tool-owned files into the host repository by default
 
 ---
 
@@ -222,7 +243,7 @@ Notes:
 - `factory_runtime/` is the canonical package-owned runtime root.
 - If preserving current folder names is required initially, a transition phase may temporarily keep `agents/` and `apps/` at top level, but the end-state should favor a clearer package-owned runtime boundary.
 - Compose files should move under `compose/` for clarity.
-- `.vscode/` is developer/workspace configuration only. It must never become a runtime dependency, but it must be present or projectable so the host workspace behaves like this one.
+- `.vscode/` is developer/workspace configuration only. It must never become a runtime dependency, and it must remain package-local by default inside the hidden tool tree.
 
 ---
 
@@ -322,7 +343,7 @@ Rule:
 
 ### VS Code workspace parity cleanup
 
-The extracted package must explicitly preserve the workspace-level VS Code behavior currently required in this repository, but in a neutralized and package-owned form.
+The extracted package must explicitly preserve the workspace-level VS Code behavior required for the tool itself, but in a neutralized and package-owned form.
 
 This includes at minimum:
 
@@ -439,12 +460,9 @@ Notes for this example:
 - `maestro.issueagent` is shown as unwanted in this example to make clear that the current Maestro-branded local extension must not be carried forward unchanged.
 - If the extracted package later ships a neutralized replacement extension, replace `maestro.issueagent` with the new neutral extension ID and move it to the appropriate required or recommended category based on the final workflow contract.
 
-These settings must be either:
+These settings must be shipped as canonical workspace configuration for the hidden tool working tree.
 
-- shipped directly as canonical workspace configuration, or
-- generated/projected deterministically from package-owned source files such as `.copilot/config/**`
-
-The end result must make a fresh host workspace behave like this repository without requiring undocumented manual VS Code setup.
+The end result must make the tool workspace behave reproducibly without mutating the host repository's own `.vscode/`, `.github/`, or `.copilot/` files.
 
 ---
 
@@ -570,11 +588,11 @@ The host repo is initialized normally by the user.
 
 Preferred:
 
-- add `softwareFactoryVscode` as a submodule under `.factory/softwareFactoryVscode`
+- add `softwareFactoryVscode` as a submodule under `.softwareFactoryVscode`
 
 Alternative:
 
-- clone the repo at `.factory/softwareFactoryVscode`
+- clone the repo at `.softwareFactoryVscode`
 
 ### Step 3 — Bootstrap host
 
@@ -584,8 +602,7 @@ Run a package-owned bootstrap command that:
 - creates required host-local directories under `.tmp/softwareFactoryVscode/`
 - creates `.factory.lock.json`
 - creates `.factory.env` from `.env.example` or equivalent
-- projects selected configuration into host-visible locations if required
-- projects or generates `.vscode/settings.json`, `.vscode/tasks.json`, and `.vscode/extensions.json` so the workspace behaves like this one
+- leaves tool-owned `.vscode/`, `.github/`, and `.copilot/` inside `.softwareFactoryVscode/`
 - verifies Docker and Python prerequisites
 
 ### Step 4 — Configure runtime env
@@ -628,7 +645,7 @@ This lock file must record:
 - factory version or pinned commit
 - schema version
 - enabled modules
-- projected artefacts and versions
+- self-contained tool/runtime modules and versions
 - last successful upgrade timestamp
 
 ### Example lock fields
@@ -638,34 +655,27 @@ This lock file must record:
   "factoryRepo": "softwareFactoryVscode",
   "factoryVersion": "v1.0.0",
   "schemaVersion": 1,
-  "installPath": ".factory/softwareFactoryVscode",
+  "installPath": ".softwareFactoryVscode",
   "enabledModules": [
-    "copilot-config",
-    "github-agents",
     "mcp-runtime",
-    "approval-gate"
+    "approval-gate",
+    "self-contained-tooling"
   ],
   "projectionVersion": 1,
   "lastUpgrade": "2026-03-14T00:00:00Z"
 }
 ```
 
-## Override model
+## Isolation model
 
-Host-specific customizations must live outside factory-owned canonical sources.
-
-Create host-owned override locations such as:
-
-- `.factory.overrides/copilot/`
-- `.factory.overrides/github-agents/`
-- `.factory.overrides/runtime/`
-- `.factory.overrides/docs/`
+Host-specific customizations remain host-owned and must not be implemented by mutating or projecting the tool's canonical `.vscode/`, `.github/`, or `.copilot/` files into the host repository.
 
 Rules:
 
-- do not edit canonical files under `.factory/softwareFactoryVscode` directly
-- projection merges canonical defaults with host overrides deterministically
-- upgrades must preserve overrides
+- do not edit canonical files under `.softwareFactoryVscode` directly unless you are intentionally modifying the tool
+- keep tool-owned configuration inside `.softwareFactoryVscode/`
+- keep host-project configuration inside the host repository
+- upgrades must preserve host runtime state and the tool checkout without mixing domains
 
 ## Upgrade command
 
@@ -678,8 +688,8 @@ The upgrade flow must:
 1. detect current installed version
 2. fetch or switch the target version
 3. validate compatibility rules
-4. regenerate projected artefacts
-5. preserve host overrides
+4. refresh runtime metadata and lock state
+5. preserve host/project separation
 6. re-run validation checks
 7. output a migration summary
 
@@ -749,7 +759,7 @@ Must include:
 - quick start
 - architecture overview
 - link to install and upgrade docs
-- note whether `.vscode` is shipped directly or projected/generated
+- note that `.vscode`, `.github`, and `.copilot` remain inside the hidden tool tree and are not projected into the host repo by default
 
 ### `docs/INSTALL.md`
 
@@ -763,7 +773,7 @@ Must include:
 - starting services
 - validation steps
 - troubleshooting
-- how `.vscode/settings.json`, `.vscode/tasks.json`, and `.vscode/extensions.json` are created or updated
+- how the hidden `.softwareFactoryVscode/.vscode/` files are used without mutating the host workspace
 - how the Context7 Docker/MCP service is built, started, configured, and verified
 - how `CONTEXT7_API_KEY` is supplied when available and how the package behaves when it is absent
 
@@ -776,14 +786,14 @@ Must include:
 - how to run static, build, runtime, isolation, and upgrade checks separately
 - where logs and diagnostics are collected
 - how the test suite maps to `SoftwareFactoryVsocdeTestsuite.md`
-- how to verify projected VS Code settings, tasks, MCP server wiring, and extension recommendations
+- how to verify the tool-local VS Code settings, tasks, MCP server wiring, and extension recommendations inside `.softwareFactoryVscode/`
 
 ### `docs/VSCODE-WORKSPACE.md`
 
 Must include:
 
 - the canonical workspace settings required for parity with this repository
-- which parts are shipped directly versus projected/generated
+- that the workspace settings are package-local and not projected into the host repository by default
 - MCP server wiring expectations in `.vscode/settings.json`
 - terminal auto-approve and subagent auto-approve policy expectations
 - task definitions required in `.vscode/tasks.json`
@@ -944,13 +954,13 @@ Acceptance:
 
 - runtime can boot without developer/meta folders mounted
 
-## Phase 6 — Create bootstrap and projection flow
+## Phase 6 — Create bootstrap and hidden-tree runtime flow
 
 Deliver:
 
 - `scripts/install_factory.py`
 - `scripts/bootstrap_host.py`
-- `scripts/project_projector.py`
+- `scripts/project_projector.py` as an informational/no-op helper unless an explicit alternate architecture is chosen later
 
 Acceptance:
 
@@ -962,7 +972,7 @@ Deliver:
 
 - `.factory.lock.json` schema
 - upgrade command
-- override merge logic
+- hidden-tree isolation logic
 - upgrade docs
 
 Acceptance:
@@ -1071,7 +1081,7 @@ The follow-up implementation must explicitly decide, record, and implement each 
 3. Whether `factory_runtime/` replaces current top-level `agents/` and `apps/` now or in a later compatibility phase.
 4. Which MCP services remain first-party versus treated as opaque isolated services.
 5. Whether projection writes directly into host `.copilot/` and `.github/agents/` or keeps them package-local with symlink/copy projection.
-6. Whether `.vscode/settings.json`, `.vscode/tasks.json`, and `.vscode/extensions.json` are canonical files or generated projections.
+6. Whether `.vscode/settings.json`, `.vscode/tasks.json`, and `.vscode/extensions.json` stay package-local in `.softwareFactoryVscode/` or whether an alternate projection mode is intentionally introduced.
 7. Which VS Code extensions are required, recommended, optional, or workspace-local bundled for parity with this repository.
 8. Whether a neutralized replacement for the current workspace-local `issueagent` extension is still necessary.
 9. Whether the package publishes a Python CLI entrypoint in addition to scripts.
@@ -1097,9 +1107,9 @@ The follow-up step must complete all items below.
 - [ ] Refactor compose files to use canonical variables and project scoping
 - [ ] Introduce or finalize `/factory` + `/target` split
 - [ ] Add install/bootstrap flow
-- [ ] Add projection flow
+- [ ] Add hidden-tree isolation flow
 - [ ] Add lock file and upgrade flow
-- [ ] Add override model
+- [ ] Ensure no tool-owned workspace/governance files are projected into the host repo by default
 - [ ] Add canonical or generated `.vscode` workspace settings, tasks, and extension recommendations
 - [ ] Add explicit required/recommended/optional VS Code extension matrix and installation guidance
 - [ ] Add Context7 Docker image, compose setup contract, and installation/verification guidance explicitly to the package

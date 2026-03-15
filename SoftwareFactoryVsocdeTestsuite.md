@@ -305,7 +305,7 @@ Prove scripts, compose files, and docs all use one canonical environment contrac
 
 ### Category 4 acceptance criteria
 
-- no unresolved drift exists between scripts, compose files, and docs
+ a clean host workspace can obtain the required `.vscode` behavior from the shipped `.softwareFactoryVscode/.vscode/` assets and documented host-local bootstrap outputs without undocumented manual setup
 
 ---
 
@@ -337,7 +337,8 @@ Prove the package reproduces the VS Code workspace behavior required for this fa
 
 ### Category 4b acceptance criteria
 
-- a clean host workspace can obtain the required `.vscode` behavior through shipped or projected files without undocumented manual setup
+- the tool workspace under `.softwareFactoryVscode/` contains the required `.vscode` behavior without undocumented manual setup
+- the host repository is not mutated with tool-owned `.vscode`, `.github`, or `.copilot` files by default
 
 ---
 
@@ -350,10 +351,10 @@ Prove a new host repo can adopt the factory cleanly.
 ### Category 5 required scenarios
 
 1. initialize an empty Git repo
-2. add `softwareFactoryVscode` under `.factory/softwareFactoryVscode`
+2. add `softwareFactoryVscode` under `.softwareFactoryVscode`
 3. run install/bootstrap command
 4. create lock file and env files
-5. project required config if applicable
+5. keep tool-owned workspace/governance config inside the hidden tool tree
 6. validate host repo remains usable
 
 ### Category 5 required checks
@@ -362,8 +363,8 @@ Prove a new host repo can adopt the factory cleanly.
 - `.factory.lock.json` is generated
 - `.factory.env` or equivalent is generated
 - host `.tmp/softwareFactoryVscode/` directories are created
-- projected artefacts exist where expected
-- projected `.vscode/settings.json`, `.vscode/tasks.json`, and `.vscode/extensions.json` exist where expected
+- no tool-owned `.vscode/`, `.github/`, or `.copilot/` files are projected into the host repo by default
+- hidden tool-owned workspace files remain inside `.softwareFactoryVscode/`
 - re-running bootstrap is idempotent
 
 ### Category 5 acceptance criteria
@@ -460,7 +461,7 @@ Prove the factory interacts with the host repo correctly and safely.
 - host repo files are readable from `/target`
 - factory actions do not mutate unrelated host files during bootstrap
 - host-local data/audit directories are created under `.tmp/softwareFactoryVscode/`
-- projected files are deterministic
+- generated host-local artifacts are deterministic and tool-owned files remain in the hidden tree
 - no hidden dependency on parent directories exists
 
 ### Category 9 acceptance criteria
@@ -538,7 +539,6 @@ Prove the factory fails safely and intelligibly.
 - Docker unavailable
 - Python unavailable or wrong version
 - malformed env file
-- missing required token
 - port already occupied
 - invalid override syntax
 - broken compose file
@@ -569,7 +569,7 @@ Prove a clean-room user can follow the docs and the startup prompt.
 - README quick-start matches actual commands and file paths
 - INSTALL guide matches actual bootstrap flow
 - UPGRADE guide matches actual upgrade flow
-- `VSCODE-WORKSPACE` guide matches actual workspace settings, tasks, and MCP wiring
+- `VSCODE-WORKSPACE` guide states clearly that tool-owned workspace files stay inside `.softwareFactoryVscode/` and only documented host-local artifacts are generated
 - `VSCODE-WORKSPACE` guide includes the explicit required/recommended/optional extension matrix with concrete extension IDs
 - `VSCODE-WORKSPACE` guide includes a concrete `.vscode/extensions.json` target example or equivalent canonical extension payload
 - INSTALL and VSCODE-WORKSPACE docs explain the Context7 Docker artefact, startup path, `CONTEXT7_API_KEY` handling, and MCP wiring expectations accurately
@@ -628,7 +628,7 @@ Purpose:
 
 Examples:
 
-- bootstrap + projection interactions
+- bootstrap + host-local artifact interactions
 - compose env generation + config loading
 - runtime validation scripts
 - docs command extraction verification
@@ -720,7 +720,7 @@ The test suite must collect enough diagnostics to debug failures quickly.
 - relevant logs from failed services
 - compose ps/state snapshot
 - host temp/audit directory listing
-- diff of projected files when useful
+- diff of generated host-local artifacts when useful
 
 ### Must avoid
 

@@ -4,6 +4,12 @@
 
 ISO 21500 Project Management AI Agent - Full-stack app with FastAPI (Python 3.10+) + React/Vite. Docker deployment or local venv. ~190MB, 8000+ files. Git-based document storage in `projectDocs/` (separate repo, NEVER commit to code). Two containers: API + web/nginx.
 
+## Tooling Boundary
+
+- Treat `.softwareFactoryVscode/` as a self-contained tool working tree, not as part of the Maestro product domain.
+- Do not use `.softwareFactoryVscode/**` as application context when working on `maestro` unless the user explicitly asks to modify the software factory tool itself.
+- Never mix tool-owned `.vscode/`, `.github/`, or `.copilot/` definitions from `.softwareFactoryVscode/` into Maestro feature/domain decisions.
+
 ## Development Workflow
 
 ### Plan → Issues → PRs

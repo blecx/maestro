@@ -1,0 +1,119 @@
+services:
+  mock-llm-gateway:
+    build:
+      context: .
+      dockerfile: docker/mock-llm-gateway/Dockerfile
+    image: softwarefactoryvscode/mock-llm-gateway:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${PORT_MOCK_LLM:-29019}:9090"
+    networks:
+      - factory_net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9090/admin/mocks')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  mcp-memory:
+    build:
+      context: .
+      dockerfile: docker/mcp-memory/Dockerfile
+    image: softwarefactoryvscode/mcp-memory:latest
+    restart: unless-stopped
+    environment:
+      PROJECT_WORKSPACE_ID: "${PROJECT_WORKSPACE_ID:-default}"
+      MEMORY_MCP_PORT: "${MEMORY_MCP_PORT:-3030}"
+      MEMORY_DB_PATH: "/data/memory.db"
+    volumes:
+      - "${FACTORY_DATA_DIR}/memory:/data"
+    ports:
+      - "${MEMORY_MCP_PORT:-3030}:3030"
+    networks:
+      - factory_net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:3030/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  mcp-agent-bus:
+    build:
+      context: .
+      dockerfile: docker/mcp-agent-bus/Dockerfile
+    image: softwarefactoryvscode/mcp-agent-bus:latest
+    restart: unless-stopped
+    environment:
+      PROJECT_WORKSPACE_ID: "${PROJECT_WORKSPACE_ID:-default}"
+      AGENT_BUS_PORT: "${AGENT_BUS_PORT:-3031}"
+      AGENT_BUS_DB_PATH: "/data/agent_bus.db"
+    volumes:
+      - "${FACTORY_DATA_DIR}/agent-bus:/data"
+    ports:
+      - "${AGENT_BUS_PORT:-3031}:3031"
+    networks:
+      - factory_net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:3031/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  approval-gate:
+    build:
+      context: .
+      dockerfile: docker/approval-gate/Dockerfile
+    image: softwarefactoryvscode/approval-gate:latest
+    restart: unless-stopped
+    depends_on:
+      mcp-agent-bus:
+        condition: service_healthy
+    environment:
+      PROJECT_WORKSPACE_ID: "${PROJECT_WORKSPACE_ID:-default}"
+      APPROVAL_GATE_PORT: "${APPROVAL_GATE_PORT:-8001}"
+      AGENT_BUS_URL: "http://mcp-agent-bus:3031"
+    ports:
+      - "${APPROVAL_GATE_PORT:-8001}:8001"
+    networks:
+      - factory_net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  agent-worker:
+    build:
+      context: .
+      dockerfile: docker/agent-worker/Dockerfile
+    image: softwarefactoryvscode/agent-worker:latest
+    restart: unless-stopped
+    depends_on:
+      mcp-memory:
+        condition: service_healthy
+      mcp-agent-bus:
+        condition: service_healthy
+      approval-gate:
+        condition: service_healthy
+    environment:
+      PROJECT_WORKSPACE_ID: "${PROJECT_WORKSPACE_ID:-default}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"
+      GITHUB_TOKEN: "${GITHUB_TOKEN}"
+      MEMORY_MCP_URL: "http://mcp-memory:3030"
+      AGENT_BUS_URL: "http://mcp-agent-bus:3031"
+      APPROVAL_GATE_URL: "http://approval-gate:8001"
+      AGENT_WORKSPACE: "/target"
+    volumes:
+      - type: bind
+        source: "${TARGET_WORKSPACE_PATH}"
+        target: /target
+    networks:
+      - factory_net
+
+networks:
+  factory_net:
+    driver: bridge

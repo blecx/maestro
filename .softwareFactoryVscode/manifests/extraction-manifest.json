@@ -1,0 +1,36 @@
+{
+  "repo": "softwareFactoryVscode",
+  "schemaVersion": 1,
+  "sourceRepository": "maestro",
+  "decisions": {
+    "factoryRuntimeLayout": "factory_runtime replaces top-level agents/apps with package-owned neutral runtime modules",
+    "workspaceProjection": "canonical .vscode files are rendered and projected into host workspaces",
+    "issueagentReplacement": "not shipped in v1; no source-repo workspace-local issueagent extension is projected",
+    "mcpServiceOwnership": {
+      "memory": "first-party",
+      "agent-bus": "first-party",
+      "approval-gate": "first-party",
+      "context7": "opaque single-tenant",
+      "github-ops": "first-party"
+    }
+  },
+  "included": [
+    ".vscode",
+    ".copilot",
+    ".github/agents",
+    "compose",
+    "configs",
+    "docker",
+    "factory_runtime",
+    "hooks",
+    "scripts",
+    "SoftwareFactoryVsocdeTestsuite.md",
+    "externalDevendenciesSoftwareFactory.md"
+  ],
+  "excluded": [
+    "apps/api",
+    "frontend build artifacts",
+    "_external/maestro-Client",
+    "maestro-specific web delivery assets"
+  ]
+}
