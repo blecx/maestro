@@ -1,142 +1,142 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
-    "python.terminal.activateEnvironment": true,
-    "python.analysis.typeCheckingMode": "basic",
-    "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": [
-        "-m",
-        "not gui and not e2e",
-        "-p",
-        "no:playwright"
-    ],
-    "task.allowAutomaticTasks": "on",
-    "chat.tools.terminal.autoApprove": {
-        "pytest": true,
-        "python -m pytest": true,
-        "gh": true,
-        "rg": true,
-        "fd": true,
-        "grep": true,
-        "awk": true,
-        "sed": true,
-        "find": true,
-        "wc": true,
-        "cat": true,
-        "head": true,
-        "tail": true,
-        "which": true,
-        "command": true,
-        "cd": true,
-        "ls": true,
-        "pwd": true,
-        "echo": true,
-        "./scripts/check_issue_specs.py": true,
-        "./scripts/validate_issue_specs.sh": true,
-        "./scripts/close-issue.sh": true,
-        "git add": true,
-        "git reset": true,
-        "git commit": true,
-        "git push": true,
-        "git pull": true,
-        "git fetch": true,
-        "git status": true,
-        "pre-commit": true,
-        "uv": true,
-        "python3 .softwareFactoryVscode/scripts/bootstrap_host.py": true,
-        "python3 .softwareFactoryVscode/scripts/project_runtime_env.py": true,
-        "python3 .softwareFactoryVscode/scripts/project_runtime_up.py": true,
-        "python3 .softwareFactoryVscode/scripts/project_runtime_down.py": true,
-        "python3 .softwareFactoryVscode/scripts/project_runtime_validate.py": true,
-        "python3": true,
-        "python": true,
-        "python -m black": true,
-        "python -m flake8": true,
-        "npm install": true,
-        "npm run dev": true,
-        "npm run build": true,
-        "npm ci": true,
-        "npm audit": true,
-        "npx vitest": true,
-        "vitest": true,
-        "sleep": true,
-        "curl": true,
-        "mkdir": true,
-        "rm": true,
-        "cp": true,
-        "chmod": true,
-        "mv": true,
-        "pushd": true,
-        "popd": true,
-        "source": true,
-        "env": true,
-        "true": true,
-        "printf": true,
-        "getent": true,
-        "docker": true,
-        "docker-compose": true,
-        "docker compose": true,
-        "act": true,
-        "/^\\s*for\\s+.+;\\s*do\\s+.+;\\s*done(?:;\\s*exit\\s+\\d+)?\\s*$/": {
-            "approve": true,
-            "matchCommandLine": true,
-            "description": "Allow polling loops used in issue/pr/merge workflows"
-        },
-        "/^\\s*cd\\s+.*\\s+&&\\s+.*$/": {
-            "approve": true,
-            "matchCommandLine": true,
-            "description": "Allow cd with command chaining"
-        }
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.terminal.activateEnvironment": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": [
+    "-m",
+    "not gui and not e2e",
+    "-p",
+    "no:playwright"
+  ],
+  "task.allowAutomaticTasks": "on",
+  "chat.tools.terminal.autoApprove": {
+    "pytest": true,
+    "python -m pytest": true,
+    "gh": true,
+    "rg": true,
+    "fd": true,
+    "grep": true,
+    "awk": true,
+    "sed": true,
+    "find": true,
+    "wc": true,
+    "cat": true,
+    "head": true,
+    "tail": true,
+    "which": true,
+    "command": true,
+    "cd": true,
+    "ls": true,
+    "pwd": true,
+    "echo": true,
+    "./scripts/check_issue_specs.py": true,
+    "./scripts/validate_issue_specs.sh": true,
+    "./scripts/close-issue.sh": true,
+    "git add": true,
+    "git reset": true,
+    "git commit": true,
+    "git push": true,
+    "git pull": true,
+    "git fetch": true,
+    "git status": true,
+    "pre-commit": true,
+    "uv": true,
+    "python3 .softwareFactoryVscode/scripts/bootstrap_host.py": true,
+    "python3 .softwareFactoryVscode/scripts/project_runtime_env.py": true,
+    "python3 .softwareFactoryVscode/scripts/project_runtime_up.py": true,
+    "python3 .softwareFactoryVscode/scripts/project_runtime_down.py": true,
+    "python3 .softwareFactoryVscode/scripts/project_runtime_validate.py": true,
+    "python3": true,
+    "python": true,
+    "python -m black": true,
+    "python -m flake8": true,
+    "npm install": true,
+    "npm run dev": true,
+    "npm run build": true,
+    "npm ci": true,
+    "npm audit": true,
+    "npx vitest": true,
+    "vitest": true,
+    "sleep": true,
+    "curl": true,
+    "mkdir": true,
+    "rm": true,
+    "cp": true,
+    "chmod": true,
+    "mv": true,
+    "pushd": true,
+    "popd": true,
+    "source": true,
+    "env": true,
+    "true": true,
+    "printf": true,
+    "getent": true,
+    "docker": true,
+    "docker-compose": true,
+    "docker compose": true,
+    "act": true,
+    "/^\\s*for\\s+.+;\\s*do\\s+.+;\\s*done(?:;\\s*exit\\s+\\d+)?\\s*$/": {
+      "approve": true,
+      "matchCommandLine": true,
+      "description": "Allow polling loops used in issue/pr/merge workflows"
     },
-    "terminal.integrated.env.linux": {
-        "TMPDIR": "${workspaceFolder}/.tmp",
-        "TMP": "${workspaceFolder}/.tmp",
-        "TEMP": "${workspaceFolder}/.tmp"
-    },
-    "chat.tools.subagent.autoApprove": {
-        "Plan": true,
-        "create-issue": true,
-        "close-issue": true,
-        "resolve-issue": true,
-        "pr-merge": true,
-        "ralph-agent": true
-    },
-    "chat.agent.maxRequests": 50,
-    "chat.allowAnonymousAccess": true,
-    "chat.checkpoints.showFileChanges": true,
-    "chat.customAgentInSubagent.enabled": true,
-    "softwareFactory.factoryInstallPath": ".softwareFactoryVscode",
-    "mcp": {
-        "servers": {
-            "context7": {
-                "url": "http://127.0.0.1:${PORT_CONTEXT7}/mcp",
-                "headers": {
-                    "CONTEXT7_API_KEY": "${env:CONTEXT7_API_KEY}"
-                }
-            },
-            "bashGateway": {
-                "url": "http://127.0.0.1:${PORT_BASH}/mcp"
-            },
-            "git": {
-                "url": "http://127.0.0.1:${PORT_GIT}/mcp"
-            },
-            "search": {
-                "url": "http://127.0.0.1:${PORT_SEARCH}/mcp"
-            },
-            "filesystem": {
-                "url": "http://127.0.0.1:${PORT_FS}/mcp"
-            },
-            "dockerCompose": {
-                "url": "http://127.0.0.1:${PORT_COMPOSE}/mcp"
-            },
-            "testRunner": {
-                "url": "http://127.0.0.1:${PORT_TEST}/mcp"
-            },
-            "offlineDocs": {
-                "url": "http://127.0.0.1:${PORT_DOCS}/mcp"
-            },
-            "githubOps": {
-                "url": "http://127.0.0.1:${PORT_GITHUB}/mcp"
-            }
-        }
+    "/^\\s*cd\\s+.*\\s+&&\\s+.*$/": {
+      "approve": true,
+      "matchCommandLine": true,
+      "description": "Allow cd with command chaining"
     }
+  },
+  "terminal.integrated.env.linux": {
+    "TMPDIR": "${workspaceFolder}/.tmp",
+    "TMP": "${workspaceFolder}/.tmp",
+    "TEMP": "${workspaceFolder}/.tmp"
+  },
+  "chat.tools.subagent.autoApprove": {
+    "Plan": true,
+    "create-issue": true,
+    "close-issue": true,
+    "resolve-issue": true,
+    "pr-merge": true,
+    "ralph-agent": true
+  },
+  "chat.agent.maxRequests": 50,
+  "chat.allowAnonymousAccess": true,
+  "chat.checkpoints.showFileChanges": true,
+  "chat.customAgentInSubagent.enabled": true,
+  "softwareFactory.factoryInstallPath": ".softwareFactoryVscode",
+  "mcp": {
+    "servers": {
+      "context7": {
+        "url": "http://127.0.0.1:${PORT_CONTEXT7}/mcp",
+        "headers": {
+          "CONTEXT7_API_KEY": "${env:CONTEXT7_API_KEY}"
+        }
+      },
+      "bashGateway": {
+        "url": "http://127.0.0.1:${PORT_BASH}/mcp"
+      },
+      "git": {
+        "url": "http://127.0.0.1:${PORT_GIT}/mcp"
+      },
+      "search": {
+        "url": "http://127.0.0.1:${PORT_SEARCH}/mcp"
+      },
+      "filesystem": {
+        "url": "http://127.0.0.1:${PORT_FS}/mcp"
+      },
+      "dockerCompose": {
+        "url": "http://127.0.0.1:${PORT_COMPOSE}/mcp"
+      },
+      "testRunner": {
+        "url": "http://127.0.0.1:${PORT_TEST}/mcp"
+      },
+      "offlineDocs": {
+        "url": "http://127.0.0.1:${PORT_DOCS}/mcp"
+      },
+      "githubOps": {
+        "url": "http://127.0.0.1:${PORT_GITHUB}/mcp"
+      }
+    }
+  }
 }

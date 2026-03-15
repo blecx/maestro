@@ -1,9 +1,11 @@
 # ADR 0001: Runtime and workspace boundary
 
 ## Status
+
 Accepted
 
 ## Decision
+
 `softwareFactoryVscode` keeps runtime code under `factory_runtime/` and workspace/developer assets under `.vscode/`, `.copilot/`, `.github/`, and `docs/`.
 
 ## Consequences

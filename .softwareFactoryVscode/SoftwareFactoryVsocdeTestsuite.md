@@ -305,7 +305,7 @@ Prove scripts, compose files, and docs all use one canonical environment contrac
 
 ### Category 4 acceptance criteria
 
- a clean host workspace can obtain the required `.vscode` behavior from the shipped `.softwareFactoryVscode/.vscode/` assets and documented host-local bootstrap outputs without undocumented manual setup
+a clean host workspace can obtain the required `.vscode` behavior from the shipped `.softwareFactoryVscode/.vscode/` assets and documented host-local bootstrap outputs without undocumented manual setup
 
 ---
 
